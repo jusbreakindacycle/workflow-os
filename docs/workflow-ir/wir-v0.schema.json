@@ -23,7 +23,7 @@
       "minItems": 2,
       "items": {
         "type": "object",
-        "required": ["id", "type"],
+        "required": ["id", "type", "risk_tier"],
         "properties": {
           "id": { "type": "string", "minLength": 1 },
           "type": {
@@ -40,8 +40,8 @@
               "end"
             ]
           },
-          "tool_ref": { "type": "string" },
-          "integration_ref": { "type": "string" },
+          "tool_ref": { "type": "string", "minLength": 1 },
+          "integration_ref": { "type": "string", "minLength": 1 },
           "timeout_seconds": { "type": "integer", "minimum": 1 },
           "risk_tier": { "enum": ["R0", "R1", "R2", "R3"] },
           "idempotency": {
@@ -73,6 +73,16 @@
           "config": { "type": "object" },
           "extensions": { "type": "object" }
         },
+        "allOf": [
+          {
+            "if": { "properties": { "type": { "const": "action" } }, "required": ["type"] },
+            "then": { "required": ["tool_ref", "timeout_seconds", "retry", "idempotency"] }
+          },
+          {
+            "if": { "properties": { "type": { "const": "ai_transform" } }, "required": ["type"] },
+            "then": { "required": ["timeout_seconds"] }
+          }
+        ],
         "additionalProperties": true
       }
     },
@@ -82,8 +92,8 @@
         "type": "object",
         "required": ["from", "to"],
         "properties": {
-          "from": { "type": "string" },
-          "to": { "type": "string" },
+          "from": { "type": "string", "minLength": 1 },
+          "to": { "type": "string", "minLength": 1 },
           "when": { "type": "string" }
         },
         "additionalProperties": false
@@ -91,10 +101,11 @@
     },
     "policy": {
       "type": "object",
-      "required": ["max_runtime_seconds", "default_timeout_seconds", "approval"],
+      "required": ["max_runtime_seconds", "default_timeout_seconds", "data_classification", "approval"],
       "properties": {
         "max_runtime_seconds": { "type": "integer", "minimum": 1 },
         "default_timeout_seconds": { "type": "integer", "minimum": 1 },
+        "data_classification": { "enum": ["Public", "Internal", "Confidential", "Restricted"] },
         "max_ai_cost_usd": { "type": "number", "minimum": 0 },
         "max_agent_iterations": { "type": "integer", "minimum": 1 },
         "approval": {
