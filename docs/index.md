@@ -11,21 +11,26 @@
 - [Freelancer Funnel](product/freelancer-funnel.md)
 - [Workflow Taxonomy](domain/workflow-taxonomy.md)
 - [Lifecycle and Execution Modes](domain/lifecycle-and-execution-modes.md)
+- [Human Approval Semantics](domain/human-approval-semantics.md)
 
 ## Workflow IR
 - [WIR v0 Specification](workflow-ir/wir-v0-spec.md)
 - [WIR v0 JSON Schema](workflow-ir/wir-v0.schema.json)
 - [Example](workflow-ir/examples/lead-qualification.yaml)
 
-## Engineering models
+## Architecture and operating models
 - [System Context](architecture/system-context.md)
+- [Engine Routing Policy](architecture/engine-routing-policy.md)
 - [Engine Adapter Contract](architecture/engine-adapter-contract.md)
+- [Connector and Tool Contract](architecture/connector-tool-contract.md)
 - [Data and Event Model](architecture/data-and-event-model.md)
 - [Loop Engineering](loop-engineering/loop-model.md)
 - [Risk Model](risk/workflow-risk-model.md)
 - [Automation Feasibility](feasibility/automation-feasibility-model.md)
 - [Reliability](reliability/reliability-model.md)
 - [Security](security/security-model.md)
+- [Data Classification and Retention](security/data-classification-and-retention.md)
+- [AI/Agent Threat Model](security/ai-threat-model.md)
 - [Testing](testing/testing-strategy.md)
 - [Observability](observability/observability-model.md)
 
