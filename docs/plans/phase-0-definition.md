@@ -15,12 +15,17 @@ Phase 0 creates the engineering contract before application code exists.
 - [x] WIR v0 machine-readable schema and synthetic example
 - [x] architecture/control-plane boundary
 - [x] execution-engine adapter contract
+- [x] engine-routing policy
+- [x] connector/tool contract
 - [x] data/event model
 - [x] nested loop-engineering model
 - [x] workflow risk and approval model
+- [x] bound human-approval semantics
 - [x] automation feasibility/ROI model
 - [x] reliability contract
 - [x] security/workspace-isolation contract
+- [x] data classification/retention model
+- [x] AI/agent threat model
 - [x] testing strategy
 - [x] MVP acceptance criteria
 - [x] observability model
@@ -30,6 +35,7 @@ Phase 0 creates the engineering contract before application code exists.
 - [x] reviewer/subagent contracts
 - [x] Codex master prompt and task/review prompts
 - [x] reusable discovery/handoff/incident templates
+- [x] adversarial Phase 0 review record
 
 ## Phase 0 exit criteria
 
