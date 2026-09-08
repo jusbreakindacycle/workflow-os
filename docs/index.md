@@ -42,5 +42,6 @@
 - [ADR Index](decisions/index.md)
 - [Reviewer/Subagent Contracts](agents/reviewer-contracts.md)
 - [Phase 0 Definition](plans/phase-0-definition.md)
+- [Phase 0 Adversarial Review](plans/phase-0-review.md)
 - [Phase 1 MVP Plan](plans/phase-1-mvp.md)
 - [Roadmap](plans/roadmap.md)
