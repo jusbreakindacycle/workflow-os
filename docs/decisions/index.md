@@ -10,6 +10,10 @@ ADRs capture decisions that must remain understandable after chat context is gon
 | [ADR-004](ADR-004-initial-execution-engine.md) | Activepieces is the initial MVP execution target | Accepted — Conditional Pass |
 | [ADR-005](ADR-005-client-isolation.md) | Workspace isolation and indirect integration references from MVP | Accepted |
 | [ADR-006](ADR-006-evidence-driven-scale.md) | Scale infrastructure requires measured triggers | Accepted |
+| [ADR-007](ADR-007-ai-employee-role-abstraction.md) | AI Employee is a governed role abstraction, not a runtime primitive | Accepted |
+| [ADR-008](ADR-008-ai-employee-authority-and-identity.md) | AI Employee authority is capability-scoped and independently enforced | Accepted |
+| [ADR-009](ADR-009-ai-employee-memory.md) | AI Employee memory is explicit, typed, and workspace-scoped | Accepted |
+| [ADR-010](ADR-010-multi-agent-deferred.md) | Multi-agent collaboration is deferred until single-role value is proven | Accepted |
 
 ## ADR rules
 
