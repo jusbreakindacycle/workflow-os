@@ -11,7 +11,15 @@ These criteria define the first governed AI Employee capability. They do not alt
 - [ ] Material role changes create a new version.
 - [ ] Historical tasks reference the exact RoleVersion.
 
-## B. Task ownership
+## B. Governance / high-stakes gate
+
+- [ ] Role declares applicable high-stakes domains.
+- [ ] Any non-empty high-stakes classification requires special review.
+- [ ] Appropriate client/domain/legal/compliance review is recorded where applicable.
+- [ ] High-stakes autonomy is capped according to role-specific policy.
+- [ ] The system does not infer that a generic technical pass equals regulatory/legal approval.
+
+## C. Task ownership
 
 - [ ] Every role invocation creates/uses a bounded TaskAssignment.
 - [ ] Task has deadline/runtime/cost/tool budgets.
@@ -19,7 +27,7 @@ These criteria define the first governed AI Employee capability. They do not alt
 - [ ] Agent sessions cannot continue indefinitely after task completion/cancellation.
 - [ ] Duplicate triggers do not create unintended duplicate business work.
 
-## C. Capability and authority
+## D. Capability and authority
 
 - [ ] Role uses allowlisted workflows/skills/tools only.
 - [ ] Responsibility does not automatically grant tool permission.
@@ -29,14 +37,14 @@ These criteria define the first governed AI Employee capability. They do not alt
 - [ ] Role cannot modify/publish its own authority.
 - [ ] Actor/identity chain is auditable.
 
-## D. Workspace/data isolation
+## E. Workspace/data isolation
 
 - [ ] Role, task, knowledge, memory, tools, and integrations enforce workspace scope.
 - [ ] Cross-workspace memory is disabled.
 - [ ] No reusable secret appears in role spec, model context, normal logs, or templates.
 - [ ] Provider/model use is compatible with declared data policy.
 
-## E. Context and memory
+## F. Context and memory
 
 - [ ] Context is assembled explicitly for the task.
 - [ ] Memory is disabled by default or uses a declared write mode.
@@ -44,15 +52,16 @@ These criteria define the first governed AI Employee capability. They do not alt
 - [ ] Untrusted content cannot modify role authority/instructions.
 - [ ] Retention/deletion rules are enforceable for persisted memory.
 
-## F. Agent runtime
+## G. Agent runtime
 
 - [ ] Runtime is behind an adapter/capability manifest.
 - [ ] Tool proposals are intercepted by Workflow OS policy.
 - [ ] Iteration/tool/time/cost limits are enforced.
+- [ ] Instruction and model policy are versioned/referenced.
 - [ ] Model/provider changes trigger applicable regression evaluation.
 - [ ] Runtime failures normalize into explicit task states.
 
-## G. Human escalation
+## H. Human escalation
 
 - [ ] Every deployed role has a human owner/escalation target.
 - [ ] Out-of-scope/ambiguous/high-risk work escalates or rejects safely.
@@ -60,7 +69,7 @@ These criteria define the first governed AI Employee capability. They do not alt
 - [ ] Approval binds to exact proposed action/version/context as required.
 - [ ] Pause/demotion is operationally available.
 
-## H. Evaluation and promotion
+## I. Evaluation and promotion
 
 - [ ] Role has functional, authority, adversarial, reliability, and escalation tests.
 - [ ] Shadow mode prevents unauthorized material side effects.
@@ -68,7 +77,7 @@ These criteria define the first governed AI Employee capability. They do not alt
 - [ ] No unresolved Critical/High security/authority findings exist before Active.
 - [ ] Production incidents add regression coverage where relevant.
 
-## I. Observability and ROI
+## J. Observability and ROI
 
 - [ ] Tasks expose role version, status, tools/workflows, approvals, errors, cost, and outcome metadata.
 - [ ] Human correction/escalation/review effort is measurable.
@@ -76,7 +85,7 @@ These criteria define the first governed AI Employee capability. They do not alt
 - [ ] Policy violation and unauthorized-action attempts are observable.
 - [ ] Human owner can pause the role.
 
-## J. Multi-agent restraint
+## K. Multi-agent restraint
 
 - [ ] Initial implementation works with max delegation depth 0.
 - [ ] No multi-agent capability is required to satisfy first-role acceptance criteria.
@@ -84,8 +93,10 @@ These criteria define the first governed AI Employee capability. They do not alt
 
 ## Exit
 
-Phase 3 first-role capability is complete only when a real-shaped role can move through:
+For an ordinary low/medium-risk role, first-role capability is complete when it can move through:
 
 `Test -> Shadow -> Supervised -> Active`
 
 with evidence for the applicable criteria above.
+
+A high-stakes role may intentionally stop at Shadow or Supervised according to its special-review policy.
