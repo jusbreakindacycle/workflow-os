@@ -9,8 +9,8 @@ No reviewer is allowed to silently expand product scope.
 **Reads:** goal, MVP scope, active plan, acceptance criteria.
 
 **Checks:**
-- task is inside MVP
-- implementation has no disguised future-scale work
+- task is inside the active phase
+- implementation has no disguised future-phase/scale work
 - acceptance criteria are mapped
 - non-goals remain intact
 
@@ -20,14 +20,16 @@ No reviewer is allowed to silently expand product scope.
 
 ## 2. Architecture Reviewer
 
-**Reads:** ARCHITECTURE, WIR, adapter contract, ADRs.
+**Reads:** ARCHITECTURE, WIR, AI Employee contracts when applicable, adapter contracts, ADRs.
 
 **Checks:**
 - control-plane/execution-plane boundary
 - canonical WIR ownership
+- AI Employee Spec vs WIR separation
 - adapter semantic fidelity
 - data/event/version integrity
 - no accidental universal executor
+- no hidden process state inside an agent session
 
 **May not:** override product scope without an ADR.
 
@@ -40,6 +42,7 @@ No reviewer is allowed to silently expand product scope.
 - sensitive-value handling/redaction
 - inbound/outbound integration boundaries
 - action authorization
+- identity/delegation
 - approval bypass
 - common API/web risks
 
@@ -50,7 +53,7 @@ No reviewer is allowed to silently expand product scope.
 - retry classification/backoff
 - idempotency/reconciliation
 - concurrency/backpressure
-- failed-run recovery
+- failed-run/task recovery
 - compensation semantics
 - no duplicate side effects
 
@@ -63,6 +66,37 @@ No reviewer is allowed to silently expand product scope.
 - loop/cost/time budgets
 - human gates for high-risk effects
 - prompt/model changes do not bypass policy
+- untrusted retrieved/tool content cannot override system policy
+- context/memory remain workspace-scoped
+
+## 5A. AI Employee Role Reviewer — Phase 3+
+
+Use when work creates or changes an AI Employee role.
+
+**Reads:**
+- `docs/ai-employees/`
+- applicable ADR-007 through ADR-010
+- role spec and Role Brief
+- evaluation/readiness evidence
+
+**Checks:**
+- role has measurable outcome
+- responsibilities and non-responsibilities are explicit
+- task inventory was decomposed before agentic design
+- role title is not being treated as permission
+- human owner exists
+- autonomy class is justified
+- RoleVersion is immutable/attributable
+- TaskAssignments are bounded
+- memory is necessary and explicitly governed
+- identity mode is explicit
+- promotion stage has evidence
+- multi-agent complexity is not introduced without its gate
+
+**May not:**
+- broaden the role to “do anything in department X”
+- promote a role based only on demo/model confidence
+- authorize a tool or R3 action
 
 ## 6. QA/Test Reviewer
 
@@ -73,6 +107,7 @@ No reviewer is allowed to silently expand product scope.
 - approval paths
 - workspace boundary tests
 - AI evaluations
+- AI Employee lifecycle/readiness tests when applicable
 - acceptance criteria evidence
 
 May identify missing tests; does not redefine the feature.
@@ -83,7 +118,7 @@ Assumes the implementation is wrong until evidence says otherwise.
 
 Attempts to break:
 - scope boundaries
-- graph validation
+- graph/task validation
 - retry safety
 - duplicate events
 - concurrent approvals
@@ -93,14 +128,17 @@ Attempts to break:
 - log redaction
 - recovery/replay
 - agent loop termination
+- memory poisoning
+- tool/identity privilege escalation
+- delegation cycles
 
 ## 8. Documentation/Handoff Reviewer
 
-Checks that repository docs, ADRs, WIR examples, operator guidance, and handoff artifacts match implemented behavior.
+Checks that repository docs, ADRs, WIR/AI Employee examples, operator guidance, and handoff artifacts match implemented behavior.
 
 ## 9. Implementation agents
 
-Future implementation may use bounded frontend, backend/control-plane, engine-adapter, and test agents. Their authority is limited by the same source-of-truth hierarchy in `AGENTS.md`.
+Future implementation may use bounded frontend, backend/control-plane, execution-adapter, agent-runtime, and test agents. Their authority is limited by the same source-of-truth hierarchy in `AGENTS.md`.
 
 ## Recommended review order
 
@@ -108,8 +146,9 @@ Future implementation may use bounded frontend, backend/control-plane, engine-ad
 Scope
  -> Architecture
  -> Security + Reliability
+ -> AI Employee Role Review (when applicable)
  -> QA
- -> AI Safety (when applicable)
+ -> AI Safety
  -> Adversarial
  -> Documentation
 ```
