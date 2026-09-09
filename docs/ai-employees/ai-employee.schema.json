@@ -10,6 +10,7 @@
     "responsibilities",
     "non_responsibilities",
     "operating_model",
+    "governance",
     "authority",
     "capabilities",
     "reasoning_policy",
@@ -70,6 +71,46 @@
           "items": { "enum": ["request_driven", "event_driven", "scheduled", "batch", "background_monitored"] }
         }
       },
+      "additionalProperties": true
+    },
+    "governance": {
+      "type": "object",
+      "required": ["high_stakes_domains", "special_review_required"],
+      "properties": {
+        "high_stakes_domains": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "employment",
+              "credit_lending_insurance",
+              "health_medical",
+              "legal_compliance",
+              "physical_safety_security",
+              "significant_financial",
+              "education_access",
+              "government_benefits_enforcement",
+              "other_high_stakes"
+            ]
+          }
+        },
+        "special_review_required": { "type": "boolean" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "high_stakes_domains": { "minItems": 1 }
+            },
+            "required": ["high_stakes_domains"]
+          },
+          "then": {
+            "properties": {
+              "special_review_required": { "const": true }
+            }
+          }
+        }
+      ],
       "additionalProperties": true
     },
     "authority": {
