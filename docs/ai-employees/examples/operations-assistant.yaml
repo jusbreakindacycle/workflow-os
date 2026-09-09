@@ -37,6 +37,10 @@ operating_model:
     - event_driven
     - request_driven
 
+governance:
+  high_stakes_domains: []
+  special_review_required: false
+
 authority:
   autonomy_class: A1
   max_automatic_risk_tier: R1
