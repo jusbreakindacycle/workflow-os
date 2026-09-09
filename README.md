@@ -1,22 +1,26 @@
 # Workflow OS
 
-Workflow OS is a **spec-first automation engineering control plane** for discovering, modeling, testing, deploying, observing, and reusing deterministic, AI-assisted, agentic, and human-in-the-loop workflows across clients and execution engines.
+Workflow OS is a **spec-first automation engineering control plane** for discovering, modeling, testing, deploying, observing, and reusing deterministic, AI-assisted, agentic, and human-in-the-loop work across clients and execution engines.
+
+Future **AI Employees / AI Workers** are governed role abstractions inside Workflow OS, built from workflows, tools, bounded agent sessions, human escalation, and measurable outcomes.
 
 ## Current status
 
-**Phase 0 — Product and engineering contract. No application code yet.**
+**Phase 0 is complete and merged. Phase 1 engine due diligence is in review; application/runtime coding has not started yet.**
 
-The repository is intentionally being defined before implementation so that future coding work in VS Code + Codex is constrained by an explicit product goal, MVP boundary, workflow model, architecture decisions, reliability/security policies, tests, and acceptance criteria.
+The repository is intentionally contract-first so future VS Code + Codex implementation is constrained by explicit product scope, workflow/role models, architecture decisions, reliability/security policy, evaluations, and acceptance criteria.
 
-Phase 0 work is developed through reviewable pull requests. Until Phase 0 is approved, implementation directories such as `src/`, `apps/`, `services/`, production infrastructure, and package-manager scaffolding should not be introduced.
+AI Employee specifications are being defined now as **future Phase 3 contracts** so Phase 1 does not create architectural dead ends. They do not expand the Phase 1 MVP.
 
 ## Public-repository rule
 
-This repository is currently public. Do **not** commit client names, client data, credentials, tokens, secrets, private workflow payloads, proprietary SOPs, or other confidential material.
+This repository is currently public. Do **not** commit client names, client data, credentials, tokens, secrets, private workflow payloads, proprietary SOPs, private role instructions, or other confidential material.
+
+Use synthetic examples only.
 
 ## Navigation
 
-After the Phase 0 specification PR is merged, start with:
+Start with:
 
 1. `AGENTS.md`
 2. `docs/index.md`
@@ -24,8 +28,14 @@ After the Phase 0 specification PR is merged, start with:
 4. `docs/product/scope-mvp.md`
 5. `ARCHITECTURE.md`
 6. `docs/decisions/index.md`
-7. `docs/testing/acceptance-criteria.md`
+7. the active phase plan and acceptance criteria
+
+Future AI Employee architecture starts at `docs/ai-employees/overview.md`.
 
 ## Core principle
 
 > Model once, execute through the right engine, govern everything from one place.
+
+For AI Employees:
+
+> Give AI a role, not unrestricted authority.
