@@ -6,10 +6,10 @@ The AI Employee Spec is the canonical definition of a governed digital role.
 
 It complements WIR:
 
-- **AI Employee Spec** defines the role, authority, context, budgets, and responsibilities.
+- **AI Employee Spec** defines the role, authority, context, budgets, responsibilities, reasoning policy, and delegation policy.
 - **WIR** defines executable workflow/process structure.
 
-An AI Employee may reference one or more workflows and tools.
+An AI Employee may reference one or more workflows, skills, tools, and knowledge sources.
 
 ## Required top-level fields
 
@@ -21,7 +21,9 @@ An AI Employee may reference one or more workflows and tools.
 - `operating_model`
 - `authority`
 - `capabilities`
+- `reasoning_policy`
 - `context_policy`
+- `delegation`
 - `limits`
 - `escalation`
 - `evaluation`
@@ -73,8 +75,7 @@ Declare:
 - maximum automatic action risk;
 - actions requiring approval;
 - prohibited actions;
-- identity mode;
-- delegation policy.
+- identity mode.
 
 R3 actions always require human approval under current Workflow OS policy.
 
@@ -89,6 +90,18 @@ References to:
 
 No raw secret values.
 
+## Reasoning policy
+
+Defines references for future agentic execution:
+
+- immutable role instruction reference;
+- model policy reference;
+- optional agent-runtime policy/reference.
+
+Instructions guide model behavior but do not grant authorization.
+
+A role may have no agentic task path in practice; the reasoning policy still makes the versioned instruction/model contract explicit for any AI behavior.
+
 ## Context policy
 
 Defines:
@@ -100,6 +113,17 @@ Defines:
 - retention;
 - workspace boundary;
 - data classification.
+
+## Delegation
+
+Defines:
+
+- allowed child-role references;
+- whether delegation is enabled.
+
+The global `limits.max_delegation_depth` remains authoritative.
+
+Default is no child roles and depth 0.
 
 ## Limits
 
@@ -128,8 +152,14 @@ References to evaluation suites and readiness rules.
 
 No role moves from test/shadow to higher autonomy solely because it “looked good” in demos.
 
+## Observability
+
+Declares core role/task metrics, with role-specific business KPIs added as needed.
+
 ## Versioning
 
 Published role versions are immutable.
 
 Task runs always reference the exact role version used.
+
+Changing role instructions, model policy, authority, capabilities, memory policy, or delegation rules is material and requires version/evaluation review.
