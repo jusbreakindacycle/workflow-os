@@ -6,7 +6,7 @@ The AI Employee Spec is the canonical definition of a governed digital role.
 
 It complements WIR:
 
-- **AI Employee Spec** defines the role, authority, context, budgets, responsibilities, reasoning policy, and delegation policy.
+- **AI Employee Spec** defines the role, authority, context, budgets, responsibilities, reasoning policy, governance, and delegation policy.
 - **WIR** defines executable workflow/process structure.
 
 An AI Employee may reference one or more workflows, skills, tools, and knowledge sources.
@@ -19,6 +19,7 @@ An AI Employee may reference one or more workflows, skills, tools, and knowledge
 - `responsibilities`
 - `non_responsibilities`
 - `operating_model`
+- `governance`
 - `authority`
 - `capabilities`
 - `reasoning_policy`
@@ -67,6 +68,17 @@ Declare:
 
 “Background” still means bounded task assignments are created from events/schedules. It does not mean an infinite uncontrolled agent loop.
 
+## Governance
+
+Every role declares:
+
+- applicable high-stakes domains;
+- whether special review is required.
+
+If a role affects employment, credit/insurance, health, legal, safety, significant financial, education-access, public-benefit/enforcement, or similar high-impact decisions, follow `high-stakes-role-gate.md`.
+
+Generic Workflow OS controls do not substitute for client/jurisdiction-specific review.
+
 ## Authority
 
 Declare:
@@ -99,8 +111,6 @@ Defines references for future agentic execution:
 - optional agent-runtime policy/reference.
 
 Instructions guide model behavior but do not grant authorization.
-
-A role may have no agentic task path in practice; the reasoning policy still makes the versioned instruction/model contract explicit for any AI behavior.
 
 ## Context policy
 
@@ -162,4 +172,4 @@ Published role versions are immutable.
 
 Task runs always reference the exact role version used.
 
-Changing role instructions, model policy, authority, capabilities, memory policy, or delegation rules is material and requires version/evaluation review.
+Changing role instructions, model policy, authority, capabilities, governance classification, memory policy, or delegation rules is material and requires version/evaluation review.
