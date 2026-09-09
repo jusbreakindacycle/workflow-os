@@ -1,6 +1,6 @@
 # Research Sources
 
-Research favors official specifications, vendor documentation, and source code. Re-verify licensing, pricing, feature availability, and version-specific behavior at implementation/client-deployment time.
+Research favors official specifications, vendor documentation, and source code. Re-verify licensing, pricing, feature availability, policy, and version-specific behavior at implementation/client-deployment time.
 
 ## Automation / orchestration
 
@@ -38,6 +38,19 @@ Research favors official specifications, vendor documentation, and source code. 
 - Waitpoints: https://www.activepieces.com/docs/install/architecture/waitpoints
 - Changelog/release process: https://www.activepieces.com/docs/about/changelog
 - MCP source: https://github.com/activepieces/activepieces/tree/main/packages/server/api/src/app/mcp
+
+## AI Employee / digital workforce research
+
+- UiPath Agents: https://docs.uipath.com/agents/automation-cloud/latest/user-guide/about-uipath-agents
+- UiPath Business Orchestration: https://www.uipath.com/platform/agentic-automation/business-orchestration
+- UiPath Agentic Orchestration: https://www.uipath.com/ai/what-is-agentic-orchestration
+- Workato Agent Studio docs: https://docs.workato.com/agentic/agent-studio
+- Workato Agent Studio: https://www.workato.com/agentstudio
+- Microsoft autonomous-agent guidance: https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/autonomous-agents
+- Microsoft human supervision: https://learn.microsoft.com/en-us/microsoft-copilot-studio/human-supervision-computer-use
+- Salesforce Digital Labor: https://www.salesforce.com/agentforce/digital-labor/
+
+These sources inform architecture patterns; vendor marketing terminology is not treated as an engineering requirement.
 
 ## Open standards
 
