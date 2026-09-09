@@ -59,11 +59,20 @@ capabilities:
   knowledge_refs:
     - synthetic-ops-handbook
 
+reasoning_policy:
+  instruction_ref: ops-assistant-instructions-v1
+  model_policy_ref: synthetic-standard-reasoning-policy-v1
+  agent_runtime_ref: future-agent-runtime-adapter
+
 context_policy:
   data_classification: Internal
   cross_workspace_memory: false
   memory_write_mode: reviewed_summary
   retention_days: 30
+
+delegation:
+  enabled: false
+  allowed_role_refs: []
 
 limits:
   max_task_runtime_seconds: 300
