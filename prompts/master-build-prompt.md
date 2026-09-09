@@ -17,14 +17,18 @@ Read:
 5. `docs/decisions/index.md` and every ADR relevant to the task
 6. `docs/workflow-ir/wir-v0-spec.md`
 7. `docs/architecture/engine-adapter-contract.md`
-8. `docs/risk/workflow-risk-model.md`
-9. `docs/reliability/reliability-model.md`
-10. `docs/security/security-model.md`
-11. `docs/testing/testing-strategy.md`
-12. `docs/testing/acceptance-criteria.md`
-13. the active Phase plan
+8. the active engine adapter profile when the task is engine-specific
+9. `docs/risk/workflow-risk-model.md`
+10. `docs/reliability/reliability-model.md`
+11. `docs/security/security-model.md`
+12. `docs/testing/testing-strategy.md`
+13. `docs/testing/acceptance-criteria.md`
+14. the active Phase plan
+15. task-specific due-diligence/research documents referenced by the applicable ADR
 
 Repository docs are authoritative.
+
+For the first Phase 1 coding task, use `prompts/phase-1-activepieces-spike.md` rather than trying to build the whole application.
 
 ## 2. Scope first
 
@@ -43,6 +47,8 @@ Do not implement future-scale features unless a measured trigger and approved AD
 - preserve WIR as canonical workflow truth;
 - preserve workspace isolation;
 - keep execution engines behind adapters;
+- use only supported engine control transports;
+- never bypass a plan/license boundary through undocumented APIs or direct engine-database writes;
 - deterministic-first;
 - enforce policy outside AI reasoning;
 - model human approval explicitly;
@@ -75,11 +81,11 @@ If implementation changes a contract or decision, update the relevant documentat
 
 Report:
 
-- files changed
-- acceptance criteria satisfied
-- tests/checks run and results
-- reviewer findings and resolutions
-- remaining limitations
-- any proposed ADR/scope follow-up
+- files changed;
+- acceptance criteria satisfied;
+- tests/checks run and results;
+- reviewer findings and resolutions;
+- remaining limitations;
+- any proposed ADR/scope follow-up.
 
 Never claim completion solely because the application runs locally.

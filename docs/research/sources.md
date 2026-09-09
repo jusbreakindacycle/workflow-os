@@ -1,6 +1,6 @@
 # Research Sources
 
-Phase 0 research favors official specifications and vendor documentation. Re-verify licensing, pricing, feature availability, and version-specific behavior at the time an implementation decision is made.
+Research favors official specifications, vendor documentation, and source code. Re-verify licensing, pricing, feature availability, and version-specific behavior at implementation/client-deployment time.
 
 ## Automation / orchestration
 
@@ -16,6 +16,28 @@ Phase 0 research favors official specifications and vendor documentation. Re-ver
 - Temporal documentation: https://docs.temporal.io/
 - LangGraph documentation: https://docs.langchain.com/oss/python/langgraph/
 - Celonis resources: https://www.celonis.com/
+
+## Activepieces Gate 2 primary sources
+
+- License: https://www.activepieces.com/docs/about/license
+- Repository license: https://github.com/activepieces/activepieces/blob/main/LICENSE
+- Pricing/plan matrix: https://www.activepieces.com/pricing
+- API overview/auth: https://www.activepieces.com/docs/endpoints/overview
+- Create Flow API: https://www.activepieces.com/docs/endpoints/flows/create
+- Flow Run API: https://www.activepieces.com/docs/endpoints/flow-runs/get
+- Flow Run list: https://www.activepieces.com/docs/endpoints/flow-runs/list
+- Flow versioning: https://www.activepieces.com/docs/flows/versioning
+- Flow approvals: https://www.activepieces.com/docs/flows/flow-approvals
+- MCP overview: https://www.activepieces.com/docs/mcp/overview
+- MCP tools: https://www.activepieces.com/docs/mcp/tools
+- Install overview: https://www.activepieces.com/docs/install/overview
+- Docker Compose self-hosting: https://www.activepieces.com/docs/install/options/docker-compose
+- Architecture overview: https://www.activepieces.com/docs/install/architecture/overview
+- Workers: https://www.activepieces.com/docs/install/architecture/workers
+- Durable execution: https://www.activepieces.com/docs/install/architecture/durable-execution
+- Waitpoints: https://www.activepieces.com/docs/install/architecture/waitpoints
+- Changelog/release process: https://www.activepieces.com/docs/about/changelog
+- MCP source: https://github.com/activepieces/activepieces/tree/main/packages/server/api/src/app/mcp
 
 ## Open standards
 
