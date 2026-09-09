@@ -15,6 +15,19 @@ Phase 3 begins only after:
 - observability/recovery works;
 - bounded AI transforms have evaluation support.
 
+## Gate 3.0 — Role governance classification
+
+Before building a role, classify:
+
+- business outcome;
+- affected people/processes;
+- high-stakes domain applicability;
+- special-review requirement;
+- human owner;
+- whether a plain workflow is sufficient.
+
+High-stakes roles follow `docs/ai-employees/high-stakes-role-gate.md`.
+
 ## Gate 3.1 — Role registry
 
 Implement:
@@ -24,7 +37,8 @@ Implement:
 - Role Instance;
 - immutable Role Version;
 - human owner binding;
-- lifecycle states.
+- lifecycle states;
+- governance classification.
 
 No agent runtime yet.
 
@@ -39,7 +53,8 @@ Prove:
 - role-version attribution;
 - terminal state;
 - escalation;
-- cancellation/pause.
+- cancellation/pause;
+- duplicate-trigger handling.
 
 ## Gate 3.3 — Capability/authority
 
@@ -77,11 +92,13 @@ Add dynamic reasoning only for one bounded use case.
 
 Required:
 
-- tool allowlist;
+- Agent Runtime Adapter;
+- tool allowlist/interception;
 - iteration/tool/cost/runtime limits;
 - stop/escalation conditions;
 - structured result;
-- no hidden process state.
+- no hidden process state;
+- versioned instruction/model policy.
 
 ## Gate 3.6 — Evaluation lifecycle
 
@@ -92,7 +109,7 @@ Implement:
 - shadow mode;
 - supervised mode;
 - promotion/demotion evidence;
-- regression on prompt/model/tool/knowledge changes.
+- regression on prompt/model/tool/knowledge/authority changes.
 
 ## Gate 3.7 — Role observability and ROI
 
@@ -103,7 +120,8 @@ Add:
 - policy violations;
 - costs;
 - review time;
-- business outcome metrics.
+- business outcome metrics;
+- pause/demotion controls.
 
 ## Gate 3.8 — Reusable Role Templates
 
@@ -126,13 +144,16 @@ Until a new gate/ADR:
 
 A single AI Employee role can:
 
-1. receive a bounded real-shaped task;
-2. use approved workflows/tools;
-3. respect identity/authority;
-4. operate within budgets;
-5. escalate correctly;
-6. survive tool/model failures safely;
-7. produce observable, attributable outcomes;
-8. pass adversarial/regression evaluations;
-9. move through shadow/supervised/active lifecycle;
-10. show measurable business value.
+1. pass governance/high-stakes classification;
+2. receive a bounded real-shaped task;
+3. use approved workflows/tools;
+4. respect identity/authority;
+5. operate within budgets;
+6. escalate correctly;
+7. survive tool/model failures safely;
+8. produce observable, attributable outcomes;
+9. pass adversarial/regression evaluations;
+10. move through shadow/supervised/active lifecycle where allowed;
+11. show measurable business value.
+
+A high-stakes role may intentionally remain capped at Shadow or Supervised if client/domain policy requires it.
