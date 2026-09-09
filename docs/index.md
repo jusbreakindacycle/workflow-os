@@ -72,6 +72,7 @@
 - [Phase 0 Adversarial Review](plans/phase-0-review.md)
 - [Phase 1 MVP Plan](plans/phase-1-mvp.md)
 - [Phase 3 AI Employees](plans/phase-3-ai-employees.md)
+- [AI Employee Spec Adversarial Review](plans/ai-employee-spec-review.md)
 - [Roadmap](plans/roadmap.md)
 
 ## Codex prompts
