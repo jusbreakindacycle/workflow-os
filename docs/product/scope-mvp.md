@@ -4,6 +4,8 @@
 
 Prove that Workflow OS can transform one real business process into a governed, deployable, observable workflow using a single execution engine.
 
+The MVP deliberately builds foundations that future AI Employees can use, but **does not implement the AI Employee product layer**.
+
 ## In scope
 
 ### Operator and workspace
@@ -65,11 +67,16 @@ Prove that Workflow OS can transform one real business process into a governed, 
 - run/node status, timestamps, attempts, error classification, approval state, and cost metadata
 
 ### Reuse
-- save client-neutral templates
+- save client-neutral workflow templates
 - generated handoff documentation
 
 ## Explicitly out of scope
 
+- AI Employee Role Registry/runtime
+- AI Employee persistent memory
+- AI Employee Task Assignment product surface
+- autonomous background digital roles
+- multi-agent delegation/collaboration
 - building a universal execution engine
 - 1,000+ native connectors
 - full drag-and-drop workflow builder
@@ -85,6 +92,12 @@ Prove that Workflow OS can transform one real business process into a governed, 
 - mobile application
 - custom LLM training
 - full process-mining platform
+
+## Future contract
+
+AI Employee specifications are documented under `docs/ai-employees/` so Phase 1 foundations do not create architectural dead ends.
+
+Their presence is not authorization to implement Phase 3 early.
 
 ## Scope-change rule
 
