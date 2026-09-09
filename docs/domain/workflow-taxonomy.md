@@ -1,6 +1,6 @@
 # Workflow Taxonomy
 
-Workflow OS classifies a process before selecting how it should execute.
+Workflow OS classifies work before selecting how it should execute.
 
 ## By determinism
 
@@ -27,6 +27,21 @@ Examples: approve a refund, sign off a proposal, review low-confidence extractio
 ### Hybrid
 Combines deterministic, AI-assisted, agentic, and human steps under one governed workflow.
 
+## By participant
+
+A process may involve:
+
+- Workflow OS deterministic execution;
+- AI transform;
+- AI Employee / governed agent task;
+- human operator/approver;
+- RPA/robot;
+- external system.
+
+**Participant is not execution semantics.**
+
+An “AI Employee” role may still perform most of its work through deterministic workflows.
+
 ## By duration
 
 - synchronous/short-running
@@ -34,6 +49,7 @@ Combines deterministic, AI-assisted, agentic, and human steps under one governed
 - scheduled
 - long-running/wait-state
 - event-correlated
+- bounded AI Employee task (future Phase 3)
 
 ## By interface
 
@@ -57,6 +73,10 @@ See the risk model for policy.
 
 ## Routing question
 
-Do not ask “Which platform automates everything?” Ask:
+Do not ask:
 
-> What execution mode best fits this workflow, and what governance must wrap it?
+> Which single platform or AI Employee automates everything?
+
+Ask:
+
+> What execution mode best fits each part of the work, which participant should own it, and what governance must wrap it?
