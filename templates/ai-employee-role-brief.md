@@ -24,6 +24,17 @@ List outcome-oriented responsibilities.
 
 What must this role never own or decide?
 
+## People / high-stakes impact gate
+
+- Who can be materially affected by this role?
+- Does it affect employment, credit/insurance, health, legal/compliance, physical safety/security, significant finance, education access, government benefits/enforcement, or another high-stakes domain?
+- High-stakes domains:
+- Special review required?
+- Human decision/review that must remain:
+- Correction/appeal/escalation path if applicable:
+
+If any high-stakes domain applies, use `docs/ai-employees/high-stakes-role-gate.md`.
+
 ## Task inventory
 
 | Task | Frequency | Current actor | Rule-based? | Semantic AI? | Agentic? | Human judgment? | Risk |
@@ -53,6 +64,13 @@ What must this role never own or decide?
 - identity mode:
 - delegated-user cases:
 
+## Instructions / model policy
+
+- instruction reference/version:
+- model policy:
+- runtime requirements:
+- fallback constraints:
+
 ## Context and memory
 
 - role context:
@@ -63,6 +81,15 @@ What must this role never own or decide?
 - retention:
 - sensitive data:
 - cross-workspace memory: **must remain false unless a future ADR changes policy**
+
+## Delegation
+
+- delegation needed?
+- allowed child roles:
+- max depth:
+- why a normal workflow/subflow is insufficient:
+
+Default is no delegation.
 
 ## Escalation
 
