@@ -70,4 +70,4 @@ test('Assignment contract validates budgets, evidence, side effects, stop condit
   const noStops = validAssignment();
   noStops.assignment.stop_conditions = [null];
   assert.throws(() => validateAssignmentContract(noStops), /contract_invalid/);
-}
+});
