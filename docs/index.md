@@ -53,7 +53,15 @@
 ## Implementation
 
 - [Local Development — Phase 1 Gate 1](implementation/local-development.md)
-- [Canonical Entities and Invariants — Phase 1 Gate 2](implementation/gate-2-canonical-entities.md)
+- [Canonical Entities — Phase 1 Gate 2](implementation/gate-2-canonical-entities.md)
+- [New Project / Discovery / Delivery Strategy — Phase 1 Gate 3](implementation/gate-3-new-project-discovery.md)
+- [Work Graph / Needs My Attention / Activity Feed — Phase 1 Gate 4](implementation/gate-4-work-graph-attention.md)
+- [Project Pack / Context Slice — Phase 1 Gate 5](implementation/gate-5-project-pack-context-slice.md)
+- [Goal Revision / Impact Propagation — Phase 1 Gate 6](implementation/gate-6-goal-revision-impact.md)
+- [Optional Repository Approval — Phase 1 Gate 7](implementation/gate-7-repository-approval.md)
+- [Mock Assignment / Verification — Phase 1 Gate 8](implementation/gate-8-mock-assignment-verification.md)
+- [Spend Gate — Phase 1 Gate 9](implementation/gate-9-spend-gate.md)
+- [Restart / Recovery / Command Center — Phase 1 Gate 10](implementation/gate-10-command-center-recovery.md)
 
 ## Providers
 
@@ -66,6 +74,7 @@
 - [Decision Index](decisions/index.md)
 - [Legacy Decision Disposition](decisions/legacy-foundation-decisions.md)
 - [PR #7 Adversarial Review](reviews/pr-7-adversarial-review.md)
+- [Phase 1 Completion Report](reviews/phase-1-completion-report.md)
 - [Roadmap](plans/roadmap.md)
 - [Phase 1 Core Control Plane](plans/phase-1-core-control-plane.md)
 

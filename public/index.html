@@ -3,19 +3,121 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Workflow OS — Gate 1</title>
+  <title>Workflow OS — Phase 1 Control Plane</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <main class="shell">
-    <p class="eyebrow">Phase 1 · Gate 1</p>
-    <h1>Local control plane foundation</h1>
-    <p>This screen only proves the local application shell, API, SQLite persistence, migrations, and testable startup. Project management features intentionally come later.</p>
-    <section class="card" aria-live="polite">
-      <div><span>Status</span><strong id="status">Checking…</strong></div>
-      <div><span>Database</span><strong id="database">—</strong></div>
-      <div><span>Migrations</span><strong id="migrations">—</strong></div>
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Phase 1 · Gates 1–10</p>
+        <h1>Local Control Plane</h1>
+        <p class="lede">Create a project, preserve uncertainty, turn accepted intent into bounded work, then inspect what is ready, blocked, awaiting approval, or already verified.</p>
+      </div>
+      <p class="status-pill" id="system-status">Checking local system…</p>
+    </header>
+
+    <section class="panel" id="command-center-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Command Center</p>
+          <h2>Portfolio</h2>
+        </div>
+        <button type="button" class="secondary compact" id="refresh-command-center">Refresh</button>
+      </div>
+      <div class="grid two">
+        <label>Workspace
+          <select id="dashboard-workspace"></select>
+        </label>
+        <div class="summary-box"><span>Needs My Attention</span><strong id="attention-count">0</strong></div>
+      </div>
+      <div id="portfolio" class="stack muted">Create a workspace/project below to populate the portfolio.</div>
+      <details>
+        <summary>Needs My Attention</summary>
+        <div id="attention-list" class="stack compact-list"></div>
+      </details>
+      <details>
+        <summary>Recent Activity</summary>
+        <div id="activity-list" class="stack compact-list"></div>
+      </details>
     </section>
+
+    <section class="panel" id="start-panel">
+      <h2>1. Start from the real request</h2>
+      <form id="start-form">
+        <div class="grid two">
+          <label>Workspace
+            <select id="workspace-select" name="workspaceId"></select>
+          </label>
+          <label id="workspace-name-wrap">New workspace name
+            <input name="workspaceName" value="My Workspace" autocomplete="off">
+          </label>
+        </div>
+        <div class="grid two">
+          <label>Project type
+            <select name="mode" id="project-mode">
+              <option value="client">Client project</option>
+              <option value="internal">Internal project</option>
+            </select>
+          </label>
+          <label>Project title
+            <input name="title" required autocomplete="off" placeholder="Coffee shop booking website">
+          </label>
+        </div>
+        <label id="client-name-wrap">Client name
+          <input name="clientName" autocomplete="off" placeholder="Sample Client">
+        </label>
+        <label>Raw request / idea
+          <textarea name="rawRequest" required rows="5" placeholder="Paste what the client said, or describe the problem in your own words."></textarea>
+        </label>
+        <label>Requested solution <span class="muted">(optional, preserved separately from our strategy)</span>
+          <input name="requestedSolution" autocomplete="off" placeholder="e.g. native Android app">
+        </label>
+        <button type="submit">Start discovery</button>
+      </form>
+    </section>
+
+    <section class="panel hidden" id="discovery-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Draft project</p>
+          <h2 id="project-title">Discovery</h2>
+        </div>
+        <span class="badge" id="intake-status">draft</span>
+      </div>
+      <p class="muted" id="raw-request-summary"></p>
+      <form id="discovery-form">
+        <div id="questions"></div>
+        <label>Working delivery strategy
+          <select id="strategy-select" required></select>
+        </label>
+        <label>Why this strategy? <span class="muted">(optional)</span>
+          <textarea id="strategy-rationale" rows="3" placeholder="Short reasoning or trade-off note"></textarea>
+        </label>
+        <button type="submit">Save discovery & review</button>
+      </form>
+    </section>
+
+    <section class="panel hidden" id="review-panel">
+      <h2>3. Review before accepting</h2>
+      <p>This makes the problem, outcome, scope summary, and working strategy canonical. It does not mean a client accepted commercial terms.</p>
+      <pre id="review-summary"></pre>
+      <button id="accept-button" type="button">Accept Project Brief</button>
+    </section>
+
+    <section class="panel success hidden" id="accepted-panel">
+      <p class="eyebrow">Accepted</p>
+      <h2>Project Brief is canonical</h2>
+      <p id="accepted-summary"></p>
+      <p class="muted" id="bootstrap-summary"></p>
+      <div class="button-row">
+        <button id="repository-proposal-button" type="button" class="secondary hidden">Propose repository (mock)</button>
+        <button id="new-project-button" type="button" class="secondary">Start another project</button>
+      </div>
+      <div id="repository-approval-box" class="mini-panel hidden"></div>
+    </section>
+
+    <p class="error" id="error" role="alert"></p>
   </main>
   <script type="module" src="/app.js"></script>
 </body>

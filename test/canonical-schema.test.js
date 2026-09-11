@@ -11,7 +11,8 @@ const expectedTables = [
   'workspaces','clients','engagements','projects','project_briefs','project_revisions',
   'work_items','work_dependencies','work_item_proposals','decisions','approvals',
   'artifact_references','evidence_references','project_events','project_pack_versions',
-  'context_slices','spend_envelopes','cost_records','assignments'
+  'context_slices','spend_envelopes','cost_records','assignments',
+  'project_intakes','discovery_responses','delivery_strategy_decisions'
 ];
 
 function fixture() {
@@ -20,7 +21,7 @@ function fixture() {
   return { ...opened, store: new CanonicalStore(opened.db) };
 }
 
-test('Gate 2 canonical tables exist and every scoped table carries workspace_id', () => {
+test('Phase 1 canonical tables exist and every scoped table carries workspace_id', () => {
   const { db } = fixture();
   const tables = new Set(db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map((row) => row.name));
   for (const table of expectedTables) assert.ok(tables.has(table), `missing ${table}`);
