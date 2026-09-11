@@ -3,14 +3,14 @@ import test from 'node:test';
 import { FreeFirstBroker } from '../src/domain/free-first-broker.js';
 import { createPhase2Fixture, acceptedReadyProject } from '../test-support/phase2-fixture.js';
 
-test('free-first policy reserves low quota and prefers cheaper-capacity routes without paid fallback', () => {
+test('free-first policy makes reserved quota verifier-only and keeps worker routing on healthy capacity', () => {
   const previousGroq = process.env.TEST_GROQ_FREE_KEY;
   const previousOpenRouter = process.env.TEST_OPENROUTER_FREE_KEY;
   process.env.TEST_GROQ_FREE_KEY = 'test-groq';
   process.env.TEST_OPENROUTER_FREE_KEY = 'test-openrouter';
-  const { db, store } = createPhase2Fixture('workflow-os-free-first-');
+  const { db, store, phase1, phase2 } = createPhase2Fixture('workflow-os-free-first-');
   try {
-    const workspace = store.createWorkspace({ name: 'Free-first policy workspace' });
+    const { workspace, snapshot, workItem } = acceptedReadyProject({ store, phase1 });
     const broker = new FreeFirstBroker(db);
     const provisioned = broker.provisionFreeRoutes({
       workspaceId: workspace.id,
@@ -38,14 +38,23 @@ test('free-first policy reserves low quota and prefers cheaper-capacity routes w
       }
     });
     const state = broker.applyPolicy({ workspaceId: workspace.id, taskClass: 'routine' });
-    const flash = state.routes.find((route) => route.routeName.includes('gemini-3.8-flash-medium'));
-    const opus = state.routes.find((route) => route.routeName.includes('claude-opus-4-6'));
-    assert.equal(flash.quotaStatus, 'healthy');
-    assert.equal(flash.workerAllowed, true);
-    assert.equal(opus.quotaStatus, 'reserved');
-    assert.equal(opus.workerAllowed, false);
-    assert.equal(opus.qualityScore, 0);
-    assert.ok(flash.qualityScore > opus.qualityScore);
+    const flashWorker = state.routes.find((route) => route.routeName === 'free-antigravity-gemini-3.8-flash-medium');
+    const opusWorker = state.routes.find((route) => route.routeName === 'free-antigravity-claude-opus-4-6');
+    const opusVerifier = state.routes.find((route) => route.routeName === 'free-antigravity-claude-opus-4-6-verifier');
+    assert.equal(flashWorker.quotaStatus, 'healthy');
+    assert.equal(flashWorker.role, 'worker');
+    assert.equal(flashWorker.allowed, true);
+    assert.equal(opusWorker.quotaStatus, 'reserved');
+    assert.equal(opusWorker.role, 'worker');
+    assert.equal(opusWorker.allowed, false);
+    assert.equal(opusWorker.qualityScore, 0);
+    assert.equal(opusVerifier.quotaStatus, 'reserved');
+    assert.equal(opusVerifier.role, 'verifier');
+    assert.equal(opusVerifier.allowed, true, '10-15% capacity remains available to verification but not ordinary workers');
+
+    const workerSelection = phase2.selectRoute({ workspaceId: workspace.id, projectId: snapshot.project.id, workItemId: workItem.id, purpose: 'worker', requiredCapabilities: ['reasoning'] });
+    assert.notEqual(workerSelection.route.route_name, 'free-antigravity-claude-opus-4-6');
+    assert.ok(JSON.parse(workerSelection.route.capabilities_json).includes('reasoning'));
   } finally {
     db.close();
     if (previousGroq === undefined) delete process.env.TEST_GROQ_FREE_KEY; else process.env.TEST_GROQ_FREE_KEY = previousGroq;
@@ -76,7 +85,7 @@ test('free-first execution can complete through two independent zero-cost routes
       reliabilityScore: 95,
       latencyScore: 95,
       estimatedCostMinor: 0,
-      config: { free_first: true, source: 'phase-2.1-free-first', provider_family: 'test-a', model_tier: 'economy', quota_bucket_key: 'test-a', base_quality_score: 90, mode: 'worker' }
+      config: { free_first: true, source: 'phase-2.1-free-first', provider_family: 'test-a', model_tier: 'economy', route_role: 'worker', quota_bucket_key: 'test-a', base_quality_score: 90, mode: 'worker' }
     });
     const verifierConnection = phase2.createProviderConnection({
       workspaceId: workspace.id,
@@ -97,7 +106,7 @@ test('free-first execution can complete through two independent zero-cost routes
       reliabilityScore: 95,
       latencyScore: 95,
       estimatedCostMinor: 0,
-      config: { free_first: true, source: 'phase-2.1-free-first', provider_family: 'test-b', model_tier: 'balanced', quota_bucket_key: 'test-b', base_quality_score: 70, mode: 'verifier' }
+      config: { free_first: true, source: 'phase-2.1-free-first', provider_family: 'test-b', model_tier: 'balanced', route_role: 'verifier', quota_bucket_key: 'test-b', base_quality_score: 70, mode: 'verifier' }
     });
 
     const broker = new FreeFirstBroker(db);
@@ -116,9 +125,9 @@ test('free-first mode fails closed when an ungoverned zero-incremental route is 
   try {
     const { workspace, snapshot, workItem } = acceptedReadyProject({ store, phase1 });
     const governed = phase2.createProviderConnection({ workspaceId: workspace.id, providerKey: 'governed', connectionType: 'local_service', billingMode: 'zero_incremental', locality: 'local' });
-    phase2.createExecutionRoute({ workspaceId: workspace.id, providerConnectionId: governed.id, routeName: 'governed-worker', runtimeKey: 'fixture', adapterKind: 'fixture', capabilities: ['reasoning'], independenceGroup: 'g1', qualityScore: 90, reliabilityScore: 90, latencyScore: 90, estimatedCostMinor: 0, config: { free_first: true, model_tier: 'economy', base_quality_score: 90, mode: 'worker' } });
+    phase2.createExecutionRoute({ workspaceId: workspace.id, providerConnectionId: governed.id, routeName: 'governed-worker', runtimeKey: 'fixture', adapterKind: 'fixture', capabilities: ['reasoning'], independenceGroup: 'g1', qualityScore: 90, reliabilityScore: 90, latencyScore: 90, estimatedCostMinor: 0, config: { free_first: true, model_tier: 'economy', route_role: 'worker', base_quality_score: 90, mode: 'worker' } });
     const governedVerifier = phase2.createProviderConnection({ workspaceId: workspace.id, providerKey: 'governed-verifier', connectionType: 'local_service', billingMode: 'zero_incremental', locality: 'local' });
-    phase2.createExecutionRoute({ workspaceId: workspace.id, providerConnectionId: governedVerifier.id, routeName: 'governed-verifier', runtimeKey: 'fixture', adapterKind: 'fixture', capabilities: ['verification'], independenceGroup: 'g2', qualityScore: 70, reliabilityScore: 90, latencyScore: 90, estimatedCostMinor: 0, config: { free_first: true, model_tier: 'balanced', base_quality_score: 70, mode: 'verifier' } });
+    phase2.createExecutionRoute({ workspaceId: workspace.id, providerConnectionId: governedVerifier.id, routeName: 'governed-verifier', runtimeKey: 'fixture', adapterKind: 'fixture', capabilities: ['verification'], independenceGroup: 'g2', qualityScore: 70, reliabilityScore: 90, latencyScore: 90, estimatedCostMinor: 0, config: { free_first: true, model_tier: 'balanced', route_role: 'verifier', base_quality_score: 70, mode: 'verifier' } });
     const rogue = phase2.createProviderConnection({ workspaceId: workspace.id, providerKey: 'rogue-subscription', connectionType: 'local_service', billingMode: 'included_subscription', locality: 'local' });
     phase2.createExecutionRoute({ workspaceId: workspace.id, providerConnectionId: rogue.id, routeName: 'rogue-route', runtimeKey: 'fixture', adapterKind: 'fixture', capabilities: ['reasoning'], independenceGroup: 'rogue', qualityScore: 100, reliabilityScore: 100, latencyScore: 100, estimatedCostMinor: 0, config: { mode: 'worker' } });
 
