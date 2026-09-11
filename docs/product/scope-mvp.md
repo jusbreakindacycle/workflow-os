@@ -1,177 +1,68 @@
-# /scope-mvp
+# Phase 1 / MVP Scope
 
-## MVP objective
+## Objective
 
-Prove that Workflow OS can take one synthetic/controlled Project from problem intake to a governed deployed workflow outcome while keeping the operator continuously aware of Project state through the Command Center.
+Prove the **local canonical control plane** before depending on any real AI/model/runtime/workflow provider.
 
-The MVP is deliberately a thin slice of the larger solo-AI-business vision. It establishes Project state, work visibility, workflow governance, and evidence without attempting to build an unrestricted autonomous software company.
+The MVP demonstrates that a raw request can become a structured, explainable Project with commercial context, versioned goal state, work state, operator attention, Project Pack/Context Slice, and evidence while remaining useful offline/local.
+
+## Golden path
+
+```text
+Open local web app
+  -> New Project
+  -> internal or client work
+  -> raw request
+  -> Workspace / Client? / Engagement? / Project Draft
+  -> small structured discovery (`I don't know` allowed)
+  -> approve initial problem/outcome/working-scope summary
+  -> initial WorkItems/dependencies
+  -> Project Pack + Context Slice
+  -> repository creation proposal + approval state
+  -> simulated/manual Assignment
+  -> evidence
+  -> Activity / Needs My Attention / Command Center
+  -> revise goal once and prove impact/version propagation
+```
 
 ## In scope
 
-### Operator, workspace, and Project
+### Local control plane
 
-- one human operator;
-- multiple client/workspace records;
-- multiple Project records across workspaces;
-- Project types sufficient for `client_delivery`, `internal_product`, and `experiment`;
-- Project Brief with problem, desired outcome, constraints, success measure, and lifecycle phase;
-- logical separation of Project/workflow/execution metadata, templates, and integration references by workspace.
+One local operator; local-first web UI; persistent local development database; multiple Workspaces; optional Client records; Engagement records for client work; Projects/ProjectBrief versions/ProjectRevisions; WorkItems/dependencies; Decisions/Approvals; WorkItem Proposals; Artifact/Evidence refs; Activity/Event ledger; ContextSlice; basic SpendEnvelope/CostRecord; mock/manual Assignment.
 
-### Project lifecycle and work graph
+### New Project / discovery
 
-- canonical Project phase/state;
-- bounded WorkItems with type, status, priority, dependencies, assignee kind, evidence references, and blocker reason;
-- task readiness derived from dependencies/gates;
-- explicit blocked, waiting, failed, approval-required, and complete states;
-- activity/event history sufficient to explain Project status;
-- no hidden agent conversation may be the only source of Project state.
+Raw text input; optional uploaded-material refs; internal vs client choice; `I don't know`; question/answer records separate from accepted facts; human approval before uncertain discovery becomes accepted working scope. Deterministic question rules are sufficient; real LLM interviewer is later.
 
-### Project Command Center
+### Commercial foundation
 
-Portfolio view must show, at minimum:
+Client Projects may record Client, Engagement, requested outcome, working/proposed/client-accepted scope state, quote/price records, deadline, maintenance placeholder, and scope-change proposal. Operator approval is not automatically client acceptance.
 
-- Project name/type/workspace;
-- lifecycle phase;
-- health/state;
-- currently active work;
-- next ready WorkItem;
-- blocker/approval indicator;
-- latest activity timestamp.
+### Goal revision
 
-Project detail must show, at minimum:
+A material accepted-goal change creates a new version/revision and explicit impact over derived work. Stale approvals/WorkItems/Pack versions cannot remain silently executable.
 
-- problem/outcome/constraints;
-- current phase;
-- WorkItems/dependencies;
-- relevant research/spec/workflow/test/deployment artifacts;
-- evidence for completed material work;
-- approvals/decisions;
-- latest workflow/deployment status where applicable.
+### Project Pack + Context Slice
 
-The Command Center is a derived read model over canonical state; manual narrative status alone is not sufficient.
+Versioned Project Pack generated from accepted canonical state; no raw secrets; deterministic regeneration; strict schema validation; visible provenance/diff. Assignment Context Slice exposes only authorized WorkItem-relevant context.
 
-### Discovery
+### Command Center
 
-- structured Project/process intake;
-- Workflow Brief where the Project includes automation;
-- feasibility score;
-- risk score;
-- ROI/time-saved estimate where applicable.
+Portfolio/project views show phase/status/health, active/next-ready work, blockers, Needs My Attention, recent Activity, commercial deadline/scope indicator, Project Pack version, and repository/deployment placeholders.
 
-### Workflow model
+### Provider-independent contracts
 
-- WIR v0 as the canonical workflow definition **within a Project**;
-- versioned definitions;
-- schema validation;
-- simple diagram/visualization derived from WIR.
+Define but do not require real execution for Model/Runtime Broker, Spend Gate, capability manifests, ProviderConnection, AgentAssignment, adapters, loops/routines, and repository bootstrap/instruction compilation. A mock/manual adapter proves state transitions.
 
-### WIR v0 node types
+### Verification
 
-- manual trigger;
-- webhook trigger;
-- scheduled trigger;
-- action;
-- transform;
-- condition;
-- delay;
-- AI transform;
-- human approval;
-- end.
+Schema validation, state-transition/version tests, dependency/readiness tests, approval tests, Proposal tests, strict Project Pack/Assignment validation, goal-revision impact tests, Context Slice minimization tests, local restart/recovery tests, and derived Command Center/Activity consistency tests.
 
-### Execution
+## Explicitly out of scope for Phase 1
 
-- exactly one primary workflow engine adapter;
-- generic HTTP/API action capability;
-- engine deployment mapping;
-- run initiation and status reconciliation;
-- workflow runs attributable to Workspace + Project + workflow version.
+Required paid AI APIs; automatic paid execution; real multi-model routing; real ProviderConnection execution; persistent autonomous agent fleet; Paperclip/Activepieces integration; real GitHub repository creation; real provider-specific instruction generation beyond fixtures; autonomous coding/deployment/incident remediation; payment collection; communication integrations; client portal; client-facing AI Employees; drag-and-drop workflow builder; Kubernetes/multi-region infrastructure.
 
-### Internal agent foundation
+## Exit criteria
 
-- contracts for bounded internal specialist assignments;
-- Project/WorkItem references in agent assignments;
-- required output/evidence contract;
-- reviewer/subagent use in the development process where supported;
-- no requirement for a persistent autonomous agent runtime in MVP.
-
-### Testing and agent verification
-
-- sample fixtures;
-- dry-run/mocked side effects where feasible;
-- input/schema validation;
-- error-path tests;
-- idempotency tests for supported mutations;
-- AI evaluation examples for AI nodes;
-- timeouts;
-- bounded retries with exponential backoff and jitter;
-- concurrency/rate-limit policy;
-- failed-run/dead-letter state;
-- manual replay/reconciliation path;
-- a documented verification path showing how an engineering agent/human can run, inspect, and prove the thin vertical slice.
-
-### Security and observability
-
-- integration references rather than embedded secret values;
-- least privilege and workspace authorization;
-- redaction of sensitive execution values;
-- inbound webhook authenticity checks where supported;
-- input and outbound-request safety controls;
-- audit trail for sensitive actions;
-- Project/WorkItem/run/node status, timestamps, attempts, error classification, approval state, and cost metadata where applicable.
-
-### Production ownership minimum
-
-For the deployed MVP Project:
-
-- register the deployment/environment reference;
-- record who/what owns recovery;
-- expose failed/incident state to the operator;
-- create a maintenance/recovery WorkItem when the deployed outcome requires intervention;
-- retain evidence of recovery/redeployment.
-
-This is not full autonomous production operations.
-
-### Reuse
-
-- save client-neutral workflow templates;
-- generated handoff documentation;
-- preserve Project lessons/evidence without copying confidential client material.
-
-## Explicitly out of scope
-
-- fully autonomous end-to-end software factory;
-- self-organizing permanent agent company;
-- unrestricted multi-agent swarms;
-- automatic merge/deploy of high-impact changes without policy/approval;
-- universal coding-agent runtime;
-- autonomous production incident remediation for high-impact systems;
-- client AI Employee Role Registry/runtime;
-- client AI Employee persistent memory;
-- client AI Employee Task Assignment product surface;
-- autonomous background client-facing digital roles;
-- building a universal workflow execution engine;
-- 1,000+ native connectors;
-- full drag-and-drop workflow builder;
-- custom RPA recorder;
-- public marketplace;
-- billing/subscriptions;
-- multi-user collaboration;
-- production Kubernetes;
-- sharding/read-replica architecture;
-- multi-region failover;
-- service discovery;
-- mobile application for Workflow OS itself;
-- custom LLM training;
-- full process-mining platform.
-
-## Future contracts
-
-The broader Project/AI-company operating model is documented now so Phase 1 does not create architectural dead ends.
-
-Client-facing AI Employee specifications remain under `docs/ai-employees/` as later contracts.
-
-Internal AI workforce contracts are defined separately under `docs/agents/internal-ai-workforce.md`.
-
-## Scope-change rule
-
-Anything outside this file is not MVP by default. Scope expansion requires explicit human approval and, when architectural, an ADR.
+Phase 1 is complete when the operator can create/revise/understand a Project locally; Project Pack is reproducible from canonical state; WorkItem readiness/attention is explainable; a simulated bounded Assignment receives only authorized context and produces evidence; and no agent/provider narrative is required as the state store.

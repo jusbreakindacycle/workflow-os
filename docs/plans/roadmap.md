@@ -1,131 +1,55 @@
 # Roadmap
 
-The roadmap is capability-driven. Dates are intentionally omitted until implementation velocity and real project/client demand exist.
+The roadmap is capability-gated. Phase numbers do not promise dates, and a later Project's actual delivery strategy may justify moving one adapter evaluation earlier without changing canonical authority.
 
-## Phase 0 — Original engineering contract
+## Foundation v3 — current documentation reset
 
-Complete/merged foundation for:
+Align the repository with the human-governed, local-first, provider-independent North Star and remove obsolete/duplicated speculative files.
 
-- workflow automation control-plane thesis;
-- WIR;
-- execution adapters;
-- risk/reliability/security;
-- testing/evaluations;
-- observability/ROI;
-- scale gates;
-- reviewer/Codex harness;
-- future client-facing AI Employee contracts.
+## Phase 1 — Core Control Plane
 
-## Foundation v2 — Solo AI business delivery model
+Build locally: Workspace/Client/Engagement/Project; New Project intake; discovery/unknowns/strategy/approval; goal revision/impact; WorkItems/dependencies/proposals; Decisions/Approvals; Project Pack + Context Slice; synthetic SpendEnvelope; Activity/Attention/Command Center; mock Assignment + evidence/verification.
 
-Current alignment pass before broad application implementation:
+No real AI provider required. Exit once the semantics pass; do not turn Phase 1 into a PM suite.
 
-- Project as top-level operational unit;
-- Project/WorkItem state and dependency semantics;
-- Project Command Center;
-- internal AI workforce contracts;
-- agent operability/verification model;
-- production/incident/maintenance ownership;
-- Phase 1 scope/acceptance update.
+## Phase 2 — Autonomy Kernel / First Real Execution
 
-This is primarily specification/architecture work, not a mandate to build an autonomous agent company immediately.
+Add normalized capability registry, ProviderConnection/entitlement registry + health, Broker + Spend Gate enforcement, one real model/runtime route selected by evidence/availability, Project Bootstrapper, instruction compilation, Skill Registry, bounded Loop Engine, and independent verifier route.
 
-## Phase 1 — Core Project + Workflow MVP
+Goal: one WorkItem can be routed/executed without operator prompt-copying.
 
-One operator, multiple Workspaces/Projects, with one controlled Project proving:
+Before claiming **operational provider portability**, configure a second eligible real route/provider for representative synthetic work and execute a replacement/rerouting drill. With only one real route, provider-neutral architecture may exist but portability remains unproven.
 
-- Project Brief and WorkItems;
-- Command Center portfolio/project visibility;
-- discovery/feasibility/risk;
-- WIR;
-- one execution adapter;
-- tests/approvals/reliability;
-- normalized run/deployment evidence;
-- minimal production/maintenance state;
-- ROI/reuse/handoff;
-- reproducible engineering-agent verification path.
+## Phase 3 — End-to-end Delivery Golden Path
 
-The Activepieces Gate 2B spike remains the first isolated coding experiment.
+Add AI-assisted discovery/research/challenge and dynamic internal role activation, then choose the first complete delivery path from an actual controlled Project's **delivery strategy**.
 
-No persistent self-organizing internal agent fleet and no client AI Employee product runtime.
+Examples:
 
-## Phase 2 — Solo Builder Delivery Pipeline
+- `custom_build` / hybrid software: approved repository/bootstrap -> implementation -> test/review -> controlled deploy/delivery;
+- `automate` / integrate: evaluate/activate Workflow Engine Adapter earlier and execute the governed automation path;
+- `configure` / adopt existing: use appropriate tool/provider adapters and evidence without inventing source-code/repository/deployment steps.
 
-Turn Workflow OS from a Project/workflow control plane into a practical internal delivery system for the operator.
+Goal: one controlled internal/synthetic Project reaches a verified real outcome from raw request with minimal operator coordination. The system does not privilege coding merely because coding agents are available.
 
-Candidate capabilities, introduced in measured slices:
+If unattended/background execution becomes valuable, define an `ExecutionHost` topology (local desktop, always-on self-hosted machine, or replaceable remote host). Canonical state must not depend on one hosting vendor.
 
-- structured idea/client-request intake;
-- research/source artifact pipeline;
-- requirement/product-brief generation with human decision gates;
-- architecture/ADR/work-graph generation;
-- repository/GitHub integration;
-- bounded coding-agent assignments;
-- project/repository maps and feature/capability maps;
-- project-specific verification skills/harnesses;
-- CI/evidence ingestion;
-- deployment-provider adapters based on actual projects;
-- operator attention queue and cost/budget visibility;
-- incident/maintenance queues;
-- stronger project templates/service packaging;
-- generated proposals/handoff packs and recurring client health/ROI reports.
+## Phase 4 — Broaden Delivery Adapters
 
-Internal parallel agents may be introduced only under ADR-012 gates: dependency-safe isolation, explicit integration, bounded authority, and independent verification.
+Expand beyond the first golden path. If business workflow automation was not already the Phase 3 path, add WIR execution and evaluate Activepieces (or alternative). Add additional source/deployment/tool adapters only from measured Project needs.
 
-## Phase 3 — Governed Client-Facing AI Employees
+## Phase 5 — Commercial Operations
 
-See `phase-3-ai-employees.md`.
+Expand operator-side commercial workflows only when real work requires them: quotation/change-request generation, invoice/payment status integration, maintenance reminders, client communication/portal. Do not become an accounting ERP.
 
-Capability order:
+## Phase 6 — Internal Workforce Provider Evaluation
 
-1. Role Template / Role Instance / immutable Role Version
-2. bounded Task Assignments
-3. capability/identity/authority bindings
-4. explicit context/knowledge; memory disabled first
-5. one bounded single-role Agent Runtime Adapter use case
-6. test -> shadow -> supervised -> active promotion
-7. AI Employee observability and ROI
-8. reusable role templates
+If direct runtime orchestration becomes burdensome, run Paperclip core/advanced gates. Adopt only the proven subset behind ADR-013. This may move earlier if measured coordination cost justifies it, but cannot replace canonical authority.
 
-Client-facing AI Employee multi-agent delegation remains governed by ADR-010 and is distinct from internal delivery-agent orchestration.
+## Phase 7 — Future client-facing AI workers
 
-## Phase 4 — Durable orchestration and production operations
+Re-research and define governed client-facing AI role packaging only after internal delivery/value is proven.
 
-When real Projects require it:
+## Scale
 
-- long-running wait states;
-- event correlation;
-- durable checkpoints;
-- compensation/Sagas;
-- BPMN import/export or process-orchestrator adapter;
-- durable-runtime adapter;
-- richer incident/change/maintenance automation;
-- production SLO/alert integration where justified;
-- long-lived client AI Employee task patterns only when process semantics justify them.
-
-## Phase 5 — Scale
-
-Only from scale-trigger evidence:
-
-- horizontal service/worker scaling;
-- distributed tracing;
-- SLO/error-budget operations;
-- advanced deployment strategies;
-- WAF and stronger edge/network controls;
-- partitioning/read replicas if needed;
-- Kubernetes if operationally justified;
-- multi-region only from explicit continuity requirements.
-
-## Future gate — More autonomous organization behavior
-
-Do not equate the North Star with an immediate “AI company swarm.”
-
-Increase autonomy only when evidence shows that:
-
-- Project state remains authoritative and debuggable;
-- bounded single-agent assignments are reliable;
-- verification is largely agent-operable;
-- tool permissions and production gates are enforced outside model reasoning;
-- cost/latency remain acceptable;
-- human intervention is being reduced rather than merely moved elsewhere;
-- dynamic delegation provides measurable value beyond an explicit WorkItem graph.
+Kubernetes, multi-region, complex queues, service discovery, sharding, etc. require measured triggers. They are not roadmap milestones by default.

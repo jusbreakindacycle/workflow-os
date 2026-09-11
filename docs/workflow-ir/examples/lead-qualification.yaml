@@ -1,95 +1,44 @@
 wir_version: "0.1"
-
 workflow:
-  id: inbound-lead-qualification
-  name: Inbound Lead Qualification
-  workspace_ref: synthetic-demo
-  version: "1.0.0"
+  id: synthetic-lead-qualification
+  name: Synthetic Lead Qualification
+  workspace_ref: ws-synthetic
+  project_ref: proj-synthetic
+  version: "1"
   environment: test
-
 nodes:
-  - id: inbound
+  - id: start
     type: trigger.webhook
     risk_tier: R0
-
-  - id: validate
+  - id: normalize
     type: transform
     risk_tier: R0
-    config:
-      purpose: validate_required_fields
-
-  - id: enrich
-    type: action
-    tool_ref: company-enrichment.lookup
-    integration_ref: enrichment-test
-    timeout_seconds: 15
-    risk_tier: R0
-    retry:
-      max_attempts: 3
-      strategy: exponential_backoff_jitter
-    idempotency:
-      mode: not_applicable
-
-  - id: classify
+  - id: score
     type: ai_transform
     timeout_seconds: 30
-    risk_tier: R0
+    risk_tier: R1
     config:
-      output_schema: lead_classification_v1
-
-  - id: confidence_gate
-    type: condition
-    risk_tier: R0
-    config:
-      expression: classification.confidence < 0.80
-
+      output_schema: lead_score_v1
   - id: review
     type: human_approval
     risk_tier: R2
-
-  - id: crm
-    type: action
-    tool_ref: crm.upsert_lead
-    integration_ref: crm-test
-    timeout_seconds: 20
-    risk_tier: R2
-    retry:
-      max_attempts: 3
-      strategy: exponential_backoff_jitter
-    idempotency:
-      mode: workflow_key
-      key_expression: trigger.submission_id
-
-  - id: done
+  - id: end
     type: end
     risk_tier: R0
-
 edges:
-  - from: inbound
-    to: validate
-  - from: validate
-    to: enrich
-  - from: enrich
-    to: classify
-  - from: classify
-    to: confidence_gate
-  - from: confidence_gate
+  - from: start
+    to: normalize
+  - from: normalize
+    to: score
+  - from: score
     to: review
-    when: "true"
-  - from: confidence_gate
-    to: crm
-    when: "false"
   - from: review
-    to: crm
-    when: approved
-  - from: crm
-    to: done
-
+    to: end
 policy:
-  max_runtime_seconds: 180
+  max_runtime_seconds: 300
   default_timeout_seconds: 30
   data_classification: Public
-  max_ai_cost_usd: 0.25
+  max_ai_cost_usd: 0
   max_agent_iterations: 1
   approval:
     r3_requires_human: true

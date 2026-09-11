@@ -1,156 +1,109 @@
 # Data and Event Model
 
-## Minimum control-plane entities
+This document defines semantics, not final SQL tables/classes. An entity appearing here does not make it a separate Phase 1 table or implementation task.
 
-### Project/portfolio
+## Phase 1 canonical semantics
 
-- Workspace
-- Operator
-- Project
-- ProjectBrief
-- WorkItem
-- WorkDependency
-- ProjectEvent / ActivityEvent
-- Decision
-- ArtifactReference
-- EvidenceReference
-- AgentAssignment
+### Identity / isolation
 
-### Workflow/execution
+- `Operator`
+- `Workspace`
 
-- IntegrationReference
-- Connector/Tool
-- WorkflowBrief
-- Workflow
-- WorkflowVersion
-- WorkflowNode metadata
-- TestCase
-- EvaluationCase
-- Deployment
-- Run
-- NodeRun
-- Approval
-- RunEvent
-- ErrorRecord
+### Commercial
 
-### Production/reuse
+- `Client`
+- `Engagement`
+- scope/quote/payment/deadline/maintenance **fields or artifact references sufficient for Phase 1**
+- `ScopeChangeProposal`
 
-- Incident
-- MaintenanceWorkItem (may be a WorkItem specialization rather than separate persistence type)
-- Template
-- ROIRecord
-- ArchitectureDecision reference
+Do not create separate Quote/Invoice/Payment/Maintenance subsystems in Phase 1 unless implementation evidence shows the simpler Engagement representation is insufficient.
 
-Exact physical tables/classes are implementation decisions; these names define required semantics.
+### Delivery
 
-## Key relationships
+- `Project`
+- `ProjectBrief` / accepted goal + delivery-strategy version
+- `ProjectRevision`
+- `ProjectPackVersion`
+- `WorkItem`
+- `WorkDependency`
+- `WorkItemProposal`
+- `Decision`
+- `Approval`
+- `ArtifactReference`
+- `EvidenceReference`
+- `ProjectEvent`
 
-- a Workspace is the authorization/data-isolation boundary and owns Projects/integration references;
-- a Project belongs to exactly one Workspace;
-- a Project owns/references WorkItems, decisions, artifacts, evidence, workflows, deployments, incidents, and internal AgentAssignments;
-- WorkItems form a dependency graph within one Project unless a later explicit cross-Project dependency contract is introduced;
-- a Workflow belongs to a Project and owns immutable published WorkflowVersions;
-- a WorkflowVersion produces zero or more Deployments;
-- a Deployment belongs to a Project, targets one adapter/environment, and references exact source/workflow versions as applicable;
-- a Run references Workspace + Project + Deployment + WorkflowVersion;
-- NodeRuns and RunEvents belong to a Run;
-- Approvals reference Project + applicable WorkItem/run/action/version;
-- AgentAssignments reference Project + WorkItem and do not own canonical WorkItem state;
-- Incidents reference Project/environment/deployment and create/reference follow-up WorkItems;
-- Templates derive only from sanitized client-neutral Project/workflow/role knowledge.
+### Phase 1 execution-policy foundation
 
-## Project lifecycle state
+- `AgentAssignment` (mock/manual capable)
+- `ContextSlice` / `ExecutionContextSnapshot`
+- `SpendEnvelope`
+- `CostRecord`
 
-Project stores/derives separately:
+Physical persistence may combine concepts where boundaries remain explicit and tests preserve semantics.
 
-- `phase` — intake/research/definition/architecture/planning/build/verification/review/deployment/production/maintenance/paused/closed;
-- `operational_status` — not_started/ready/running/waiting_external/needs_approval/blocked/failed/complete/canceled;
-- `health` — healthy/at_risk/blocked/unknown plus explainable reason(s).
+## Later capability semantics
 
-Do not collapse these into one ambiguous status field.
+Introduce only when roadmap gates activate:
+
+- `OperatorPolicyProfile`
+- richer `QuoteRecord` / `InvoiceRecord` / `PaymentRecord` / `MaintenanceAgreement` if needed;
+- `RoleDefinition`;
+- `SkillVersion`;
+- `LoopDefinition` / `LoopRun`;
+- `ModelProfile`;
+- `RuntimeProfile`;
+- `ProviderConnection`;
+- `ExecutionHost`;
+- `RouteDecision`;
+- `ProviderMapping`;
+- `RepositoryReference`;
+- `EnvironmentReference`;
+- `Workflow` / `WorkflowVersion`;
+- `Deployment`;
+- `ExecutionRun`;
+- `Incident`;
+- `MaintenanceRecord`.
+
+## Relationships
+
+- Workspace is the authorization/isolation boundary.
+- External client work defaults to one Client per Workspace.
+- Engagement belongs to Workspace and normally one Client.
+- Project belongs to Workspace and may reference an Engagement.
+- WorkItem belongs to exactly one Project.
+- ProjectRevision references before/after accepted ProjectBrief versions and affected records.
+- ProjectPackVersion references exact accepted canonical versions.
+- ContextSlice belongs to an Assignment purpose and exposes only minimum authorized context.
+- AgentAssignment belongs to one Project + exact WorkItem version.
+- SpendEnvelope belongs to bounded purpose and human approval.
+- ProviderConnection represents configured access/entitlement and references secure credentials without copying reusable secrets into ordinary canonical data.
+- ProviderMapping links canonical IDs to replaceable provider-native IDs.
+- Workflow/WIR belongs to a Project.
+- Deployment/Incident/Maintenance belongs to Project/environment and exact versions.
+
+## Project phase / status / health
+
+Keep phase, operational status, and explainable health separate. Do not derive arbitrary percentage from LLM judgment.
 
 ## WorkItem state
 
-Suggested lifecycle:
+Recommended states: `draft`, `ready`, `running`, `waiting_external`, `needs_attention`, `blocked`, `failed`, `complete`, `canceled`, with explicit `stale`/`superseded` treatment after revision invalidation.
 
-`not_started -> ready -> running -> complete`
+Provider state is separate. Provider `done` maps to Assignment `execution_finished`; verification/acceptance decides WorkItem completion.
 
-with explicit alternate states:
+## Approval state
 
-- `waiting_external`
-- `needs_approval`
-- `blocked`
-- `failed`
-- `canceled`
-
-Readiness is derived from dependencies, gates, policy, required artifacts, and allowed execution capability.
-
-## Normalized workflow run state
-
-Suggested lifecycle:
-
-`queued -> running -> waiting -> succeeded | rejected | failed | cancelled`
-
-`waiting` must include a reason such as human approval, timer, external callback, or execution-engine wait.
-
-Workflow run state is not the same as Project/WorkItem state; adapters/events map execution evidence back to the applicable WorkItem.
+Suggested: `requested`, `approved`, `rejected`, `expired`, `superseded`. Approval references exact subject/version/authority reason. It is not external client acceptance evidence.
 
 ## Event envelope
 
-Normalize meaningful control-plane events with fields equivalent to:
+Material events include equivalents of event id/type/time; Workspace/Project/WorkItem; actor; Assignment/Loop/Run/provider refs; status changes; correlation/idempotency keys; reason/error; artifact/evidence refs; cost/spend refs; sensitivity; and exact versions.
 
-- `event_id`
-- `event_type`
-- `occurred_at`
-- `workspace_id`
-- `project_id`
-- `work_item_id` when applicable
-- `actor_type` / `actor_id` or tool/assignment reference
-- `workflow_id` / `workflow_version` when applicable
-- `deployment_id` when applicable
-- `run_id` / `node_id` when applicable
-- `agent_assignment_id` when applicable
-- `incident_id` when applicable
-- `correlation_id`
-- `attempt` when applicable
-- `source`
-- `status_from` / `status_to` when applicable
-- `reason/error_code`
-- `evidence_references`
-- `payload_metadata`
-- sensitivity classification.
+## Activity / attention
 
-CloudEvents conventions may inform the envelope, but Foundation v2 does not mandate a transport implementation.
-
-## Command Center read model
-
-Command Center fields must be derived from canonical entities/events. Materialized views/caches are allowed, but they must be rebuildable/reconcilable from authoritative state.
-
-At minimum derive:
-
-- Project phase/status/health/reason;
-- active WorkItems/assignments;
-- next ready WorkItem(s);
-- blockers/approvals requiring attention;
-- latest meaningful activity;
-- current deployment/production health/incident summary.
-
-Do not create a separate manually updated “dashboard status” that can diverge from Project/WorkItem reality.
+Activity is a filtered read model over events, not another state store. Needs My Attention derives from unresolved approvals/decisions/unknowns, failed/blocked/stale work, credentials/spend, scope changes, deployment gates, and incidents.
 
 ## Data minimization
 
-Prefer references, hashes, metadata, and redacted execution summaries over storing complete third-party payloads, source files, or agent transcripts. Retention must follow data classification and Workspace/client requirements.
-
-Do not store private agent chain-of-thought. Persist useful artifacts, decisions, evidence, summaries, tool outputs, and explicit state transitions instead.
-
-## Version integrity
-
-Historical evidence must be explainable against the exact versions that produced it:
-
-- Project/WorkItem state at the relevant event;
-- WorkflowVersion;
-- RoleVersion for future client AI Employees;
-- source commit/build/deployment where applicable;
-- prompt/model/tool/evaluation version when needed for AI regression.
-
-Never render current content as though it were the historical version that previously ran or was approved.
+Prefer structured summaries, references, hashes, and evidence metadata over full external payloads/transcripts. Never persist private chain-of-thought as required business state.

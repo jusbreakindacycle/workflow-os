@@ -1,0 +1,41 @@
+assignment_version: "0.1"
+assignment:
+  id: assignment-synthetic
+  workspace_id: ws-synthetic
+  project_id: proj-synthetic
+  work_item_id: wi-1
+  work_item_version: 1
+  role: implementation-worker
+  objective: "Produce the bounded synthetic outcome"
+  project_pack_ref: "project-pack://proj-synthetic@v3"
+  context_slice_ref: "context://assignment-synthetic@v1"
+  inputs:
+    - "artifact://accepted-spec"
+  in_scope:
+    - "Only the accepted WorkItem outcome"
+  out_of_scope:
+    - "Commercial scope changes"
+    - "Production deployment"
+  allowed_capabilities:
+    - repo_read
+    - repo_write_branch
+    - test_run
+  budgets:
+    max_iterations: 3
+    max_minutes: 30
+    max_incremental_cost: 0
+    spend_envelope_ref: null
+  evidence_required:
+    - tests
+    - change_summary
+  side_effect_policy:
+    max_risk_tier: R1
+    production_allowed: false
+    destructive_allowed: false
+  stop_conditions:
+    - scope_change
+    - credential_required
+    - unsupported_capability
+  escalation:
+    - needs_operator_decision
+    - verification_impossible

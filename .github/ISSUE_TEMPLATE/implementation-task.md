@@ -1,27 +1,32 @@
 ---
 name: Implementation task
-about: MVP implementation task tied to repository contracts
-title: ""
-labels: ""
-assignees: ""
+about: Bounded implementation WorkItem
 ---
 
-## Goal
+## Outcome
 
-## MVP scope mapping
+What must be true when this task is complete?
 
-Relevant section in `docs/product/scope-mvp.md`:
+## Inputs / authoritative contracts
 
-## Acceptance criteria
+- Project/WorkItem:
+- ADRs:
+- specifications:
 
-Relevant checkboxes in `docs/testing/acceptance-criteria.md`:
+## Scope
 
-## Applicable ADRs
+### In
 
-## Smallest vertical slice
+### Out
 
-## Failure/security considerations
+## Acceptance evidence
 
-## Explicit non-goals
+What evidence will prove completion?
 
-## Evidence required for completion
+## Risk / approvals
+
+What can cause side effects, spend, security impact, scope change, or production impact?
+
+## Stop / escalation
+
+When must the worker stop instead of improvising?

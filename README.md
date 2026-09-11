@@ -1,90 +1,136 @@
-# Workflow OS
+# Workflow OS (temporary name)
 
-Workflow OS is a **personal AI business delivery operating system** for a solo builder. It turns a raw user problem, client request, or product idea into governed work that can be researched, specified, built, verified, deployed, operated, maintained, improved, and reused.
+> **Status:** specification-first foundation for a human-governed autonomous delivery system. The product name `workflow-os` is temporary.
 
-It combines:
+Workflow OS is intended to become the **one operating interface a solo builder uses to run client and internal delivery work without depending on one AI platform, one coding agent, or one model vendor**.
 
-- a project/portfolio control plane;
-- deterministic workflows and WIR;
-- bounded internal AI specialist agents;
-- external execution and agent runtimes through adapters;
-- verification, security, reliability, and human approval;
-- production operations and maintenance state;
-- future client-facing AI Employees / AI Workers.
+The operator should be able to say, in plain language:
 
-The human operator remains the final authority for scope, commitments, high-impact production actions, and policy exceptions.
+> “I have a new client/project. This is the problem. This is what they asked for.”
 
-## North-star promise
+The system should then organize the work from discovery through delivery/operation while asking the operator only for decisions that genuinely require human authority.
 
-> Give Workflow OS the problem, desired outcome, constraints, and approvals; let it organize the rest of the delivery lifecycle.
+## North-star interaction
 
-The target lifecycle is:
+The operator primarily does four things:
 
-> Intake -> Research -> Challenge -> Define -> Scope -> Architect -> Plan -> Build -> Verify -> Review -> Deploy -> Observe -> Maintain -> Improve -> Reuse
+1. give or revise the goal;
+2. answer important discovery questions, including `I don't know`;
+3. provide credentials only when required;
+4. approve, reject, or revise consequential decisions and paid execution.
 
-## Project is the top-level operational unit
+Everything else should be coordinated by the system as far as evidence, policy, available compute, and approved authority allow.
 
-A Project represents one client delivery, internal product, or research/experiment stream. Workflows, repositories, deployments, tasks, evidence, incidents, AI-agent assignments, and maintenance records belong to a Project.
+A goal revision is not a silent text edit. The system versions it, assesses impact, invalidates stale derived work/approvals when required, and regenerates affected Project Pack/plan state before continuing.
 
-WIR remains the canonical representation of a workflow **inside** a Project. AI Employee Spec remains the canonical future representation of a client-facing governed role. Neither replaces Project state.
+## Target lifecycle
 
-## Project Command Center
+The lifecycle is **conditional**, not a rule that every problem becomes custom software or a repository.
 
-Workflow OS must give the operator one place to see the portfolio:
+```text
+Raw request / user problem / project idea
+  -> Intake
+  -> Adaptive discovery
+  -> Research and challenge
+  -> Problem / outcome definition
+  -> Choose delivery strategy
+       process change / adopt / configure / integrate /
+       automate / custom build / hybrid / pilot / defer
+  -> Commercial scope when applicable
+  -> Architecture / plan appropriate to that strategy
+  -> Repository or external-system approval when required
+  -> Execute / build / configure / automate
+  -> Verify / review
+  -> Deliver / deploy / apply change when applicable
+  -> Observe outcome / production when applicable
+  -> Maintain / repair / improve
+  -> Reuse lessons and skills
+```
 
-- every active Project;
-- current lifecycle phase and health;
-- what is running now;
-- next ready task;
-- blockers and approvals needed;
-- research/spec/build/test/deploy/maintenance state;
-- active agent or human assignee;
-- latest evidence and activity;
-- production environment, incidents, and maintenance needs.
+A Project that can be solved by process change or existing software should not be forced through a fake coding/deployment lifecycle.
 
-Status is derived from canonical project/task/event state, not from an agent merely claiming that work is done.
+## Core architectural promise
 
-## Internal AI workforce
+Workflow OS owns the **meaning and state of the work**. External systems perform specialized execution.
 
-Internal agents are bounded workers, not the owner of project state. Typical roles include research, requirements, architecture, planning, implementation, verification, security/reliability review, deployment, incident investigation, maintenance, and documentation.
+```text
+Workflow OS
+  -> Model/Runtime Broker
+      -> OpenAI / Anthropic / Google / open models / local models
+      -> Codex / Claude Code / Copilot / OpenCode / future runtimes
+  -> Internal Workforce Adapter
+      -> Paperclip or another provider, if proven useful
+  -> Workflow Engine Adapter
+      -> Activepieces or another engine
+  -> Source / Deployment / Observability adapters
+      -> Git/source providers / clouds / monitoring systems
+```
 
-Workflow OS owns the work graph, dependencies, budgets, approvals, evidence, and project state. Agents receive bounded assignments and return artifacts/evidence.
+No provider is allowed to become the hidden source of truth for a Project.
 
-## Current status
+## Local-first, provider-independent
 
-**The original Phase 0 specification is complete and merged. Foundation v2 is being added before serious application implementation to align the repository with the broader solo-AI-business vision.**
+The control plane, Project state, commercial records, approvals, activity history, Project Pack, and operator interface are designed to work locally first.
 
-The Activepieces hands-on adapter spike can remain the first execution-engine coding experiment, but broad application implementation should follow the updated Project, Command Center, internal-agent, and maintenance contracts.
+Local-first does **not** mean every high-capability AI model must run on the operator's laptop. The system may route suitable work to local models and may use remote/free/paid models when available and approved.
 
-## Public-repository rule
+Continuous autonomous work requires an available execution/coordinator host. If the local host is shut down/asleep and no approved always-on host exists, work waits; the product must not pretend it continued running.
 
-This repository is currently public. Do **not** commit client names, client data, credentials, tokens, secrets, private workflow payloads, proprietary SOPs, private role instructions, or other confidential material.
+Any new metered/variable-cost external execution requires an applicable operator-approved spend envelope before incremental cost is incurred.
 
-Use synthetic examples only.
+## Not a generic template generator
 
-## Navigation
+Every active delivery Project gets a **case-specific Project Pack** compiled from its actual problem, chosen delivery strategy, client commitments, requirements, architecture/plan, risks, decisions, acceptance criteria, work graph, and tool permissions.
 
-Start with:
+Provider-specific files such as `AGENTS.md`, `CLAUDE.md`, Copilot instructions, or OpenCode/runtime configuration are generated projections. They are not canonical Project state.
+
+Workers receive a minimum-authorized Assignment Context/Context Slice, not blanket permission to transmit the full Project Pack or commercial record to every provider.
+
+## Internal workforce
+
+A complete logical delivery roster may exist for every Project, but roles are activated dynamically. The system should not run many agents merely because many role names exist.
+
+Typical capabilities include intake, research, product/requirements, UX/product design, architecture, planning, implementation, QA/verification, security/reliability, adversarial review, deployment/operations when applicable, maintenance, and documentation.
+
+## Operator experience
+
+The default surface is a local-first **Command Center**, not a collection of agent chats. It includes New Project / Revise Goal, Projects/clients/engagements, Needs My Attention, Activity Feed, active work/assignments, costs/spend, repositories/deployments when applicable, and incidents/maintenance.
+
+Detailed worker/runtime logs remain drill-down diagnostics.
+
+## Current implementation boundary
+
+Phase 1 is deliberately smaller than the North Star. It proves the local canonical control plane first:
+
+```text
+New Project
+  -> Workspace / Client / Engagement / Project
+  -> discovery + delivery-strategy decision
+  -> WorkItems / decisions / approvals / events
+  -> Project Pack / Context Slice
+  -> Needs My Attention + Activity Feed + Command Center
+  -> simulated/manual execution evidence
+  -> goal revision / impact propagation
+```
+
+Phase 1 does **not** require Paperclip, Activepieces, Codex, Claude Code, GitHub, a paid model, or a persistent multi-agent runtime.
+
+See `docs/plans/phase-1-core-control-plane.md`.
+
+## Repository safety
+
+This repository is public. Use synthetic data only. Never commit real client data, credentials, tokens, private instructions, invoices, proprietary source material, or production payloads.
+
+## Start here
 
 1. `AGENTS.md`
 2. `docs/index.md`
 3. `docs/product/goal.md`
-4. `docs/product/project-operating-model.md`
-5. `docs/product/project-command-center.md`
-6. `docs/product/scope-mvp.md`
-7. `ARCHITECTURE.md`
-8. `docs/decisions/index.md`
-9. `docs/plans/foundation-v2.md`
-10. the active phase plan and acceptance criteria
+4. `docs/product/scope-mvp.md`
+5. `ARCHITECTURE.md`
+6. `docs/decisions/index.md`
+7. `docs/plans/phase-1-core-control-plane.md`
 
-Future client-facing AI Employee architecture starts at `docs/ai-employees/overview.md`.
+## One-line product test
 
-## Core principles
-
-> Workflow OS owns the project state; agents perform bounded work.
-
-> Model once, execute through the right engine, govern everything from one place.
-
-For client-facing AI Employees:
-
-> Give AI a role, not unrestricted authority.
+If the operator still has to manually copy prompts between AI products, remember what each worker was doing, or reconstruct Project truth from chats, the system has not achieved its goal.

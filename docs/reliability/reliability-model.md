@@ -1,93 +1,52 @@
 # Reliability Model
 
-Every external side effect is a distributed-systems problem at small scale too.
+## Principle
 
-## Per-run identity
-
-A normalized run should carry:
-
-- run id
-- workflow version
-- deployment/environment
-- workspace
-- correlation id
-- attempt number
-- deadline
-- idempotency context
-- cost counters where applicable
+Autonomy is useful only when failures remain explainable and recoverable.
 
 ## Error classes
 
-### Permanent validation/configuration
-No automatic retry until configuration/input changes.
-
-### Authorization/integration unavailable
-Stop or pause; require reconnection or policy resolution.
-
-### Provider rate limit
-Honor provider retry guidance when available; otherwise bounded backoff with jitter.
-
-### Timeout/network/transient provider failure
-Bounded retry if side-effect safety is known.
-
-### Provider server failure
-Bounded retry according to connector policy.
-
-### Business-rule rejection
-No technical retry unless business state changes.
-
-### Uncertain side effect
-Do **not** blindly retry. Reconcile the remote system first.
-
-### Unsupported capability
-Deployment validation failure, not runtime improvisation.
-
-## Retry rules
-
-- every retry policy has a maximum attempt count
-- retries use deadlines/timeouts
-- exponential backoff includes jitter
-- a retry is allowed only when the action's idempotency/reconciliation contract makes repetition safe enough
-- retry storms must be constrained by concurrency/rate limits
+- validation/configuration — no retry until input/config changes;
+- authorization/credential — stop and request resolution;
+- rate limit — bounded provider-aware backoff;
+- transient network/provider — bounded retry only when side-effect safety is known;
+- provider server failure — bounded retry by adapter policy;
+- business-rule rejection — no technical retry until business state changes;
+- uncertain side effect — reconcile before retry;
+- unsupported capability — fail route/validation, do not improvise;
+- budget exhausted — stop/escalate;
+- verification failed — repair/new WorkItem, not false completion.
 
 ## Idempotency modes
 
 - `not_applicable`
-- `provider_key`: provider accepts a stable idempotency key
-- `workflow_key`: Workflow OS/adapter deduplicates by stable business key
-- `reconcile_before_retry`: query remote state before another mutation
-- `non_idempotent_explicit`: no safe idempotency method; automatic mutation retry is disabled unless explicitly approved
+- `provider_key`
+- `system_key`
+- `reconcile_before_retry`
+- `non_idempotent_explicit`
 
-## Failed-run / dead-letter state
+Every mutation declares one or explains why automatic retry is disabled.
 
-When retries are exhausted, record:
+## Retries
 
-- normalized error category
-- last safe checkpoint
-- side effects known to have succeeded
-- side effects uncertain
-- compensation options
-- replay/reconciliation options
-- human notes/status
+Retries always have max attempts/deadline and backoff/jitter where relevant. Retry does not mean “ask the model forever.”
 
-## Compensation / Saga-style recovery
+## Unknown outcomes
 
-When a workflow changes multiple independent systems, prefer explicit local actions plus compensating actions over pretending an atomic distributed transaction exists.
+If an external operation may have succeeded but acknowledgement failed, do not blindly repeat it. Query/reconcile remote state first.
 
-Compensation must be modeled as a business action and may itself require approval.
+## Provider outage
 
-## Circuit breaking
-
-Not required as custom MVP infrastructure, but adapters/connectors should support a future circuit-breaker policy for dependencies with repeated failures.
+Canonical Project state remains readable. Assignments become waiting/unknown/blocked as appropriate. Recovery reconciles before continuing.
 
 ## Backpressure
 
-When inbound work exceeds execution capacity, preserve bounded queues/concurrency rather than spawning unlimited work.
+Bound queues/concurrency. Do not spawn unlimited loops/agents because inbound events increased.
 
 ## Database correctness
 
-When implementation begins, choose transaction isolation/locking deliberately for competing updates. Optimistic locking is the default candidate for versioned control-plane records; pessimistic/distributed locking requires evidence that it is necessary.
+Choose transaction/locking strategy deliberately for competing state transitions. Prefer optimistic version checks for canonical records unless evidence requires stronger locking.
 
-## Recovery principle
+## Recovery test
 
-A production workflow is not “reliable” merely because it retries. It is reliable when the operator can determine what happened and safely reach a known business state.
+The operator should be able to answer what happened, what is certain/uncertain, and what action safely restores a known state.

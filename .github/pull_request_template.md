@@ -1,38 +1,32 @@
 ## Purpose
 
-What repository goal/plan does this PR advance?
+What Project/foundation WorkItem does this change satisfy?
 
 ## Scope
 
-- [ ] Inside `docs/product/scope-mvp.md`, or
-- [ ] Explicitly approved non-MVP/spec work
+- In scope:
+- Explicitly out of scope:
 
-Acceptance criteria affected:
+## Architecture / decisions
 
-ADRs applicable:
-
-## What changed
-
-Describe the smallest coherent change.
-
-## What intentionally did not change
-
-State non-goals to make scope creep visible.
+Relevant ADRs/contracts:
 
 ## Verification
 
-- [ ] relevant spec/tests/checks passed
-- [ ] failure paths considered
-- [ ] workspace/security boundaries reviewed
-- [ ] retry/idempotency implications reviewed
-- [ ] documentation agrees with behavior
-- [ ] no real client data or sensitive material added
-- [ ] no scale-trigger capability added without evidence/ADR
+Evidence produced:
 
-## Reviewer findings
+- [ ] static/schema/type/lint checks as applicable
+- [ ] automated tests/evals as applicable
+- [ ] real flow or integration verification as applicable
+- [ ] independent/adversarial review as applicable
+- [ ] documentation updated when contracts changed
 
-Summarize Scope, Architecture, Security/Reliability, QA, Adversarial, and AI Safety review when applicable.
+## Human authority
 
-## Remaining risks / follow-up
+- [ ] no unapproved paid execution introduced
+- [ ] no new high-impact/destructive authority introduced
+- [ ] no provider-specific state made canonical
 
-Be explicit.
+## Risks / remaining limitations
+
+List known blockers, unsupported behavior, or follow-up WorkItems.

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:autonomous-delivery:agent-assignment:0.1",
+  "title": "Agent Assignment v0.1",
+  "type": "object",
+  "required": ["assignment_version", "assignment"],
+  "properties": {
+    "assignment_version": { "const": "0.1" },
+    "assignment": {
+      "type": "object",
+      "required": ["id", "workspace_id", "project_id", "work_item_id", "work_item_version", "role", "objective", "project_pack_ref", "context_slice_ref", "in_scope", "out_of_scope", "allowed_capabilities", "budgets", "evidence_required", "side_effect_policy", "stop_conditions", "escalation"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "workspace_id": { "type": "string", "minLength": 1 },
+        "project_id": { "type": "string", "minLength": 1 },
+        "work_item_id": { "type": "string", "minLength": 1 },
+        "work_item_version": { "type": "integer", "minimum": 1 },
+        "role": { "type": "string", "minLength": 1 },
+        "objective": { "type": "string", "minLength": 1 },
+        "project_pack_ref": { "type": "string", "minLength": 1 },
+        "context_slice_ref": { "type": "string", "minLength": 1 },
+        "inputs": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "in_scope": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "out_of_scope": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "allowed_capabilities": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "budgets": {
+          "type": "object",
+          "required": ["max_iterations", "max_minutes", "max_incremental_cost"],
+          "properties": {
+            "max_iterations": { "type": "integer", "minimum": 1 },
+            "max_minutes": { "type": "integer", "minimum": 1 },
+            "max_incremental_cost": { "type": "number", "minimum": 0 },
+            "spend_envelope_ref": { "type": ["string", "null"] }
+          },
+          "allOf": [
+            {
+              "if": { "properties": { "max_incremental_cost": { "exclusiveMinimum": 0 } }, "required": ["max_incremental_cost"] },
+              "then": { "required": ["spend_envelope_ref"], "properties": { "spend_envelope_ref": { "type": "string", "minLength": 1 } } }
+            }
+          ],
+          "additionalProperties": false
+        },
+        "evidence_required": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "side_effect_policy": {
+          "type": "object",
+          "required": ["max_risk_tier", "production_allowed", "destructive_allowed"],
+          "properties": {
+            "max_risk_tier": { "enum": ["R0", "R1", "R2", "R3"] },
+            "production_allowed": { "type": "boolean" },
+            "destructive_allowed": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "stop_conditions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "escalation": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "route_metadata": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

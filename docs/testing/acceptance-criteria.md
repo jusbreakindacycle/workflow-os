@@ -1,113 +1,100 @@
-# Phase 1 MVP Acceptance Criteria
+# Phase 1 Acceptance Criteria
 
-These criteria define “MVP complete.” Future-scale or future-autonomy features do not substitute for missing MVP behavior.
+Phase 1 proves the local canonical control plane, not full autonomous delivery.
 
-## A. Project and discovery
+## Local startup / persistence
 
-- [ ] Operator can create a Workspace and a Project using synthetic/demo data.
-- [ ] Project captures kind, problem, desired outcome, constraints, success measure, owner, lifecycle phase, and operational status.
-- [ ] Operator can create bounded WorkItems with explicit status, priority, dependencies, exit condition, and evidence requirement.
-- [ ] WorkItem readiness/blocking is derived from dependencies/gates rather than only free-form notes.
-- [ ] Project event/activity history can explain the current status.
-- [ ] Operator can create a Workflow Brief for an automation WorkItem.
-- [ ] Workflow Brief captures objective, trigger, inputs, outputs, systems, rules, exceptions, approvals, volume, SLA/deadline, and success metric.
-- [ ] Feasibility and risk assessments produce explainable scores/notes.
-- [ ] A WIR v0 definition can be created inside a Project and validates against the canonical schema.
-- [ ] Invalid graphs/policies are rejected before deployment.
+- [ ] application starts locally using documented steps;
+- [ ] canonical state survives restart;
+- [ ] core UI/state remains usable with external AI providers disconnected;
+- [ ] backup/export path for development data is documented.
 
-## B. Project Command Center
+## Isolation / hierarchy
 
-- [ ] Portfolio view lists active Projects with Workspace, kind, lifecycle phase, operational status, health/reason, latest activity, active work, next ready WorkItem, and blocker/approval indicator.
-- [ ] Project detail shows problem/outcome/constraints, WorkItems/dependencies, relevant artifacts, approvals/decisions, evidence, and workflow/deployment state.
-- [ ] A dedicated operator-attention view can surface at least approval-required, blocked, failed, and production/maintenance attention states.
-- [ ] `Next task` is selected only from WorkItems whose dependencies/gates permit execution.
-- [ ] Project/WorkItem completion does not rely solely on an agent narrative claim.
-- [ ] Command Center state is derived from canonical state/events/evidence rather than a manually maintained duplicate status field.
+- [ ] Workspace is present on every relevant canonical record;
+- [ ] an operation scoped to synthetic Workspace A cannot accidentally read/mutate/reference Workspace B records unless the operator intentionally switches/uses B scope;
+- [ ] Client/Engagement/Project relationships are explicit;
+- [ ] internal Project works without Client/Engagement.
 
-## C. Versioning and attribution
+## New Project / discovery / strategy
 
-- [ ] Draft workflow can become an immutable published version.
-- [ ] A changed workflow creates a new version.
-- [ ] Historical runs always reference the exact workflow version that ran.
-- [ ] Workflow runs are attributable to Workspace + Project + workflow version.
-- [ ] Material Project artifacts/evidence can be attributed to the applicable Project/WorkItem.
+- [ ] operator can create Project from raw text without repository;
+- [ ] `I don't know` remains explicit unknown state;
+- [ ] question/answer/proposal/accepted fact are distinguishable;
+- [ ] requested solution is stored separately from recommendation;
+- [ ] a working delivery strategy is explicitly selected before Project Pack generation;
+- [ ] operator approval creates accepted problem/outcome/working-scope version.
 
-## D. Execution adapter
+## Goal revision
 
-- [ ] One primary adapter passes the adapter contract tests.
-- [ ] Unsupported WIR capabilities fail validation rather than silently degrading.
-- [ ] Deployment/run identifiers are mapped to canonical Workflow OS identifiers.
-- [ ] Run state is normalized into the Workflow OS lifecycle.
+- [ ] material revision creates new ProjectBrief/ProjectRevision rather than rewriting history;
+- [ ] impact analysis marks affected WorkItems/approvals/Pack/Assignments stale/superseded/attention-required;
+- [ ] unaffected work remains valid when basis is unchanged;
+- [ ] stale approved work cannot continue silently.
 
-## E. Reliability
+## Work graph
 
-- [ ] Relevant actions declare timeout, retry, and idempotency/reconciliation behavior.
-- [ ] Transient failure can retry with bounded backoff.
-- [ ] Permanent/business-rule errors are not blindly retried.
-- [ ] Uncertain side effects trigger reconciliation rather than duplicate mutation.
-- [ ] Exhausted runs become visible failed/dead-letter states.
-- [ ] Operator has a safe replay/recovery path.
-- [ ] Relevant workflow/deployment failures surface to the Project/WorkItem state and Command Center.
+- [ ] dependencies/readiness are explainable;
+- [ ] blocked/failed/needs-attention/stale states are explicit;
+- [ ] narrative cannot make ineligible work ready;
+- [ ] WorkItem Proposal cannot silently become canonical work.
 
-## F. Human approval and risk
+## Commercial foundation
 
-- [ ] R3 actions cannot execute without human approval.
-- [ ] Approval/rejection is recorded with Project, WorkItem/run, and exact workflow/version where applicable.
-- [ ] Execution adapter cannot silently bypass Workflow OS approval requirements.
-- [ ] Operator-attention view explains why approval is required and the consequence/context needed to decide.
+- [ ] client Project references enough Engagement scope/price/deadline/maintenance context without requiring a full ERP schema;
+- [ ] `proposed_to_client` and `client_accepted` are distinguishable;
+- [ ] operator approval alone cannot fabricate client acceptance;
+- [ ] material scope-change proposal creates Needs My Attention.
 
-## G. Security/isolation
+## Project Pack / Context Slice
 
-- [ ] Workspace authorization is enforced at the server/data boundary.
-- [ ] Project/WIR definitions contain integration references, not secret values.
-- [ ] Sensitive values are redacted from normal logs/views.
-- [ ] Generic inbound/outbound integration surfaces apply declared safety controls.
-- [ ] Sensitive external actions are auditable.
-- [ ] Project-to-workflow/deployment references cannot cross Workspace boundaries without explicit authorized design.
+- [ ] Project Pack validates against meaningful schema;
+- [ ] malformed requirement/delivery-strategy/work-graph/policy objects are rejected;
+- [ ] same canonical versions/config regenerate equivalent Pack;
+- [ ] Pack contains no raw reusable secrets;
+- [ ] provenance/version visible; material accepted change creates new version/diff;
+- [ ] Context Slice contains only authorized WorkItem-relevant fields/refs;
+- [ ] mock worker cannot read unrelated client/commercial data through normal Assignment context.
 
-## H. AI transform
+## Assignment / evidence
 
-- [ ] AI transform emits schema-constrained output or explicit failure.
-- [ ] AI behavior has a stored evaluation set.
-- [ ] AI call obeys workflow timeout/cost policy.
-- [ ] AI output cannot itself bypass authorization/approval policy.
+- [ ] Assignment validates exact WorkItem version, Context Slice, budgets, evidence, side-effect policy, stop/escalation;
+- [ ] one mock/manual Assignment transitions created -> running -> execution_finished;
+- [ ] Assignment finish does not directly complete WorkItem;
+- [ ] evidence/verification can complete/reject WorkItem;
+- [ ] failed verification keeps/reopens incomplete state.
 
-## I. Agent operability and verification
+## Spend
 
-- [ ] Repository documents the commands/steps needed to bootstrap and run the Phase 1 vertical slice.
-- [ ] An authorized engineering agent/human can locate and exercise the relevant feature/API/workflow path without relying on hidden chat context.
-- [ ] Applicable static/schema/type/lint and automated tests can be run reproducibly.
-- [ ] The real relevant user/API/workflow path can be executed for verification where feasible.
-- [ ] Material side effects are reconciled/confirmed when the test is intended to prove them.
-- [ ] Completion evidence is stored/referenced for the Project/WorkItem.
-- [ ] At least one material change is independently reviewed or verified rather than accepted only from the implementing agent's assertion.
+- [ ] synthetic metered route/action cannot start without approved SpendEnvelope;
+- [ ] envelope has bounded purpose/amount;
+- [ ] expansion requires new approval;
+- [ ] unknown cost is not silently zero.
 
-## J. Observability
+## Command Center
 
-- [ ] Operator can see Project/WorkItem state plus run/node status, duration, attempts, normalized errors, and approvals where applicable.
-- [ ] Runs have correlation/trace identifiers.
-- [ ] Core success/failure/retry/latency metrics are available for the thin slice.
-- [ ] A failed run explains recovery options.
-- [ ] Project health/status reason can be explained from observable state/evidence.
+- [ ] portfolio derives phase/status/health from canonical data;
+- [ ] Needs My Attention shows unresolved decision/approval/spend/scope/failure/stale items;
+- [ ] Activity Feed derives from events/source records;
+- [ ] next-ready work is dependency/version/policy aware;
+- [ ] operator understands state without worker transcript.
 
-## K. Production and maintenance minimum
+## Provider independence
 
-- [ ] Deployed MVP Project has an environment/deployment record referencing the exact source/workflow version.
-- [ ] Deployment success/failure/health evidence is visible from the Project detail.
-- [ ] Recovery ownership and rollback/replay path are documented where applicable.
-- [ ] A production/deployment failure can create or map to an Incident or maintenance WorkItem.
-- [ ] Recovery/redeployment can be verified and recorded before the related incident/maintenance item is closed.
+- [ ] no specific provider identifier is required in core Project semantics;
+- [ ] provider mappings/connections are separate from Project meaning;
+- [ ] provider outage/unconfigured state does not corrupt Project state.
 
-## L. Reuse and ROI
+Operational portability across two real providers is a later-phase test, not a Phase 1 claim.
 
-- [ ] A successful workflow can be converted into a sanitized client-neutral template.
-- [ ] Workflow OS can record baseline and post-automation time/quality metrics.
-- [ ] Handoff documentation can be generated from canonical Project/workflow metadata.
-- [ ] Reusable lessons/artifacts do not copy confidential client material into shared templates.
+## Security / reliability
 
-## M. Scope integrity
+- [ ] untrusted content cannot grant scope/tool/spend/approval authority in fixtures;
+- [ ] raw secrets are rejected/redacted from Pack/Context fixtures;
+- [ ] mutations use version/idempotency controls where applicable;
+- [ ] restart/recovery does not falsely complete in-flight Assignment;
+- [ ] public fixtures contain synthetic data only.
 
-- [ ] No required MVP criterion remains incomplete.
-- [ ] No out-of-scope autonomous-agent or scale feature is treated as a substitute for required functionality.
-- [ ] Architectural deviations have approved ADRs.
-- [ ] Phase 1 does not implement a persistent self-organizing internal agent fleet or client-facing AI Employee runtime.
+## Exit evidence
+
+A Phase 1 completion report links every criterion to reproducible evidence. Screenshot alone is insufficient when machine-checkable proof is feasible.

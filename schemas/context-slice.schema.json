@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:autonomous-delivery:context-slice:0.1",
+  "title": "Assignment Context Slice v0.1",
+  "type": "object",
+  "required": ["context_slice_version", "id", "workspace_id", "project_id", "work_item_id", "work_item_version", "project_pack_ref", "objective", "authorized_refs", "data_classification"],
+  "properties": {
+    "context_slice_version": { "const": "0.1" },
+    "id": { "type": "string", "minLength": 1 },
+    "workspace_id": { "type": "string", "minLength": 1 },
+    "project_id": { "type": "string", "minLength": 1 },
+    "work_item_id": { "type": "string", "minLength": 1 },
+    "work_item_version": { "type": "integer", "minimum": 1 },
+    "project_pack_ref": { "type": "string", "minLength": 1 },
+    "objective": { "type": "string", "minLength": 1 },
+    "requirements": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "constraints": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "authorized_refs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "data_classification": { "enum": ["Public", "Internal", "Confidential", "Restricted"] },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false
+}

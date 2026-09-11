@@ -1,98 +1,102 @@
-# /goal
+# Product Goal
 
-## Product goal
+## North Star
 
-Build a personal **AI Business Delivery Operating System** that lets one solo builder turn a raw user problem, client request, or project idea into a researched, specified, built, verified, deployed, operated, maintained, improved, and reusable solution without manually rebuilding the delivery organization for every project.
+Build a **human-governed autonomous delivery operating system for a solo builder**.
 
-Workflow OS should make this lifecycle repeatable:
+The operator should be able to start with an incomplete statement such as:
 
-> Intake -> Research -> Challenge -> Define -> Scope -> Architect -> Plan -> Build -> Verify -> Review -> Deploy -> Observe -> Maintain -> Improve -> Reuse
+> “I have a new client. They want an ordering app because their current process is messy.”
 
-## North-star promise
+The system should convert that raw intent into a governed delivery process without requiring the operator to manually prompt, route, remind, or synchronize multiple AI products.
 
-The operator should be able to provide primarily:
+## Operator job
 
-- the problem or idea;
-- the desired outcome;
-- known constraints/context;
-- decisions and approvals that require human judgment.
+The long-term operator responsibility is intentionally small:
 
-Workflow OS should organize the remaining work through explicit Project state, a dependency-aware work graph, deterministic workflows, bounded AI agents, specialist reviewers, external tools/runtimes, evidence, and production-maintenance loops.
+- give or revise the goal;
+- provide known context/files/voice/screenshots/messages;
+- answer important discovery questions, including `I don't know`;
+- provide credentials when needed;
+- approve/reject/revise consequential decisions;
+- approve any new metered/variable-cost external execution before spend;
+- accept commercial/production commitments that require human authority.
 
-The human remains the final authority for commercial commitments, major scope changes, policy exceptions, credentials/secrets, destructive/high-impact production actions, and risk acceptance.
+## System job
 
-## Primary job to be done
+Subject to policy, evidence, available capability, and approved budgets, the system should coordinate:
 
-“When I receive a business problem or project idea, help me determine what should actually be built, create the non-coding and coding work required to deliver it, prove that it works, deploy it safely, keep track of its production state, and help maintain and improve it without making me manually coordinate every agent, task, document, repository, test, deployment, and incident.”
+1. intake;
+2. adaptive interview;
+3. research;
+4. challenge of the requested solution;
+5. problem/outcome definition;
+6. commercial scope and constraints;
+7. requirements/non-goals;
+8. architecture;
+9. work planning;
+10. repository approval/bootstrap;
+11. case-specific Project Pack generation;
+12. role activation;
+13. model/runtime/skill selection;
+14. build/automation work;
+15. verification and adversarial review;
+16. deployment approval/execution;
+17. observation;
+18. incident/maintenance/change work;
+19. lessons/reuse.
 
-## Top-level operational unit
+## Goal revision rule
 
-`Project` is the top-level unit of delivery inside a Workspace.
+`Give or revise the goal` is a first-class operation.
 
-A Project may represent:
+A material revision must:
 
-- a client delivery;
-- an internal product/SaaS;
-- an automation engagement;
-- a website/mobile application;
-- an integration/data project;
-- an approved research/experiment stream;
-- a project that itself delivers one or more client-facing AI Employees.
+- create a new accepted ProjectBrief/goal version;
+- record who/what changed and why;
+- compute which requirements, WorkItems, decisions, approvals, architecture artifacts, Project Pack versions, repository/deployment plans, and commercial commitments may be stale;
+- stop affected ready/running work when continuing would be unsafe or wasteful;
+- create impact/decision items rather than silently rewriting history;
+- regenerate derived Project Pack/Assignment context only after the revised direction is accepted.
 
-Project owns lifecycle state and references the work required to deliver and operate the outcome.
+Revision does not erase historical evidence.
 
-WIR remains canonical for workflow definitions **inside** a Project. It is not the whole Project model.
+## Independence goal
 
-## Project Command Center
+Workflow OS must not require one specific AI platform to preserve or understand a Project.
 
-Workflow OS must reduce operator cognitive load by providing one Command Center where the operator can answer:
+Switching from Codex to Claude Code, Copilot, OpenCode, a local/open model runtime, or a future provider must not require redefining the Project from scratch.
 
-- What Projects do I have?
-- What phase is each one in?
-- What is currently happening?
-- What is the next ready task?
-- What is blocked and why?
-- What needs my approval/decision?
-- Is research, specification, coding, testing, review, deployment, or maintenance still running?
-- Which agent/human/tool owns the current assignment?
-- What evidence says the work is actually complete?
-- Which production Projects have incidents or maintenance needs?
+Provider-specific prompts/instruction files are compiled projections of canonical Project state.
 
-The Command Center is derived from canonical state and evidence, not manually updated narrative status.
+Provider independence is not considered operationally proven merely because interfaces are abstract: representative provider-replacement/rerouting drills must eventually demonstrate it.
 
-## Internal AI workforce
+## Local-first goal
 
-Workflow OS may coordinate an internal AI delivery workforce for the operator: research, product/requirements, architecture, planning, implementation, verification, security/reliability review, deployment, production operations, maintenance, and documentation.
+The operator's Project/commercial state, decisions, approvals, evidence, Activity Feed, and Command Center should remain locally usable even when external providers are unavailable.
 
-These internal agents are bounded workers. They do not become the system of record and they do not gain authority from their role title alone.
+Local-first is not a promise that every advanced AI workload runs locally. The system should route work according to capability, privacy, cost, availability, configured provider access, and approved policy.
 
-## Strategic positioning
+Continuous autonomous execution requires an available coordinator/execution host. When no approved host is online, work waits visibly instead of pretending it continued.
 
-Workflow OS does not aim to replace every execution engine, coding agent, cloud development environment, deployment system, observability platform, or agent runtime.
+## Human-governance goal
 
-It is the **control, memory-of-work, governance, and orchestration layer above them**.
+Autonomy is bounded by explicit authority.
 
-Execution/coding/deployment systems remain tools/adapters. Workflow OS preserves Project state, work dependencies, policy, evidence, versions, approvals, incidents, and operator visibility across them.
-
-## Future client-facing AI Employee capability
-
-Workflow OS may also package governed automation as client-facing **AI Employees / AI Workers**.
-
-A client-facing AI Employee is:
-
-- a versioned role;
-- backed by workflows/tools/knowledge;
-- given explicit authority and budgets;
-- executed through bounded tasks;
-- evaluated and promoted through test/shadow/supervised stages;
-- owned/escalated to a human.
-
-It is not an unrestricted autonomous process and does not own Project state.
-
-This remains a later product capability and does not authorize premature Phase 1 implementation.
+The system may continue routine, in-scope, already-authorized work without asking the operator for every microscopic step. It must stop for material scope/price/deadline/risk/credential/production decisions and before unapproved metered external execution.
 
 ## Success condition
 
-Workflow OS succeeds when one human can manage a growing portfolio of projects while the system reliably answers what is happening, what happens next, what needs human attention, what evidence proves completion, and what production work must be maintained.
+Workflow OS succeeds when the operator can leave it working, return later, and answer from one system:
 
-The long-term outcome is not merely “AI writes code” or “automation runs.” It is **lower operator coordination load across the full delivery and maintenance lifecycle while preserving control, safety, quality, recoverability, and reuse.**
+- what every Project is trying to achieve;
+- what is happening now;
+- what completed and with what evidence;
+- what failed or is blocked;
+- what needs human attention;
+- what money was approved/spent;
+- what was deployed;
+- what production work remains;
+- what the system will do next;
+
+without reconstructing the story from AI chats or manually moving prompts between vendors.
