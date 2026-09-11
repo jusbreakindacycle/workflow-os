@@ -27,7 +27,7 @@ export function createApp(options) {
   const status = {
     service: 'workflow-os',
     phase: 'phase-1',
-    gate: 'gate-1-repository-foundation',
+    gate: 'gate-2-canonical-entities',
     database: { status: 'ready', migrations }
   };
   assertFoundationStatus(status);
