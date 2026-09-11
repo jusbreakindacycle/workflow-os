@@ -61,6 +61,9 @@ CREATE TABLE provider_usage_counters (
   FOREIGN KEY (route_id, workspace_id) REFERENCES execution_routes(id, workspace_id) ON DELETE CASCADE
 ) STRICT;
 
+CREATE UNIQUE INDEX idx_execution_attempts_id_workspace_phase21
+  ON execution_attempts(id, workspace_id);
+
 CREATE TABLE provider_usage_accounted_attempts (
   attempt_id TEXT PRIMARY KEY,
   workspace_id TEXT NOT NULL,
