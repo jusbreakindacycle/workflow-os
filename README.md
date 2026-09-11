@@ -1,6 +1,6 @@
 # Workflow OS (temporary name)
 
-> **Status:** specification-first foundation for a human-governed autonomous delivery system. The product name `workflow-os` is temporary.
+> **Status:** Foundation v3 + Phase 1 local core control plane implemented. The product name `workflow-os` is temporary. Real provider execution begins only in Phase 2.
 
 Workflow OS is intended to become the **one operating interface a solo builder uses to run client and internal delivery work without depending on one AI platform, one coding agent, or one model vendor**.
 
@@ -98,24 +98,47 @@ The default surface is a local-first **Command Center**, not a collection of age
 
 Detailed worker/runtime logs remain drill-down diagnostics.
 
-## Current implementation boundary
+## Phase 1 local control plane
 
-Phase 1 is deliberately smaller than the North Star. It proves the local canonical control plane first:
+Phase 1 now proves the complete provider-independent local golden path:
 
 ```text
 New Project
-  -> Workspace / Client / Engagement / Project
-  -> discovery + delivery-strategy decision
-  -> WorkItems / decisions / approvals / events
-  -> Project Pack / Context Slice
-  -> Needs My Attention + Activity Feed + Command Center
-  -> simulated/manual execution evidence
-  -> goal revision / impact propagation
+  -> Workspace / Client? / Engagement? / Project
+  -> discovery + explicit unknowns
+  -> delivery-strategy decision
+  -> accepted Project Brief
+  -> synthetic Work graph + readiness
+  -> Needs My Attention + Activity Feed
+  -> deterministic Project Pack + minimum Context Slice
+  -> goal revision + selective impact propagation
+  -> optional repository proposal/approval + mock result
+  -> bounded mock Assignment
+  -> execution_finished + evidence + verification
+  -> bounded synthetic Spend Gate
+  -> restart/recovery + Command Center
 ```
 
-Phase 1 does **not** require Paperclip, Activepieces, Codex, Claude Code, GitHub, a paid model, or a persistent multi-agent runtime.
+Phase 1 requires **no** Paperclip, Activepieces, OpenAI, Anthropic, Codex, Claude Code, Copilot, Kimi, Supabase, paid model, real repository API, or production deployment.
 
-See `docs/plans/phase-1-core-control-plane.md`.
+The implementation uses Node.js 24.15+, built-in HTTP, built-in SQLite, plain browser HTML/CSS/JS, ordered SQL migrations, `node:test`, and zero runtime npm dependencies.
+
+Run locally:
+
+```bash
+npm run verify
+npm run db:migrate
+npm run db:backup
+npm start
+```
+
+See:
+
+- `docs/plans/phase-1-core-control-plane.md`
+- `docs/testing/acceptance-criteria.md`
+- `docs/reviews/phase-1-completion-report.md`
+
+After the completion PR is green and merged, the anti-PM-suite stop rule applies: proceed to **Phase 2 real execution** rather than adding generic project-management polish.
 
 ## Repository safety
 
@@ -130,6 +153,7 @@ This repository is public. Use synthetic data only. Never commit real client dat
 5. `ARCHITECTURE.md`
 6. `docs/decisions/index.md`
 7. `docs/plans/phase-1-core-control-plane.md`
+8. `docs/reviews/phase-1-completion-report.md`
 
 ## One-line product test
 
