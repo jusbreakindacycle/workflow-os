@@ -63,7 +63,9 @@ test('Gate 3 API supports New Project -> discovery -> strategy -> accept', async
 
   const page = await fetch(`${origin}/`);
   assert.equal(page.status, 200);
-  assert.match(await page.text(), /New Project/);
+  const html = await page.text();
+  assert.match(html, /Local Control Plane/);
+  assert.match(html, /Start from the real request/);
 });
 
 async function request(origin, pathname, method, body, expectedStatus) {
