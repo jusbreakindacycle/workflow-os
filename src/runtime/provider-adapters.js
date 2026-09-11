@@ -79,9 +79,12 @@ async function executeOpenAIResponses({ route, connection, prompt, env, fetchImp
   const body = {
     model: requiredModel(route),
     input: prompt,
-    store: false,
     max_output_tokens: positiveInteger(config.max_output_tokens, 1200)
   };
+  // Groq's Responses compatibility currently rejects `store`; local bridges do
+  // not need it. Keep it only for the direct OpenAI route where it prevents
+  // response persistence without weakening compatibility for other providers.
+  if (connection.provider_key === 'openai') body.store = false;
   const headers = { 'content-type': 'application/json' };
   if (apiKey) headers.authorization = `Bearer ${apiKey}`;
   if (connection.provider_key === 'openrouter') headers['x-openrouter-metadata'] = 'enabled';
