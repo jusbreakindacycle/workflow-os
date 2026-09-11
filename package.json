@@ -1,0 +1,18 @@
+{
+  "name": "workflow-os",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.15.0"
+  },
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "db:migrate": "node scripts/migrate.js",
+    "db:backup": "node scripts/backup-db.js",
+    "check": "node scripts/check-source.js",
+    "test": "node --test",
+    "verify": "npm run check && npm test"
+  }
+}
