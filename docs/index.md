@@ -53,7 +53,8 @@
 ## Implementation
 
 - [Local Development — Phase 1 Gate 1](implementation/local-development.md)
-- [Canonical Entities and Invariants — Phase 1 Gate 2](implementation/gate-2-canonical-entities.md)
+- [Canonical Entities — Phase 1 Gate 2](implementation/gate-2-canonical-entities.md)
+- [New Project / Discovery / Delivery Strategy — Phase 1 Gate 3](implementation/gate-3-new-project-discovery.md)
 
 ## Providers
 

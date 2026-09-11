@@ -12,12 +12,12 @@ test('migrations are persistent and idempotent', () => {
   const databasePath = path.join(dataDir, 'test.sqlite');
 
   const first = openDatabase({ databasePath, dataDir, migrationsDir });
-  assert.equal(first.migrations, 2);
+  assert.equal(first.migrations, 3);
   const metadata = first.db.prepare('SELECT value FROM app_metadata WHERE key = ?').get('foundation_gate');
-  assert.equal(metadata.value, '2');
+  assert.equal(metadata.value, '3');
   first.db.close();
 
   const second = openDatabase({ databasePath, dataDir, migrationsDir });
-  assert.equal(second.migrations, 2);
+  assert.equal(second.migrations, 3);
   second.db.close();
 });

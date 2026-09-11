@@ -30,6 +30,8 @@ This prevents an AI-generated assumption from becoming client truth merely becau
 
 Questions should be adaptive to known context, plain-language, prioritized by impact on scope/risk/architecture, skippable with `I don't know`, and avoided when the answer can be safely researched/derived.
 
+Phase 1 Gate 3 begins with a small deterministic question set. Later AI-assisted discovery may choose questions dynamically, but it must preserve the same state separation and unknown semantics.
+
 ## Requested solution vs actual problem
 
 Preserve what the client/operator requested, but do not assume the requested artifact is the best intervention.
@@ -43,8 +45,8 @@ Before architecture, compare the problem/outcome against plausible delivery stra
 - `automate` — automate a repeatable workflow;
 - `custom_build` — build bespoke software;
 - `hybrid` — combine approaches;
-- `research_or_pilot` — uncertainty too high for full commitment;
-- `decline_or_defer` — value/feasibility/risk does not justify proceeding yet.
+- `research_pilot` — research or pilot first because uncertainty is too high for full commitment;
+- `defer` — decline or defer because value/feasibility/risk does not justify proceeding yet.
 
 The decision is case-specific. No strategy wins by default.
 
