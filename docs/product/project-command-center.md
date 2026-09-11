@@ -2,117 +2,69 @@
 
 ## Purpose
 
-The Command Center is the operator's single operational surface across client and internal work.
+The Command Center is the operator's single operational surface across client and internal work. It removes the need to open AI chats, repos, CI, workflow engines, deployments, and task boards merely to understand state.
 
-It should remove the need to open many AI chats, repositories, CI pages, workflow engines, deployment dashboards, and task boards merely to understand what is happening.
-
-It is a read/action model over canonical state and evidence, not a manually updated project board.
+It is a read/action model over canonical state/evidence, not a manually updated PM board.
 
 ## Home view
 
-Primary navigation:
+Primary navigation/actions:
 
 - `+ New Project`;
 - Needs My Attention;
 - Activity Feed;
 - Projects;
 - Clients / Engagements;
-- Costs;
+- Costs / Spend;
 - Production / Maintenance;
 - Settings / Providers.
 
+Within a Project, `Revise Goal` is a first-class action.
+
 ## Portfolio Project card
 
-At minimum:
-
-- Project name/type;
-- Workspace/client/Engagement reference;
-- phase/status/health + reason;
-- active WorkItem/Assignment;
-- next-ready WorkItem;
-- attention count;
-- latest meaningful activity;
-- Project Pack version;
-- commercial deadline/scope warning when applicable;
-- deployment/incident indicator when applicable.
+At minimum show Project name/type, Workspace/client/Engagement, accepted goal/brief version, delivery strategy, phase/status/health + reason, active WorkItem/Assignment, next-ready WorkItem, attention count, latest meaningful activity, Project Pack version, commercial deadline/scope warning, stale/revision warning, and deployment/incident indicator when applicable.
 
 ## Needs My Attention
 
-Priority classes include:
+Priority classes include goal/strategy decision, discovery unknown needing human judgment, scope/price/deadline/client-acceptance change, repository creation approval, credential/permission request, metered spend, risk/security acceptance, failed verification with business choice, deployment approval, and production incident/high-impact remediation.
 
-- goal/scope decision;
-- discovery unknown requiring human judgment;
-- scope/price/deadline change;
-- repository creation approval;
-- credential/permission request;
-- paid execution approval;
-- risk/security acceptance;
-- failed verification with business choice;
-- deployment approval;
-- production incident/high-impact remediation.
-
-Every item explains consequence, recommendation, alternatives, evidence, and available actions.
+Every item explains consequence, recommendation, alternatives, evidence, exact subject/version, and safe actions.
 
 ## Activity Feed
 
-Show meaningful events, not raw logs.
-
-Examples:
-
-- Project created;
-- discovery question answered;
-- recommendation produced;
-- scope approved;
-- WorkItem became ready;
-- agent/workflow/runtime assignment started/finished/failed;
-- verification passed/failed;
-- paid budget approved/consumed;
-- repository/PR/deployment created;
-- incident opened/resolved.
-
-Drill-down can link to provider logs/transcripts, but Project truth remains in canonical records.
+Show meaningful events, not raw logs: Project/revision created, discovery answered, recommendation/strategy decided, scope proposed/client accepted, WorkItem readiness change, assignment start/finish/fail, verification result, spend approval/consumption, repository/PR/deployment action, incident opened/resolved.
 
 ## Project detail
 
 Sections:
 
-1. Goal / problem / outcome;
-2. Client/Engagement commitments;
-3. lifecycle and work graph;
-4. Needs My Attention;
-5. active assignments;
-6. Project Pack and artifacts;
-7. decisions/approvals;
-8. verification/evidence;
-9. costs/spend envelopes;
-10. repositories/deployments;
-11. production/maintenance;
-12. Activity Feed.
+1. goal/problem/outcome + revision history;
+2. requested solution + chosen delivery strategy;
+3. Client/Engagement commitments + external acceptance evidence;
+4. lifecycle/work graph;
+5. Needs My Attention;
+6. active assignments/Context Slice summary;
+7. Project Pack/artifacts;
+8. decisions/approvals;
+9. verification/evidence;
+10. costs/spend envelopes;
+11. repositories/deployments;
+12. production/maintenance;
+13. Activity Feed.
 
 ## Next-ready semantics
 
-`Next` means eligible after dependencies, policy, approvals, spend, capabilities, and resource conflicts are evaluated. It is not merely the next item an LLM mentions.
+`Next` means eligible after dependencies, accepted versions, policy, approvals, spend, capabilities, provider/host availability when execution is requested, and resource conflicts. It is not the next item an LLM mentions.
 
-## Agent visibility
+## Worker visibility
 
-Default display is compact event/status information.
-
-Optional drill-down may show:
-
-- role;
-- model/runtime/provider/version;
-- assignment objective/scope;
-- tool calls/log refs;
-- artifacts;
-- cost;
-- failure/evidence summary.
-
-Do not expose or store private chain-of-thought as required Project state.
+Default is compact event/status information. Drill-down may show role, model/runtime/provider/connection/version, Assignment objective/scope, tool/log refs, artifacts, cost, and failure/evidence summary. Do not store private chain-of-thought as Project state.
 
 ## MVP boundary
 
-Phase 1 may be a simple local web dashboard with forms/tables/timeline. It does not need Slack-like chat, Gantt, drag/drop planning, mobile app, or polished multi-user PM features.
+Phase 1 may be simple forms/tables/timeline. It does not need Slack-like chat, Gantt, drag/drop planning, mobile app, or polished multi-user PM features.
 
 ## Success test
 
-The operator can leave the system, return, and understand each active Project plus required human actions without asking agents for a recap.
+The operator can leave the system, return, and understand each active Project, stale work, and required human actions without asking workers for a recap.

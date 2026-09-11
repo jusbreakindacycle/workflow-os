@@ -2,36 +2,38 @@
 
 ## Default mental model
 
-The operator runs the business from the **Command Center**. VS Code, Codex, Claude Code, Copilot, OpenCode, Paperclip, Activepieces, GitHub, and deployment dashboards are execution/detail tools, not the place where the operator must reconstruct the company.
+The operator runs the business from the **Command Center**. VS Code, coding agents, workforce managers, workflow engines, source control, and deployment dashboards are execution/detail tools, not where the operator reconstructs the company.
+
+## Primary actions
+
+The operator should normally need only:
+
+- `+ New Project`;
+- `Revise Goal`;
+- answer/record important discovery/client questions;
+- provide credentials when required;
+- approve/reject/revise consequential decisions;
+- approve new metered spend;
+- inspect exceptions/evidence when desired.
 
 ## Starting a Project
-
-The primary entry point is:
 
 ```text
 Command Center -> + New Project
 ```
 
-The first screen should accept incomplete natural input:
-
-- a client message;
-- an idea;
-- a user problem;
-- meeting notes;
-- pasted requirements;
-- screenshots/files/voice references in later phases.
-
-The operator does not need a repository first.
+The first screen accepts incomplete natural input: client message, idea, user problem, meeting notes, pasted requirements, and later file/screenshot/voice references. No repository is required first.
 
 ## New Project flow
 
 ```text
 Raw input
   -> Draft
-  -> Discovery questions
-  -> Research/challenge proposals (later autonomous phase)
+  -> adaptive discovery / explicit unknowns
+  -> research/challenge later
   -> accepted problem/outcome
-  -> Engagement/scope when client work
+  -> choose delivery strategy
+  -> Engagement/scope for client work
   -> architecture/plan
   -> repository proposal
   -> operator approval
@@ -39,109 +41,64 @@ Raw input
   -> autonomous delivery work
 ```
 
-## Adaptive interview principle
+Delivery strategy may be process change, adopt/configure/integrate existing systems, automate, custom build, hybrid, pilot/research, or defer/decline. Do not force every Project into software development.
 
-The system should ask questions the operator can reasonably answer.
+## Revising a goal
 
-Bad question:
+`Revise Goal` opens a change flow rather than editing the old statement in place.
 
-> Which database isolation level should be used?
+The system shows:
 
-Better question:
+- proposed new direction;
+- what requirements/work/architecture/approvals/Pack/Assignments/commercial commitments may be affected;
+- what can safely remain valid;
+- what must stop or be re-approved.
 
-> Can two people update the same booking/inventory item at the same time?
+After acceptance, the system creates the new version and visibly marks stale/superseded work. The operator should not manually hunt through old prompts to update them.
 
-Every question supports:
+## Adaptive interview
 
-- an answer;
-- `I don't know`;
-- `Ask/research this for me` in later phases.
-
-Unknowns are explicit state, not pressure on the operator to invent technical facts.
+Ask questions the operator can reasonably answer. Every material question supports an answer, `I don't know`, and later `research this for me`. Unknowns are state, not pressure to invent technical facts.
 
 ## Requested solution vs real problem
 
-The system must preserve the client's requested solution and may separately challenge it.
-
-Example:
-
-```text
-Client request: native Android app
-Problem: staff need remote inventory visibility
-System recommendation: compare PWA vs native before commitment
-```
-
-The system never silently overrides a client commitment. It presents evidence/options and asks for the applicable decision.
+Preserve the client's request and separately challenge it. The system may recommend another strategy but never silently replace an accepted client commitment.
 
 ## Needs My Attention
 
-This is the most important queue for the operator.
+This is the most important queue. Items include discovery/strategy decisions, scope/price/deadline changes, architecture/risk acceptance, credential requests, repository approval, metered spend, failed verification requiring business choice, deployment approval, and high-impact incidents/remediation.
 
-Items include:
-
-- discovery decision;
-- scope/price/deadline change;
-- architecture/risk acceptance;
-- credential request;
-- repository creation approval;
-- paid execution approval;
-- failed verification requiring business choice;
-- production deployment approval;
-- incident/high-impact remediation.
-
-Every attention item must state:
-
-- what happened;
-- why the operator is needed;
-- consequence of waiting;
-- recommended option and alternatives;
-- evidence/links;
-- safe actions.
+Every item says what happened, why human authority is needed, consequence of waiting, recommendation/alternatives, evidence, and safe actions.
 
 ## Activity Feed
 
-Default visibility is an event-oriented feed, not raw agent conversation.
-
-Example:
-
-```text
-09:10 Research completed — 14 sources
-09:18 Requirements proposal created — 2 decisions required
-09:24 Operator approved MVP scope
-09:25 Architecture assignment started
-10:07 QA rejected candidate — duplicate booking race condition
-10:12 Repair assignment started
-10:45 QA passed
-10:50 Deployment approval requested
-```
-
-The operator may drill down to runtime logs/transcripts/tool calls when debugging, subject to retention/privacy policy.
+Default visibility is event-oriented, not raw worker conversation. Drill-down may show provider/runtime logs, tool calls, artifacts, route, cost, and evidence subject to retention/privacy policy.
 
 ## Full roster, dynamic activation
 
-The Project can display a logical team roster, but only active roles consume runtime/model resources.
+Project can display its logical delivery roster while only active roles consume model/runtime resources. The operator sees who/what is active without dispatching each role manually.
 
-The operator should see who/what is active without needing to dispatch them manually.
+## Spend UX
 
-## Paid work UX
-
-Before any unapproved paid execution:
+Before unapproved metered execution:
 
 ```text
-Paid execution required
-Purpose: architecture verification
-Recommended route: <model/runtime>
+Spend approval required
+Purpose: <WorkItem/action>
+Recommended route/service: ...
 Estimated range: ...
 Maximum envelope: ...
-Reason free/local route is insufficient: ...
+Reason zero-incremental route is insufficient: ...
 
 [Approve envelope] [Choose alternative] [Stop]
 ```
 
 No hidden spend.
 
+## Offline / host state
+
+The Command Center clearly distinguishes `provider unavailable` from `coordinator host offline`. If no approved execution host is running, background work is queued/waiting; the UI must not imply work continued while the machine was off.
+
 ## Desktop vs web
 
-Initial implementation is a local-first web application for faster development and portability. A desktop shell may later package the same control plane for startup/background integration, filesystem access, local runtime management, notifications, and tray behavior.
-
-The product architecture must not depend on the desktop shell existing.
+Initial implementation is a local-first web app. A desktop shell may later add startup/background integration, filesystem access, local runtime/model management, notifications, secure OS storage, and tray behavior without redefining canonical state.
