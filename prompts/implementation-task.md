@@ -1,16 +1,19 @@
-# Implementation Task Prompt
+# Implementation Task Wrapper
 
-Read `AGENTS.md` and all documents applicable to this task.
+This file is temporary build-time scaffolding for human-invoked coding agents. The product goal is to generate bounded assignments automatically in later phases.
 
-For the requested task:
+Before implementation, read `AGENTS.md`, the active phase plan, acceptance criteria, relevant ADRs/contracts, and the exact task.
 
-1. map it to MVP scope and acceptance criteria;
-2. identify relevant ADRs;
-3. identify security/reliability/AI implications;
-4. define the smallest end-to-end slice;
-5. implement only that slice;
-6. add the required tests/evidence;
-7. run bounded reviewer passes;
-8. update documentation only when behavior/decision legitimately changed.
+Report before coding:
 
-Do not introduce infrastructure from the scale-trigger matrix without its documented trigger and approval.
+- exact outcome;
+- in-scope/out-of-scope;
+- affected acceptance criteria;
+- relevant ADRs;
+- risks/failure modes;
+- verification plan;
+- any decision that requires human approval.
+
+Implement the smallest evidence-producing slice. Do not expand phase scope, add provider lock-in, or treat agent/provider success as completion.
+
+Finish with changed files, tests/evidence, unresolved limitations, and next-ready WorkItem/proposal.

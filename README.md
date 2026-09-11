@@ -1,90 +1,135 @@
-# Workflow OS
+# Workflow OS (temporary name)
 
-Workflow OS is a **personal AI business delivery operating system** for a solo builder. It turns a raw user problem, client request, or product idea into governed work that can be researched, specified, built, verified, deployed, operated, maintained, improved, and reused.
+> **Status:** specification-first foundation for a human-governed autonomous delivery system. The product name `workflow-os` is temporary.
 
-It combines:
+Workflow OS is intended to become the **one operating interface a solo builder uses to run client and internal delivery work without depending on one AI platform, one coding agent, or one model vendor**.
 
-- a project/portfolio control plane;
-- deterministic workflows and WIR;
-- bounded internal AI specialist agents;
-- external execution and agent runtimes through adapters;
-- verification, security, reliability, and human approval;
-- production operations and maintenance state;
-- future client-facing AI Employees / AI Workers.
+The operator should be able to say, in plain language:
 
-The human operator remains the final authority for scope, commitments, high-impact production actions, and policy exceptions.
+> “I have a new client/project. This is the problem. This is what they asked for.”
 
-## North-star promise
+The system should then organize the work from discovery through production while asking the operator only for decisions that genuinely require human authority.
 
-> Give Workflow OS the problem, desired outcome, constraints, and approvals; let it organize the rest of the delivery lifecycle.
+## North-star interaction
 
-The target lifecycle is:
+The operator primarily does four things:
 
-> Intake -> Research -> Challenge -> Define -> Scope -> Architect -> Plan -> Build -> Verify -> Review -> Deploy -> Observe -> Maintain -> Improve -> Reuse
+1. give or revise the goal;
+2. answer important discovery questions, including `I don't know`;
+3. provide credentials only when required;
+4. approve, reject, or revise consequential decisions and paid execution.
 
-## Project is the top-level operational unit
+Everything else should be coordinated by the system as far as evidence, policy, available compute, and approved authority allow.
 
-A Project represents one client delivery, internal product, or research/experiment stream. Workflows, repositories, deployments, tasks, evidence, incidents, AI-agent assignments, and maintenance records belong to a Project.
+## Target lifecycle
 
-WIR remains the canonical representation of a workflow **inside** a Project. AI Employee Spec remains the canonical future representation of a client-facing governed role. Neither replaces Project state.
+```text
+Raw request / user problem / project idea
+  -> Intake
+  -> Adaptive discovery
+  -> Research and challenge
+  -> Problem / outcome definition
+  -> Commercial scope
+  -> Architecture and plan
+  -> Repository approval
+  -> Project bootstrap
+  -> Build / automate
+  -> Verify / review
+  -> Deployment approval
+  -> Deploy
+  -> Observe
+  -> Maintain / repair / improve
+  -> Reuse lessons and skills
+```
 
-## Project Command Center
+## Core architectural promise
 
-Workflow OS must give the operator one place to see the portfolio:
+Workflow OS owns the **meaning and state of the work**. External systems perform specialized execution.
 
-- every active Project;
-- current lifecycle phase and health;
-- what is running now;
-- next ready task;
-- blockers and approvals needed;
-- research/spec/build/test/deploy/maintenance state;
-- active agent or human assignee;
-- latest evidence and activity;
-- production environment, incidents, and maintenance needs.
+```text
+Workflow OS
+  -> Model/Runtime Broker
+      -> OpenAI / Anthropic / Google / open models / local models
+      -> Codex / Claude Code / Copilot / OpenCode / future runtimes
+  -> Internal Workforce Adapter
+      -> Paperclip or another provider, if proven useful
+  -> Workflow Engine Adapter
+      -> Activepieces or another engine
+  -> Source / Deployment / Observability adapters
+      -> GitHub / cloud providers / monitoring systems
+```
 
-Status is derived from canonical project/task/event state, not from an agent merely claiming that work is done.
+No provider is allowed to become the hidden source of truth for a Project.
 
-## Internal AI workforce
+## Local-first, provider-independent
 
-Internal agents are bounded workers, not the owner of project state. Typical roles include research, requirements, architecture, planning, implementation, verification, security/reliability review, deployment, incident investigation, maintenance, and documentation.
+The control plane, Project state, commercial records, approvals, activity history, Project Pack, and operator interface are designed to work locally first.
 
-Workflow OS owns the work graph, dependencies, budgets, approvals, evidence, and project state. Agents receive bounded assignments and return artifacts/evidence.
+Local-first does **not** mean every high-capability AI model must run on the operator's laptop. The system may route suitable work to local models and may use remote/free/paid models when available and approved.
 
-## Current status
+Any paid AI execution requires an explicit operator-approved spend envelope before money is spent.
 
-**The original Phase 0 specification is complete and merged. Foundation v2 is being added before serious application implementation to align the repository with the broader solo-AI-business vision.**
+## Not a generic template generator
 
-The Activepieces hands-on adapter spike can remain the first execution-engine coding experiment, but broad application implementation should follow the updated Project, Command Center, internal-agent, and maintenance contracts.
+Every Project gets a **case-specific Project Pack** compiled from its actual problem, client commitments, requirements, architecture, risks, decisions, acceptance criteria, work graph, and tool permissions.
 
-## Public-repository rule
+Provider-specific files such as `AGENTS.md`, `CLAUDE.md`, Copilot instructions, or OpenCode/runtime configuration are generated projections of that Project Pack. They are not the canonical Project state.
 
-This repository is currently public. Do **not** commit client names, client data, credentials, tokens, secrets, private workflow payloads, proprietary SOPs, private role instructions, or other confidential material.
+## Internal workforce
 
-Use synthetic examples only.
+A complete logical delivery roster may exist for every Project, but roles are activated dynamically. The system should not run fourteen agents merely because fourteen role names exist.
 
-## Navigation
+Typical capabilities include intake, research, product/requirements, architecture, planning, implementation, QA/verification, security/reliability, adversarial review, deployment, maintenance, and documentation.
 
-Start with:
+## Operator experience
+
+The default operator surface is a local-first **Command Center**, not a collection of agent chats. It includes:
+
+- `New Project`;
+- Projects and clients;
+- engagements and commercial commitments;
+- `Needs My Attention`;
+- Activity Feed;
+- active WorkItems and assignments;
+- costs and approved spend;
+- repositories and deployments;
+- incidents and maintenance.
+
+Detailed agent/runtime logs remain available for debugging but are not the main UI.
+
+## Current implementation boundary
+
+The repository is being realigned around **Foundation v3** before serious coding.
+
+Phase 1 is deliberately smaller than the North Star. It proves the local canonical control plane first:
+
+```text
+New Project
+  -> Workspace / Client / Engagement / Project
+  -> WorkItems / decisions / approvals / events
+  -> Project Pack
+  -> Needs My Attention + Activity Feed + Command Center
+  -> simulated/manual execution evidence
+```
+
+Phase 1 does **not** require Paperclip, Activepieces, Codex, Claude Code, a paid model, or a persistent multi-agent runtime.
+
+See `docs/plans/phase-1-core-control-plane.md`.
+
+## Repository safety
+
+This repository is public. Use synthetic data only. Never commit real client data, credentials, tokens, private instructions, invoices, proprietary source material, or production payloads.
+
+## Start here
 
 1. `AGENTS.md`
 2. `docs/index.md`
 3. `docs/product/goal.md`
-4. `docs/product/project-operating-model.md`
-5. `docs/product/project-command-center.md`
-6. `docs/product/scope-mvp.md`
-7. `ARCHITECTURE.md`
-8. `docs/decisions/index.md`
-9. `docs/plans/foundation-v2.md`
-10. the active phase plan and acceptance criteria
+4. `docs/product/scope-mvp.md`
+5. `ARCHITECTURE.md`
+6. `docs/decisions/index.md`
+7. `docs/plans/phase-1-core-control-plane.md`
 
-Future client-facing AI Employee architecture starts at `docs/ai-employees/overview.md`.
+## One-line product test
 
-## Core principles
-
-> Workflow OS owns the project state; agents perform bounded work.
-
-> Model once, execute through the right engine, govern everything from one place.
-
-For client-facing AI Employees:
-
-> Give AI a role, not unrestricted authority.
+If the operator still has to manually copy prompts between AI products, remember what each agent was doing, or reconstruct Project truth from chats, the system has not yet achieved its goal.

@@ -1,24 +1,20 @@
-# Adversarial Review Prompt
+# Adversarial Review Wrapper
 
-Assume the change is subtly wrong. Do not redesign the product. Try to prove a violation.
+Review the proposed change as if its completion claim may be wrong.
 
-Review specifically for:
+Check:
 
-- hidden scope expansion
-- contradiction with ADRs
-- WIR/engine semantic loss
-- unsafe or duplicate retries
-- missing idempotency/reconciliation
-- race conditions around runs/approvals
-- workspace isolation failures
-- sensitive-value leakage
-- approval bypass
-- unsupported adapter capabilities
-- stale workflow-version attribution
-- unbounded AI/agent loops or cost
-- misleading dry-run behavior
-- failed states with no recovery
-- missing failure-path tests
-- premature scale infrastructure
+- contradiction with goal/scope/ADRs;
+- hidden provider lock-in;
+- canonical vs derived state confusion;
+- Workspace/client isolation;
+- unapproved spend/authority;
+- scope/commercial drift;
+- retry/idempotency/reconciliation;
+- loop termination/budgets;
+- evidence quality;
+- provider `done` incorrectly mapped to canonical complete;
+- missing failure/restart/recovery path;
+- unnecessary future-phase complexity.
 
-Classify findings as Critical / High / Medium / Low. For every finding, point to the repository contract it violates and the smallest correction.
+Return concrete findings ordered by severity, required fixes, and evidence needed to close each finding. Do not silently change product scope.

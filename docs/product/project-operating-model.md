@@ -2,264 +2,156 @@
 
 ## Purpose
 
-Project is the canonical operational container for the full delivery lifecycle. It exists because a client engagement or product idea is larger than any one workflow, repository, agent session, deployment, or AI Employee role.
+`Project` is the canonical container for delivery and ongoing operation. It is larger than a repository, workflow, agent session, or model conversation.
 
-## Core relationship
+## Context hierarchy
 
 ```text
 Workspace
-  -> Project
-      -> WorkItems
-      -> Decisions
-      -> Artifacts
-      -> Evidence
-      -> Workflow(s) / WIR versions
-      -> Repositories / environments / deployments
-      -> AgentAssignments
-      -> Approvals
-      -> Incidents / maintenance
-      -> future AI Employee roles
+  -> Client? / Engagement?
+      -> Project
+          -> Project Brief
+          -> Project Pack versions
+          -> WorkItems / dependencies
+          -> WorkItem Proposals
+          -> Decisions / Approvals
+          -> Artifacts / Evidence
+          -> Events
+          -> AgentAssignments
+          -> Repositories / environments / deployments
+          -> Workflows / WIR versions
+          -> Spend Envelopes / Cost Records
+          -> Incidents / Maintenance
 ```
 
-Workspace remains the authorization/data-isolation boundary. Project is the unit the operator thinks about and manages.
+Workspace remains the isolation boundary. Engagement provides commercial context. Project owns delivery/operational state.
 
 ## Project kinds
 
 Initial kinds:
 
-- `client_delivery` — work performed for a client/business;
-- `internal_product` — the operator's own product/SaaS/system;
-- `experiment` — bounded research/prototype work that has not yet earned production status.
-
-Additional kinds require a real use case; avoid taxonomy growth for its own sake.
-
-## Required Project fields
-
-A Project should eventually have canonical fields equivalent to:
-
-- stable Project ID;
-- Workspace ID;
-- name;
-- kind;
-- problem statement;
-- desired outcome;
-- constraints/assumptions;
-- success measures;
-- lifecycle phase;
-- operational status;
-- health;
-- human owner;
-- risk summary;
-- created/updated timestamps;
-- related repositories/environments/deployments;
-- current next-ready WorkItem(s);
-- blocker/approval state.
-
-Do not encode secrets or confidential payloads directly in general Project metadata.
+- `client_delivery`;
+- `internal_product`;
+- `experiment`.
 
 ## Lifecycle phase
 
-Phase answers: **what kind of delivery work is this Project primarily doing now?**
+Suggested phases:
 
-Initial canonical phases:
+`intake -> research -> definition -> architecture -> planning -> build -> verification -> review -> deployment -> production -> maintenance -> closed`
 
-1. `intake`
-2. `research`
-3. `definition`
-4. `architecture`
-5. `planning`
-6. `build`
-7. `verification`
-8. `review`
-9. `deployment`
-10. `production`
-11. `maintenance`
-12. `paused`
-13. `closed`
+Projects may move backward when evidence invalidates an assumption.
 
-Phase is not a percentage-complete field. Projects can revisit an earlier phase when evidence requires it.
+`paused` is an operational condition, not evidence of a lifecycle achievement.
 
 ## Operational status
 
-Status answers: **what is preventing or allowing work right now?**
+Keep status separate from phase:
 
-Suggested initial states:
-
-- `not_started`
-- `ready`
-- `running`
-- `waiting_external`
-- `needs_approval`
-- `blocked`
-- `failed`
-- `complete`
-- `canceled`
-
-Project status should be derived from the highest-priority unresolved condition in canonical WorkItems/approvals/incidents rather than free-form agent narration.
+- `draft`;
+- `ready`;
+- `running`;
+- `waiting_external`;
+- `needs_attention`;
+- `blocked`;
+- `failed`;
+- `complete`;
+- `canceled`.
 
 ## Health
 
-Use a small explainable set such as:
+Use explainable health only:
 
-- `healthy`
-- `at_risk`
-- `blocked`
-- `unknown`
+- `healthy`;
+- `at_risk`;
+- `blocked`;
+- `unknown`.
 
-Health must include reasons/evidence. Do not invent arbitrary progress percentages or “AI confidence” health scores.
+Do not invent arbitrary AI confidence/progress percentages.
 
 ## WorkItem
 
-A WorkItem is the bounded unit of planned or reactive work.
+A WorkItem is bounded planned/reactive work with:
 
-Minimum conceptual fields:
-
-- WorkItem ID;
-- Project ID;
-- class/type;
-- title/outcome;
-- status;
-- priority;
+- Project id;
+- class;
+- outcome/title;
+- status/priority;
 - dependencies;
-- assignee kind and assignment reference;
-- input/context references;
-- acceptance/exit condition;
+- inputs/artifacts;
+- acceptance condition;
 - required evidence;
-- risk/approval requirement where applicable;
-- blocker/failure reason;
-- timestamps.
+- assignee kind/reference;
+- risk/approval/spend policy;
+- blocker/error;
+- timestamps/version.
 
-Typical classes:
+Possible classes include intake, research, decision, commercial, specification, architecture, implementation, automation, verification, review, approval, deployment, incident, maintenance, and documentation.
 
-- intake;
-- research;
-- decision;
-- specification;
-- architecture;
-- implementation;
-- workflow design;
-- verification;
-- security/reliability review;
-- approval;
-- deployment;
-- incident;
-- maintenance;
-- documentation/handoff.
+## Readiness
 
-## Dependency and readiness semantics
+A WorkItem is ready only when:
 
-A WorkItem is `ready` only when:
+- predecessors/gates are satisfied;
+- required accepted artifacts exist;
+- policy permits it;
+- required approval/spend envelope exists;
+- an eligible role/runtime/tool route exists;
+- mutable-resource conflicts are controlled.
 
-- required predecessors are satisfied;
-- required artifacts/inputs exist;
-- policy permits execution;
-- required prior approval exists;
-- the assignee has the necessary allowed capability/environment.
+AI may rank eligible work. It cannot make ineligible work ready by narration.
 
-The system may recommend a next action, but it must not bypass dependencies or invent completion.
+## WorkItem Proposal
 
-Parallel WorkItems are allowed only when their dependencies and mutable resources do not create unsafe conflicts. Parallel coding work should prefer isolated worktrees/branches/environments when supported.
+Agents/providers may discover new work.
 
-## Assignment model
+- in-scope provider-local decomposition may remain provider-local;
+- material new work becomes a WorkItem Proposal;
+- proposals never silently change Project/Engagement truth.
 
-A WorkItem can be assigned to:
+Proposal impact should cover scope, cost, deadline, architecture, risk, production, and maintenance where applicable.
 
-- the human operator;
-- a bounded internal AI agent;
-- a deterministic workflow;
-- an external execution/coding/deployment tool;
-- a future client-facing AI Employee task where semantically appropriate.
+## Project Pack
 
-Assignment is not ownership of canonical state. The assignee returns evidence/results; Workflow OS validates/persists state transitions.
+The versioned Project Pack is compiled from accepted canonical state for machine execution. It is not the Project database itself.
 
-## Artifact model
+Regeneration must be deterministic for the same canonical version/configuration and must preserve provenance.
 
-Artifacts are outputs required to continue or prove work, for example:
+## Assignment
 
-- research memo;
-- product brief;
-- requirement/specification;
-- architecture/ADR;
-- design asset;
-- source repository/commit/PR;
-- workflow definition/version;
-- test/evaluation report;
-- deployment record;
-- handoff document;
-- incident report.
+A WorkItem may be assigned to:
 
-Artifacts should be version/reference based where possible rather than copied into uncontrolled chat context.
+- human operator;
+- internal AI worker;
+- deterministic workflow;
+- external tool/runtime;
+- future client-facing AI role.
 
-## Evidence model
+The assignee performs work and returns evidence/proposals. It does not own canonical completion.
 
-Completion evidence may include:
+## Evidence and completion
 
-- schema/type/lint result;
+Evidence standard increases with consequence. Examples:
+
+- schema/type/lint;
 - automated tests;
-- evaluation result;
-- executed user-flow evidence;
-- read-after-write reconciliation;
-- deployment health check;
+- evals;
+- real user/business flow;
+- side-effect reconciliation;
 - independent review;
-- human approval;
-- external provider confirmation.
+- deployment health;
+- human acceptance.
 
-The evidence standard rises with risk/consequence.
+Provider success is evidence, not automatically completion.
 
-## Decision model
+## Decisions
 
-Material ambiguity should become an explicit Decision record rather than remain buried in agent conversation.
+Material ambiguity becomes an explicit Decision record with question, options, recommendation, choice, reason/evidence, authority, affected records, and timestamp.
 
-Decision should capture:
+## Events
 
-- question;
-- options considered;
-- chosen decision;
-- reason/evidence;
-- who/what proposed it;
-- human approval if required;
-- affected Project/WorkItems/artifacts;
-- timestamp/version.
+Every material transition emits an event sufficient to reconstruct what happened without opening private model reasoning.
 
-Architectural decisions continue to use ADRs in the repository when they affect Workflow OS itself.
+## Closure
 
-## Project event history
-
-State transitions should create auditable events sufficient to explain:
-
-- what changed;
-- from/to state;
-- actor/assignee/tool;
-- evidence/reference;
-- reason/error;
-- correlation to workflow run, agent assignment, PR, deployment, or incident.
-
-The Command Center consumes this state/event model.
-
-## Phase gates
-
-Moving phases is evidence-driven. Examples:
-
-- `research -> definition`: enough evidence to state the target problem/outcome and material unknowns;
-- `definition -> architecture`: accepted scope/requirements/non-goals;
-- `architecture -> build`: architecture/risk decisions and work graph are sufficient to implement the approved slice;
-- `build -> verification`: candidate implementation/workflow exists;
-- `verification -> deployment`: required tests/evaluations/reviews pass and approvals exist;
-- `deployment -> production`: deployment is registered and health/recovery ownership is known;
-- `production -> maintenance`: incident, change, dependency, or planned maintenance work exists.
-
-A Project may move backward when new evidence invalidates an earlier assumption.
-
-## Project closure
-
-Closing a Project requires an explicit outcome, not disappearance from the dashboard.
-
-Close with one of:
-
-- delivered/accepted;
-- experiment concluded;
-- canceled/not viable;
-- superseded;
-- archived after support/maintenance transfer.
-
-Retain the reusable lessons, evidence, decisions, and sanitized templates allowed by policy.
+Closing a Project requires an explicit outcome such as delivered/accepted, experiment concluded, canceled/not viable, superseded, or support transferred.

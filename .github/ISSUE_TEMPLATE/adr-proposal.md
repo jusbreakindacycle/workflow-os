@@ -1,21 +1,18 @@
 ---
-name: ADR proposal
-about: Propose a durable architecture or scope decision
-title: "ADR: "
-labels: ""
-assignees: ""
+name: Architecture decision proposal
+about: Propose a durable architecture/product decision
 ---
 
-## Context
+## Decision question
 
-## Decision required
+## Context / evidence
 
 ## Options considered
 
 ## Proposed decision
 
-## Trade-offs
+## Consequences
 
-## Impact on goal/MVP/acceptance criteria
+## Existing ADRs affected
 
 ## Revisit trigger

@@ -1,116 +1,71 @@
 # Documentation Index
 
-## Start here
+## Product
 
 - [Goal](product/goal.md)
+- [Product Brief](product/product-brief.md)
+- [Phase 1 / MVP Scope](product/scope-mvp.md)
+- [Operator Experience](product/operator-experience.md)
+- [Intake and Discovery](product/intake-and-discovery.md)
+- [Commercial Engagement](product/commercial-engagement.md)
 - [Project Operating Model](product/project-operating-model.md)
 - [Project Command Center](product/project-command-center.md)
-- [MVP Scope](product/scope-mvp.md)
-- [Product Brief](product/product-brief.md)
+
+## Architecture
+
 - [Root Architecture](../ARCHITECTURE.md)
-- [Foundation v2](plans/foundation-v2.md)
+- [System Context](architecture/system-context.md)
+- [Data and Event Model](architecture/data-and-event-model.md)
+- [Local-first Control Plane](architecture/local-first-control-plane.md)
+- [Model / Runtime Broker](architecture/model-runtime-broker.md)
+- [Project Bootstrapper and Instruction Compiler](architecture/project-bootstrapper-and-instruction-compiler.md)
+- [Loop / Routine Engine](architecture/loop-routine-engine.md)
+- [Skill Registry](architecture/skill-registry.md)
+- [Spend Gate](architecture/spend-gate.md)
+- [Provider Adapter Contract](architecture/provider-adapter-contract.md)
+- [Internal Workforce Adapter](architecture/internal-workforce-adapter-contract.md)
+- [Workflow Engine Adapter](architecture/workflow-engine-adapter-contract.md)
+
+## Internal workforce
+
+- [Internal Workforce](agents/internal-workforce.md)
+- [Agent Assignment Contract](agents/assignment-contract.md)
+- [Verification and Review](agents/verification-and-review.md)
+
+## Workflow automation
+
+- [WIR v0](workflow-ir/wir-v0-spec.md)
+- [WIR v0 Schema](workflow-ir/wir-v0.schema.json)
+
+## Safety / operations
+
+- [Security Model](security/security-model.md)
+- [Reliability Model](reliability/reliability-model.md)
+- [Production and Maintenance](operations/production-maintenance.md)
+- [Verification Ladder](testing/verification-ladder.md)
 - [Phase 1 Acceptance Criteria](testing/acceptance-criteria.md)
 
-## Project / portfolio / delivery model
+## Providers
 
-- [Project Operating Model](product/project-operating-model.md)
-- [Project Command Center](product/project-command-center.md)
-- [Freelancer Funnel](product/freelancer-funnel.md)
-- [Internal AI Workforce](agents/internal-ai-workforce.md)
-- [Agent Operability and Verification](engineering/agent-operability-and-verification.md)
-- [Production and Maintenance Model](operations/production-maintenance-model.md)
+- [Provider Strategy](providers/strategy.md)
+- [Paperclip Candidate](providers/paperclip.md)
+- [Activepieces Candidate](providers/activepieces.md)
 
-## Product and workflow domain
+## Decisions and plans
 
-- [Workflow Taxonomy](domain/workflow-taxonomy.md)
-- [Lifecycle and Execution Modes](domain/lifecycle-and-execution-modes.md)
-- [Human Approval Semantics](domain/human-approval-semantics.md)
-
-## Workflow IR
-
-- [WIR v0 Specification](workflow-ir/wir-v0-spec.md)
-- [WIR v0 JSON Schema](workflow-ir/wir-v0.schema.json)
-- [Example](workflow-ir/examples/lead-qualification.yaml)
-
-## AI Employees — Future client-facing Phase 3
-
-- [Overview](ai-employees/overview.md)
-- [Terminology](ai-employees/terminology.md)
-- [Product Brief](ai-employees/product-brief.md)
-- [Role Model](ai-employees/role-model.md)
-- [AI Employee Spec v0](ai-employees/ai-employee-spec.md)
-- [AI Employee JSON Schema](ai-employees/ai-employee.schema.json)
-- [Synthetic Operations Assistant](ai-employees/examples/operations-assistant.yaml)
-- [Lifecycle and Autonomy](ai-employees/lifecycle-and-autonomy.md)
-- [Authority, Identity, Permissions](ai-employees/authority-identity-and-permissions.md)
-- [High-Stakes Role Gate](ai-employees/high-stakes-role-gate.md)
-- [Context, Memory, Knowledge](ai-employees/context-memory-and-knowledge.md)
-- [Skills, Tools, Workflows](ai-employees/skills-tools-and-workflows.md)
-- [Task and Event Model](ai-employees/task-and-event-model.md)
-- [Control-Plane Data Model](ai-employees/data-model.md)
-- [Agent Runtime Adapter Contract](ai-employees/agent-runtime-adapter-contract.md)
-- [Model and Instruction Policy](ai-employees/model-and-instruction-policy.md)
-- [Delegation and Collaboration](ai-employees/delegation-and-collaboration.md)
-- [Evaluation and Readiness](ai-employees/evaluation-and-readiness.md)
-- [Phase 3 Acceptance Criteria](ai-employees/acceptance-criteria.md)
-- [Observability, ROI, Human Management](ai-employees/observability-roi-and-human-management.md)
-- [Design Loop](ai-employees/design-loop.md)
-- [Service Packaging](ai-employees/service-packaging.md)
-
-## Architecture and operating models
-
-- [System Context](architecture/system-context.md)
-- [Engine Routing Policy](architecture/engine-routing-policy.md)
-- [Engine Adapter Contract](architecture/engine-adapter-contract.md)
-- [Internal Workforce Adapter Contract](architecture/internal-workforce-adapter-contract.md)
-- [Activepieces Adapter Profile](architecture/activepieces-adapter-profile.md)
-- [Connector and Tool Contract](architecture/connector-tool-contract.md)
-- [Data and Event Model](architecture/data-and-event-model.md)
-- [Loop Engineering](loop-engineering/loop-model.md)
-- [Risk Model](risk/workflow-risk-model.md)
-- [Automation Feasibility](feasibility/automation-feasibility-model.md)
-- [Reliability](reliability/reliability-model.md)
-- [Security](security/security-model.md)
-- [Data Classification and Retention](security/data-classification-and-retention.md)
-- [AI/Agent Threat Model](security/ai-threat-model.md)
-- [Testing](testing/testing-strategy.md)
-- [Observability](observability/observability-model.md)
-
-## Scale, research, decisions, plans
-
-- [Engineering Maturity](scale/engineering-maturity-model.md)
-- [Scale Trigger Matrix](scale/scale-trigger-matrix.md)
-- [Competitive Landscape](research/competitive-landscape.md)
-- [Build vs Adopt vs Adapter Review](research/build-adopt-integrate-review.md)
-- [Paperclip Due Diligence](research/paperclip-due-diligence.md)
-- [Paperclip Capability Matrix](research/paperclip-capability-matrix.md)
-- [ADR-013 Adversarial Acceptance Review](research/adr-013-adversarial-review.md)
-- [Research Review Index](research/README.md)
-- [Activepieces Gate 2 Due Diligence](research/activepieces-gate-2.md)
-- [AI Employee Landscape](research/ai-employee-landscape.md)
-- [Sources](research/sources.md)
-- [ADR Index](decisions/index.md)
-- [Reviewer/Subagent Contracts](agents/reviewer-contracts.md)
-- [Foundation v2](plans/foundation-v2.md)
-- [Phase 0 Definition](plans/phase-0-definition.md)
-- [Phase 0 Adversarial Review](plans/phase-0-review.md)
-- [Phase 1 MVP Plan](plans/phase-1-mvp.md)
-- [Phase 3 AI Employees](plans/phase-3-ai-employees.md)
-- [AI Employee Spec Adversarial Review](plans/ai-employee-spec-review.md)
+- [Decision Index](decisions/index.md)
 - [Roadmap](plans/roadmap.md)
+- [Phase 1 Core Control Plane](plans/phase-1-core-control-plane.md)
 
-## Codex / implementation prompts
+## Templates / schemas
 
-### Current implementation
+Templates are scaffolds used to generate case-specific records. They are not generic prompts and are not canonical until instantiated into Project state.
 
-- [Master Build Prompt](../prompts/master-build-prompt.md)
-- [Phase 1 Activepieces Adapter Spike](../prompts/phase-1-activepieces-spike.md)
-- [Implementation Task](../prompts/implementation-task.md)
-- [Pre-Merge Review](../prompts/pre-merge-review.md)
-- [Adversarial Review](../prompts/adversarial-review.md)
-
-### Future client-facing AI Employee design/review
-
-- [AI Employee Role Design](../prompts/ai-employee-role-design.md)
-- [AI Employee Adversarial Review](../prompts/ai-employee-adversarial-review.md)
-- [AI Employee Readiness Review](../prompts/ai-employee-readiness-review.md)
+- `templates/project-intake.md`
+- `templates/commercial-engagement.md`
+- `templates/project-pack.example.yaml`
+- `templates/agent-assignment.example.yaml`
+- `templates/work-item-proposal.md`
+- `schemas/project-pack.schema.json`
+- `schemas/agent-assignment.schema.json`
+- `schemas/model-runtime-profile.schema.json`

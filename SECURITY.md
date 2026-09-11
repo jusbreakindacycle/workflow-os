@@ -1,27 +1,35 @@
-# Repository Security Policy
+# Security Policy
 
-Workflow OS is currently public and specification-only.
+This repository is currently public and specification-first.
 
-## Public-repository rule
+## Do not commit
 
-Use synthetic examples only. Do not commit real client/customer content or reusable authentication material.
+- real client names/data unless deliberately approved for publication;
+- credentials, tokens, API keys, cookies, private keys, passwords;
+- production database values or payloads;
+- invoices/payment identifiers;
+- proprietary client SOPs/contracts;
+- private model/runtime credentials;
+- reusable secret values in examples, Project Packs, WIR, prompts, logs, or fixtures.
 
-## Report a repository security concern
+Use synthetic fixtures only.
 
-Until a private disclosure process is configured, do not post exploitable details in a public issue. The repository owner should configure GitHub private vulnerability reporting before production use.
+## Product security principles
 
-## Product security model
+Workflow OS is expected to coordinate privileged tools and client systems. Security is therefore part of the product contract from the first implementation phase.
 
-See `docs/security/security-model.md` for the engineering contract.
+Required principles:
 
-Core rules:
+- Workspace isolation;
+- least privilege;
+- server-side authorization;
+- explicit side-effect policy;
+- bounded agent/tool capability;
+- secret references rather than raw values;
+- auditability for high-impact actions;
+- redaction/minimal retention;
+- human approval for consequential actions;
+- provider credential blast-radius analysis;
+- no paid or destructive action through hidden agent authority.
 
-- least privilege
-- workspace isolation
-- indirect integration references in WIR
-- sensitive-value redaction
-- explicit action authorization
-- highest-risk actions require human approval
-- inbound authenticity checks where supported
-- safe outbound-request controls
-- auditable sensitive actions
+See `docs/security/security-model.md`.

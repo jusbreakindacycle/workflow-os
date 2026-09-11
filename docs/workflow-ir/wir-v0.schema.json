@@ -1,121 +1,74 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://workflow-os.local/schemas/wir-v0.schema.json",
-  "title": "Workflow OS WIR v0",
+  "$id": "https://example.local/workflow-os/wir-v0.schema.json",
+  "title": "Workflow Intermediate Representation v0",
   "type": "object",
-  "required": ["wir_version", "workflow", "nodes", "edges", "policy"],
+  "required": ["wir_version", "workflow"],
   "properties": {
-    "wir_version": { "const": "0.1" },
+    "wir_version": { "const": "0" },
     "workflow": {
       "type": "object",
-      "required": ["id", "name", "workspace_ref", "version", "environment"],
+      "required": ["id", "name", "workspace_ref", "project_ref", "version", "environment", "nodes", "edges", "policy"],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
         "name": { "type": "string", "minLength": 1 },
         "workspace_ref": { "type": "string", "minLength": 1 },
+        "project_ref": { "type": "string", "minLength": 1 },
         "version": { "type": "string", "minLength": 1 },
-        "environment": { "enum": ["dev", "test", "prod"] }
+        "environment": { "type": "string", "enum": ["development", "test", "staging", "production"] },
+        "nodes": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/node" }
+        },
+        "edges": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/edge" }
+        },
+        "policy": { "$ref": "#/$defs/policy" },
+        "extensions": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "enum": ["trigger.manual", "trigger.webhook", "trigger.schedule", "action", "transform", "condition", "delay", "ai_transform", "human_approval", "end"]
+        },
+        "input_schema_ref": { "type": "string" },
+        "output_schema_ref": { "type": "string" },
+        "integration_ref": { "type": "string" },
+        "timeout_ms": { "type": "integer", "minimum": 1 },
+        "risk_tier": { "type": "string", "enum": ["R0", "R1", "R2", "R3"] },
+        "config": { "type": "object", "additionalProperties": true },
+        "extensions": { "type": "object", "additionalProperties": true }
       },
       "additionalProperties": false
     },
-    "nodes": {
-      "type": "array",
-      "minItems": 2,
-      "items": {
-        "type": "object",
-        "required": ["id", "type", "risk_tier"],
-        "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "type": {
-            "enum": [
-              "trigger.manual",
-              "trigger.webhook",
-              "trigger.schedule",
-              "action",
-              "transform",
-              "condition",
-              "delay",
-              "ai_transform",
-              "human_approval",
-              "end"
-            ]
-          },
-          "tool_ref": { "type": "string", "minLength": 1 },
-          "integration_ref": { "type": "string", "minLength": 1 },
-          "timeout_seconds": { "type": "integer", "minimum": 1 },
-          "risk_tier": { "enum": ["R0", "R1", "R2", "R3"] },
-          "idempotency": {
-            "type": "object",
-            "properties": {
-              "mode": {
-                "enum": [
-                  "not_applicable",
-                  "provider_key",
-                  "workflow_key",
-                  "reconcile_before_retry",
-                  "non_idempotent_explicit"
-                ]
-              },
-              "key_expression": { "type": "string" }
-            },
-            "required": ["mode"],
-            "additionalProperties": false
-          },
-          "retry": {
-            "type": "object",
-            "properties": {
-              "max_attempts": { "type": "integer", "minimum": 1, "maximum": 10 },
-              "strategy": { "enum": ["none", "fixed", "exponential_backoff_jitter"] }
-            },
-            "required": ["max_attempts", "strategy"],
-            "additionalProperties": false
-          },
-          "config": { "type": "object" },
-          "extensions": { "type": "object" }
-        },
-        "allOf": [
-          {
-            "if": { "properties": { "type": { "const": "action" } }, "required": ["type"] },
-            "then": { "required": ["tool_ref", "timeout_seconds", "retry", "idempotency"] }
-          },
-          {
-            "if": { "properties": { "type": { "const": "ai_transform" } }, "required": ["type"] },
-            "then": { "required": ["timeout_seconds"] }
-          }
-        ],
-        "additionalProperties": true
-      }
-    },
-    "edges": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["from", "to"],
-        "properties": {
-          "from": { "type": "string", "minLength": 1 },
-          "to": { "type": "string", "minLength": 1 },
-          "when": { "type": "string" }
-        },
-        "additionalProperties": false
-      }
+    "edge": {
+      "type": "object",
+      "required": ["from", "to"],
+      "properties": {
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "condition": { "type": "string" }
+      },
+      "additionalProperties": false
     },
     "policy": {
       "type": "object",
-      "required": ["max_runtime_seconds", "default_timeout_seconds", "data_classification", "approval"],
       "properties": {
-        "max_runtime_seconds": { "type": "integer", "minimum": 1 },
-        "default_timeout_seconds": { "type": "integer", "minimum": 1 },
-        "data_classification": { "enum": ["Public", "Internal", "Confidential", "Restricted"] },
-        "max_ai_cost_usd": { "type": "number", "minimum": 0 },
-        "max_agent_iterations": { "type": "integer", "minimum": 1 },
-        "approval": {
-          "type": "object",
-          "required": ["r3_requires_human"],
-          "properties": {
-            "r3_requires_human": { "const": true }
-          },
-          "additionalProperties": false
-        }
+        "max_runtime_ms": { "type": "integer", "minimum": 1 },
+        "max_retries": { "type": "integer", "minimum": 0 },
+        "max_ai_iterations": { "type": "integer", "minimum": 0 },
+        "requires_human_approval_for_r3": { "type": "boolean" },
+        "data_classification": { "type": "string" }
       },
       "additionalProperties": true
     }

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/workflow-os/agent-assignment-v0.schema.json",
+  "title": "Agent Assignment v0",
+  "type": "object",
+  "required": ["assignment_version", "assignment"],
+  "properties": {
+    "assignment_version": { "const": "0" },
+    "assignment": {
+      "type": "object",
+      "required": ["id", "workspace_id", "project_id", "work_item_id", "role", "objective", "project_pack_ref", "in_scope", "out_of_scope", "allowed_capabilities", "budgets", "evidence_required", "stop_conditions"],
+      "properties": {
+        "id": { "type": "string" },
+        "workspace_id": { "type": "string" },
+        "project_id": { "type": "string" },
+        "work_item_id": { "type": "string" },
+        "role": { "type": "string" },
+        "objective": { "type": "string" },
+        "project_pack_ref": { "type": "string" },
+        "inputs": { "type": "array", "items": { "type": "string" } },
+        "in_scope": { "type": "array", "items": { "type": "string" } },
+        "out_of_scope": { "type": "array", "items": { "type": "string" } },
+        "allowed_capabilities": { "type": "array", "items": { "type": "string" } },
+        "budgets": { "type": "object" },
+        "evidence_required": { "type": "array", "items": { "type": "string" } },
+        "stop_conditions": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/workflow-os/project-pack-v0.schema.json",
+  "title": "Project Pack v0",
+  "type": "object",
+  "required": ["project_pack_version", "project"],
+  "properties": {
+    "project_pack_version": { "const": "0" },
+    "project": {
+      "type": "object",
+      "required": ["workspace_id", "project_id", "project_version", "kind", "problem", "desired_outcome", "requirements", "non_goals", "work_items", "policy", "verification", "escalation"],
+      "properties": {
+        "workspace_id": { "type": "string", "minLength": 1 },
+        "project_id": { "type": "string", "minLength": 1 },
+        "project_version": { "type": "integer", "minimum": 1 },
+        "kind": { "type": "string", "enum": ["client_delivery", "internal_product", "experiment"] },
+        "problem": { "type": "string" },
+        "desired_outcome": { "type": "string" },
+        "engagement_ref": { "type": ["string", "null"] },
+        "requirements": { "type": "array", "items": { "type": "object" } },
+        "non_goals": { "type": "array", "items": { "type": "string" } },
+        "architecture_refs": { "type": "array", "items": { "type": "string" } },
+        "work_items": { "type": "array", "items": { "type": "object" } },
+        "policy": { "type": "object" },
+        "verification": { "type": "object" },
+        "escalation": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

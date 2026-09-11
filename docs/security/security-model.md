@@ -1,92 +1,62 @@
 # Security Model
 
-## Security objective
+## Objective
 
-Workflow OS may coordinate access to high-value client systems. Security and workspace isolation are MVP requirements, not later-scale features.
+Workflow OS may coordinate client systems, repositories, credentials, paid AI execution, and production actions. Security/isolation are foundational requirements.
 
-## Core principles
+## Principles
 
-1. least privilege
-2. workspace isolation
-3. explicit tool/action authorization
-4. sensitive-value redaction
-5. minimal retained third-party data
-6. standard authentication and cryptographic libraries
-7. verifiable inbound events
-8. safe outbound-network policy
-9. audited high-impact actions
-10. humans authorize the highest-risk actions
-
-## Integration material
-
-Workflow definitions store logical integration references rather than secret values.
-
-Runtime integrations should use engine-managed or dedicated secret storage. An agent or prompt should receive an authorized tool abstraction, not reusable secret material.
+1. least privilege;
+2. Workspace isolation;
+3. capability-scoped tool authority;
+4. explicit side-effect policy;
+5. human approval for highest consequence;
+6. secret references/bindings, not raw values in Project artifacts;
+7. sensitive-data minimization/redaction;
+8. auditable consequential actions;
+9. authenticated/verifiable inbound events;
+10. safe outbound network behavior;
+11. provider credential blast-radius analysis;
+12. fail closed on unknown authorization semantics.
 
 ## Workspace isolation
 
-Every security-relevant entity must be scoped to a workspace, including:
+Every security-relevant canonical entity is Workspace-scoped. For external client work the default is one Client per Workspace.
 
-- workflows and versions
-- deployments
-- run metadata
-- integration references
-- templates before sanitization
-- approvals
-- logs/traces
-- incident records
+Authorization must be enforced at the data/action boundary, not by prompt instruction alone.
 
-Authorization checks must be server-side at the data/action boundary.
+## Provider credentials
 
-## Tool permissions
+A provider's own tenant boundary is not enough. The integration/control credential used by Workflow OS must have documented actual permissions and acceptable blast radius.
 
-A tool registration declares:
+If a provider cannot safely scope control credentials across clients, evaluate stronger per-Workspace instance/account separation.
 
-- read/write classification
-- risk tier
-- allowed workspace(s)
-- allowed data classes
-- required approval policy
-- rate/concurrency limits
-- audit requirements
+## Agents/tools
 
-AI agents receive an allowlist of tools. No wildcard access by default.
+Each Assignment declares an allowlist of tools/capabilities. Role title does not grant permission.
 
-## Inbound webhooks
+No wildcard production credentials by default.
 
-Where provider support exists:
+## Secrets
 
-- verify signature/authenticity
-- enforce replay/time-window protections when available
-- validate content type and schema
-- cap request size
-- use idempotent event identifiers
+Canonical Project/WorkItem/ProjectPack/WIR data contains logical refs such as `client-a.supabase.production`, never the reusable secret itself.
 
-## Outbound HTTP / SSRF defense
+A runtime adapter resolves the reference into minimum necessary run-bound/provider binding where possible.
 
-A generic HTTP action is powerful and dangerous. Implementation must constrain destination resolution and block access to internal metadata/control endpoints unless explicitly allowed.
+Secret access should be auditable and revocable. Redaction must be systematic, not dependent on workers remembering.
 
-## Application security baseline
+## Paid execution
 
-Implementation must account for:
+Spend authorization is a security/authority boundary. Model reasoning cannot grant itself money.
 
-- broken object-level/function authorization
-- injection
-- unsafe output rendering
-- CSRF when cookie-based browser sessions are used
-- CORS policy
-- rate/resource limits
-- dependency vulnerabilities
-- secure headers/TLS
-- secure session/token rotation
-- migration/backup confidentiality
+## Generic HTTP / SSRF
 
-Use OWASP API Security and relevant OWASP application guidance as implementation checklists.
+Any generic network action must enforce destination policy and block metadata/internal control targets unless explicitly allowed.
 
-## Logging
+## Application baseline
 
-Never rely on “developers will remember not to log it.” Redaction and structured-field allowlisting must be designed.
+Account for broken authorization, injection, unsafe rendering, CSRF/session risks when applicable, CORS, rate/resource abuse, dependency vulnerabilities, TLS/secure headers, backup confidentiality, and migration safety.
 
 ## Public repository
 
-While this repository is public, all examples remain synthetic. Client-specific architecture may only be added after a deliberate confidentiality decision.
+Use synthetic examples only.

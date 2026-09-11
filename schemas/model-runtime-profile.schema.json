@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/workflow-os/model-runtime-profile-v0.schema.json",
+  "title": "Model or Runtime Capability Profile v0",
+  "type": "object",
+  "required": ["profile_version", "id", "kind", "provider", "capabilities", "locality", "cost_class", "status"],
+  "properties": {
+    "profile_version": { "const": "0" },
+    "id": { "type": "string" },
+    "kind": { "type": "string", "enum": ["model", "runtime", "combined_route"] },
+    "provider": { "type": "string" },
+    "provider_version": { "type": "string" },
+    "capabilities": { "type": "object", "additionalProperties": true },
+    "locality": { "type": "string", "enum": ["local", "remote", "hybrid"] },
+    "cost_class": { "type": "string", "enum": ["zero", "variable_paid", "fixed_subscription", "unknown"] },
+    "privacy": { "type": "object", "additionalProperties": true },
+    "limits": { "type": "object", "additionalProperties": true },
+    "status": { "type": "string", "enum": ["available", "degraded", "unavailable", "disabled"] },
+    "evidence": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

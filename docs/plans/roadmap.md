@@ -1,131 +1,81 @@
 # Roadmap
 
-The roadmap is capability-driven. Dates are intentionally omitted until implementation velocity and real project/client demand exist.
+The roadmap is capability-gated. Phase numbers do not promise dates.
 
-## Phase 0 — Original engineering contract
+## Foundation v3 — current documentation reset
 
-Complete/merged foundation for:
+Goal: align the repository with the clarified human-governed, local-first, provider-independent North Star and remove obsolete/duplicated speculative files.
 
-- workflow automation control-plane thesis;
-- WIR;
-- execution adapters;
-- risk/reliability/security;
-- testing/evaluations;
-- observability/ROI;
-- scale gates;
-- reviewer/Codex harness;
-- future client-facing AI Employee contracts.
+## Phase 1 — Core Control Plane
 
-## Foundation v2 — Solo AI business delivery model
+Build locally:
 
-Current alignment pass before broad application implementation:
+- Workspace / Client / Engagement / Project;
+- New Project intake;
+- basic discovery/unknowns/approval;
+- WorkItems/dependencies/proposals;
+- Decisions/Approvals;
+- Project Pack generation/versioning;
+- SpendEnvelope records/policy using synthetic cost;
+- Activity Feed / Needs My Attention / Command Center;
+- mock/manual Assignment + evidence/verification.
 
-- Project as top-level operational unit;
-- Project/WorkItem state and dependency semantics;
-- Project Command Center;
-- internal AI workforce contracts;
-- agent operability/verification model;
-- production/incident/maintenance ownership;
-- Phase 1 scope/acceptance update.
+No real AI provider required.
 
-This is primarily specification/architecture work, not a mandate to build an autonomous agent company immediately.
+## Phase 2 — Autonomy Kernel
 
-## Phase 1 — Core Project + Workflow MVP
+Add:
 
-One operator, multiple Workspaces/Projects, with one controlled Project proving:
+- model/runtime capability registry;
+- Broker + Spend Gate enforcement;
+- one real Model Adapter and one real Runtime Adapter selected by evidence/availability, not architecture lock-in;
+- Project Bootstrapper;
+- instruction compilation to at least two target formats/fixtures;
+- Skill Registry;
+- bounded Loop Engine;
+- independent verifier route.
 
-- Project Brief and WorkItems;
-- Command Center portfolio/project visibility;
-- discovery/feasibility/risk;
-- WIR;
-- one execution adapter;
-- tests/approvals/reliability;
-- normalized run/deployment evidence;
-- minimal production/maintenance state;
-- ROI/reuse/handoff;
-- reproducible engineering-agent verification path.
+Goal: prove one WorkItem can be routed/executed/re-routed without the operator copying prompts.
 
-The Activepieces Gate 2B spike remains the first isolated coding experiment.
+## Phase 3 — End-to-end Project Delivery
 
-No persistent self-organizing internal agent fleet and no client AI Employee product runtime.
+Add:
 
-## Phase 2 — Solo Builder Delivery Pipeline
+- AI-assisted adaptive discovery/research/challenge;
+- dynamic internal role activation;
+- approved GitHub repository creation/bootstrap;
+- implementation/test/PR path;
+- deployment adapter in controlled environment;
+- human deployment approval;
+- production/maintenance records.
 
-Turn Workflow OS from a Project/workflow control plane into a practical internal delivery system for the operator.
+Goal: one controlled synthetic/internal MVP delivered from raw idea to deployed result.
 
-Candidate capabilities, introduced in measured slices:
+## Phase 4 — Business Workflow Automation
 
-- structured idea/client-request intake;
-- research/source artifact pipeline;
-- requirement/product-brief generation with human decision gates;
-- architecture/ADR/work-graph generation;
-- repository/GitHub integration;
-- bounded coding-agent assignments;
-- project/repository maps and feature/capability maps;
-- project-specific verification skills/harnesses;
-- CI/evidence ingestion;
-- deployment-provider adapters based on actual projects;
-- operator attention queue and cost/budget visibility;
-- incident/maintenance queues;
-- stronger project templates/service packaging;
-- generated proposals/handoff packs and recurring client health/ROI reports.
+Add WIR execution and evaluate Activepieces (or alternative) against the Workflow Engine Adapter contract.
 
-Internal parallel agents may be introduced only under ADR-012 gates: dependency-safe isolation, explicit integration, bounded authority, and independent verification.
+## Phase 5 — Commercial Operations
 
-## Phase 3 — Governed Client-Facing AI Employees
+Expand operator-side commercial workflows only when real work requires them:
 
-See `phase-3-ai-employees.md`.
+- quotation/change-request generation;
+- invoice/payment status integration;
+- maintenance agreement reminders;
+- client communication/portal integration.
 
-Capability order:
+Do not become a full accounting ERP.
 
-1. Role Template / Role Instance / immutable Role Version
-2. bounded Task Assignments
-3. capability/identity/authority bindings
-4. explicit context/knowledge; memory disabled first
-5. one bounded single-role Agent Runtime Adapter use case
-6. test -> shadow -> supervised -> active promotion
-7. AI Employee observability and ROI
-8. reusable role templates
+## Phase 6 — Internal Workforce Provider Evaluation
 
-Client-facing AI Employee multi-agent delegation remains governed by ADR-010 and is distinct from internal delivery-agent orchestration.
+If direct runtime orchestration becomes burdensome, run Paperclip core/advanced gates. Adopt only the proven subset behind ADR-013.
 
-## Phase 4 — Durable orchestration and production operations
+This phase may move earlier if measured coordination cost justifies it, but cannot replace canonical control-plane authority.
 
-When real Projects require it:
+## Phase 7 — Future client-facing AI workers
 
-- long-running wait states;
-- event correlation;
-- durable checkpoints;
-- compensation/Sagas;
-- BPMN import/export or process-orchestrator adapter;
-- durable-runtime adapter;
-- richer incident/change/maintenance automation;
-- production SLO/alert integration where justified;
-- long-lived client AI Employee task patterns only when process semantics justify them.
+Re-research and define client-facing governed AI role packaging only after internal delivery/value is proven. Old detailed Phase 3 AI Employee specs were intentionally removed from the active Foundation v3 tree to avoid premature product scope.
 
-## Phase 5 — Scale
+## Scale
 
-Only from scale-trigger evidence:
-
-- horizontal service/worker scaling;
-- distributed tracing;
-- SLO/error-budget operations;
-- advanced deployment strategies;
-- WAF and stronger edge/network controls;
-- partitioning/read replicas if needed;
-- Kubernetes if operationally justified;
-- multi-region only from explicit continuity requirements.
-
-## Future gate — More autonomous organization behavior
-
-Do not equate the North Star with an immediate “AI company swarm.”
-
-Increase autonomy only when evidence shows that:
-
-- Project state remains authoritative and debuggable;
-- bounded single-agent assignments are reliable;
-- verification is largely agent-operable;
-- tool permissions and production gates are enforced outside model reasoning;
-- cost/latency remain acceptable;
-- human intervention is being reduced rather than merely moved elsewhere;
-- dynamic delegation provides measurable value beyond an explicit WorkItem graph.
+Kubernetes, multi-region, complex queues, service discovery, sharding, etc. require measured triggers. They are not roadmap milestones by default.

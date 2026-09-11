@@ -1,205 +1,238 @@
 # Architecture
 
-## Architectural thesis
+## Thesis
 
-Workflow OS is a **personal AI business delivery control plane** for one human operator. It is not a universal workflow executor and not one giant autonomous agent.
+Workflow OS is a **local-first, provider-independent, human-governed autonomous delivery control plane** for a solo builder.
 
-It owns the state and governance required to move a raw problem or project idea through research, specification, implementation, verification, deployment, production operation, maintenance, and reuse.
+It owns the meaning, state, policy, memory-of-work, approvals, evidence, and operator visibility required to take a raw client request or idea through delivery and maintenance.
 
-> Workflow OS owns the project state; agents perform bounded work.
+It does not need to implement every model, coding runtime, workflow engine, source-control system, deployment provider, or observability product itself.
 
-> Model once, execute through the right engine, govern everything from one place.
+> Workflow OS decides what the work means, what is allowed, what is ready, what evidence is required, and whether the result is accepted. Replaceable providers perform specialized execution.
 
-## Top-level lifecycle
+## Human contract
+
+The target operator interaction is intentionally small:
 
 ```text
-Business/User Problem or Project Idea
-  -> Project Intake
-  -> Research / Challenge
-  -> Problem + Outcome Definition
-  -> Scope / Requirements
-  -> Architecture / Risk / Feasibility
-  -> Work Graph / Plan
-  -> Build / Configure / Automate
-  -> Verify / Review
-  -> Deploy
-  -> Observe Production
-  -> Incident / Maintenance / Change
-  -> Measure
-  -> Improve / Reuse
+Give / revise goal
+  -> answer important discovery questions
+  -> approve / reject / revise consequential decisions
+  -> provide credentials when required
+  -> approve paid execution and high-impact actions
 ```
 
-A Project may contain software delivery, deterministic workflows, AI-assisted steps, client-facing AI Employees, documentation, integrations, research, or combinations of these.
+The system coordinates everything else until it either reaches an accepted outcome or genuinely requires human authority.
 
 ## Canonical hierarchy
 
 ```text
-Workspace
-  -> Project
-      -> Project artifacts / decisions
-      -> WorkItems + dependencies
-      -> Repository / environment / deployment references
-      -> Workflow(s) -> WIR versions
-      -> future AI Employee role(s) -> RoleVersions
-      -> internal AgentAssignments
-      -> Evidence / evaluations / approvals
-      -> Incidents / maintenance records
+Operator
+  -> Workspace                         # security/isolation boundary
+      -> Client?                       # commercial party; optional for internal work
+      -> Engagement?                   # commercial agreement/scope
+          -> Project                   # delivery/operational unit
+              -> Project Brief
+              -> Project Pack
+              -> WorkItems + dependencies
+              -> WorkItem Proposals
+              -> Decisions / Approvals
+              -> Artifacts / Evidence
+              -> Events / Activity
+              -> Repositories / environments / deployments
+              -> Workflows / WIR versions
+              -> AgentAssignments
+              -> Spend Envelopes / Cost Records
+              -> Incidents / Maintenance
 ```
 
-### Workspace
+For client work, the default safety posture is one client per Workspace. Internal product work may use an internal Workspace without a Client.
 
-The authorization and data-isolation boundary.
+## Main layers
 
-### Project
+### 1. Operator interface
 
-The top-level operational unit for a client delivery, internal product, or approved experiment. Project is authoritative for lifecycle phase, work graph, current state, related artifacts, production ownership, and portfolio visibility.
+Local-first web Command Center initially; optional desktop packaging later.
 
-### Workflow / WIR
+Primary surfaces:
 
-WIR remains the canonical portable model for a workflow inside a Project. It does not represent the whole Project.
+- New Project;
+- Projects/Clients/Engagements;
+- Needs My Attention;
+- Activity Feed;
+- Work graph;
+- approvals/decisions;
+- costs/spend;
+- repositories/deployments;
+- incidents/maintenance.
 
-### AI Employee
+### 2. Canonical delivery control plane
 
-AI Employee Spec remains the canonical future model for a client-facing governed role. A client AI Employee is a Project deliverable/participant and does not own Project state.
+Owns Workspace, Client, Engagement, Project, WorkItem, Decision, Approval, Artifact, Evidence, Event, Project Pack, cost authorization, deployment, incident, and maintenance semantics.
 
-## Project Command Center
+### 3. Discovery and planning layer
 
-The Command Center is the operator-facing read model over canonical Project, WorkItem, AgentAssignment, WorkflowRun, Deployment, Approval, Evidence, Incident, and Maintenance state.
+Converts raw input into explicit problem/outcome/scope/requirements/architecture/work graph.
 
-It must expose, at minimum:
+The interview is adaptive and must support `I don't know`. The system may research and propose an assumption rather than forcing the operator to answer technical questions they cannot reasonably know.
 
-- all Projects and lifecycle phases;
-- health and blockers;
-- active work;
-- next ready action;
-- approvals/decisions requiring the human operator;
-- research/spec/build/test/deploy/maintenance status;
-- latest evidence/activity;
-- production deployments/incidents where applicable.
+### 4. Autonomy kernel
 
-A status badge is never authoritative merely because an agent wrote it. Read models are derived from canonical state/events and reconciled evidence.
+Contains:
 
-## Internal AI workforce
+- ready-work selection;
+- loop/routine engine;
+- dynamic role activation;
+- bounded AgentAssignments;
+- WorkItem Proposal handling;
+- verification/escalation;
+- budget/stop conditions.
 
-Workflow OS can coordinate bounded internal specialist roles such as:
+### 5. Model/Runtime Broker
 
-- problem/intake analyst;
-- researcher;
-- product/requirements analyst;
-- solution architect;
-- planner/orchestrator;
-- frontend/backend/mobile/automation implementation worker;
-- verification/QA/security/reliability/adversarial reviewer;
-- deployment/operations worker;
-- incident/maintenance worker;
-- documentation/handoff worker.
+Separates **model choice** from **runtime choice**.
 
-An internal agent receives a bounded AgentAssignment referencing exact Project/WorkItem state. It returns artifacts, proposed state transitions, and evidence. It cannot make itself authoritative by storing hidden state in its context.
+A WorkItem declares capability/risk/privacy/cost/tool requirements. The broker chooses an eligible model/runtime combination based on hard constraints and dynamic scoring.
 
-Parallel work requires dependency-safe isolation and explicit integration/verification. A multi-agent swarm is not a default architecture.
+Paid execution cannot begin without an operator-approved spend envelope.
 
-## Project work graph
+### 6. Project Bootstrapper + Instruction Compiler
 
-Known delivery state is represented as WorkItems with explicit dependencies rather than hidden conversation sequencing.
+After accepted scope/architecture and an explicit repository-creation approval, the bootstrapper creates or connects the repository/workspace and compiles a case-specific Project Pack into provider-supported instruction/configuration projections.
 
-Typical WorkItem classes include:
+Examples may include:
 
-- research;
-- decision;
-- specification;
-- implementation;
-- workflow design;
-- verification;
-- review;
-- approval;
-- deployment;
-- incident;
-- maintenance;
-- documentation.
+- `AGENTS.md`;
+- `CLAUDE.md`;
+- GitHub Copilot instructions;
+- OpenCode/runtime configuration;
+- API-based AgentAssignment payloads.
 
-A WorkItem can be assigned to a human, deterministic workflow, external tool/runtime, or bounded agent.
+These generated files are projections, not canonical Project truth.
 
-## Agent engineering layer
+### 7. Skill Registry
 
-Engineering agents require an operable environment, not just a better prompt. The architecture therefore supports a future agent-engineering layer containing:
+Stores versioned, evaluated capabilities that agents can invoke. A skill is more than prompt text: it declares purpose, inputs/outputs, prerequisites, tools/permissions, failure modes, verification, and compatibility.
 
-- repository/project maps;
-- project-specific verification skills;
-- feature/capability maps;
-- machine-enforced architecture and CI constraints;
-- evidence contracts;
-- stored evaluation cases;
-- isolated branches/worktrees/environments for parallel workers;
-- independent verification for material changes.
+### 8. Adapter plane
 
-See `docs/engineering/agent-operability-and-verification.md`.
+Provider-neutral adapter classes include:
 
-## Production operations layer
+- Model Adapter;
+- Runtime Adapter;
+- Internal Workforce Adapter;
+- Workflow Engine Adapter;
+- Source Control Adapter;
+- Deployment Adapter;
+- Observability Adapter;
+- communication/notification adapters.
 
-Deployment is not the end of a Project. Production-capable Projects retain:
+### 9. Execution plane
 
-- deployment/environment records;
-- health/observability references;
-- incident state;
-- maintenance/change WorkItems;
-- dependency/update obligations;
-- rollback/recovery evidence;
-- ownership and escalation rules.
+Replaceable systems may include local/open models, hosted AI APIs, Codex, Claude Code, GitHub Copilot, OpenCode, Paperclip, Activepieces, GitHub, deployment platforms, databases, and monitoring tools.
 
-See `docs/operations/production-maintenance-model.md`.
+### 10. Evidence and production layer
 
-## Workflow execution plane
+Provider events/results are normalized into canonical evidence and activity. Deployment is not the end of a Project: incidents, maintenance, change, recovery, and improvement remain part of Project state.
 
-Candidate execution classes include low-code API automation, Microsoft automation/RPA, durable workflow runtimes, BPMN/process orchestrators, agent runtimes, and isolated custom functions.
+## Project Pack
 
-The Phase 1 MVP uses exactly **one primary workflow execution adapter**.
+The Project Pack is the machine-oriented, case-specific execution contract for one Project/version. It contains references or normalized summaries for:
 
-Future agentic work may use separate Agent Runtime Adapters, coding agents, cloud development environments, or other tool-specific adapters, but Workflow OS remains authoritative for Project/WorkItem state, authorization, budgets, versioning, approvals, and evidence.
+- problem/outcome;
+- accepted client/commercial constraints;
+- requirements/non-goals;
+- architecture/ADRs;
+- WorkItems/dependencies;
+- acceptance criteria;
+- risk/data classification;
+- allowed tools/capabilities;
+- repository/environment references;
+- model/runtime policy;
+- spend policy;
+- verification policy;
+- escalation rules.
 
-## Tool/connectivity plane
+It is generated from canonical state and is versioned. It does not contain reusable raw secrets.
 
-MCP, webhooks, OpenAPI-derived actions, native connectors, source-control APIs, CI/CD systems, deployment providers, databases, and observability tools expose capabilities.
+## Internal workforce
 
-Tool discovery does not grant execution permission.
+Every Project may expose a full logical roster, but workers are activated only when the work requires their separation.
 
-## Future client-facing AI Employee layer — Phase 3
+The preferred pattern is:
 
 ```text
-Project
-  -> AI Employee RoleVersion
-      -> bounded TaskAssignment
-          -> deterministic Workflow(s)
-          -> AI Transform(s)
-          -> optional AgentSession
-          -> Tool(s)
-          -> Human escalation/approval
+Project state
+  -> derive ready WorkItem
+  -> choose role/capability
+  -> choose model/runtime
+  -> compile bounded Assignment
+  -> execute
+  -> capture artifacts/evidence
+  -> verify/reconcile
+  -> accept / repair / escalate
+  -> derive next-ready work
 ```
 
-The role does not run as an unconstrained permanent LLM session.
+Do not coordinate through free-form agent-to-agent chat when durable state/artifacts can carry the handoff.
 
-See `docs/ai-employees/`.
+## Loops and routines
+
+A loop is a controlled execution structure with:
+
+- trigger;
+- goal/predicate;
+- authorized scope;
+- work strategy;
+- verification;
+- max iterations/time/cost/tool use;
+- stop conditions;
+- escalation.
+
+A routine adds a time/event schedule. No unbounded autonomous loop is permitted.
+
+## Local-first does not mean local-only AI
+
+Core state and operator functions remain local-capable. Intelligence may be local or remote depending on WorkItem requirements and availability.
+
+Fallback is capability-based, for example:
+
+```text
+eligible local model
+  -> eligible free/approved remote model
+  -> paid model requiring Spend Gate
+  -> Needs My Attention if no acceptable route exists
+```
+
+## Completion semantics
+
+Provider `done` means only execution finished/evidence available.
+
+Canonical WorkItem completion requires the applicable verification, reconciliation, policy, and human approval gates.
 
 ## Architectural invariants
 
-1. Project is the top-level operational unit inside a Workspace.
-2. WIR is the canonical portable workflow model within a Project.
-3. AI Employee Spec is the canonical future client-facing role model; it references workflows/tools rather than replacing Project or WIR.
-4. Workflow OS, not an agent context, owns Project/WorkItem/approval/deployment/incident state.
-5. Command Center state is derived from canonical state/events and evidence.
-6. Execution, coding, deployment, and agent runtimes are adapters/tools, not the source of truth.
-7. Deterministic-first, agentic-where-necessary.
-8. Responsibility is not permission; tool authority is independently enforced.
-9. High-impact side effects require explicit policy; R3 requires human approval.
-10. Raw secrets are never embedded in Project specs, WIR, role specs, or prompts.
-11. Every workflow run is attributable to a Workspace, Project, and workflow version.
-12. Every future AI Employee task is attributable to a Workspace, Project, and exact RoleVersion.
-13. Every internal AgentAssignment is attributable to a Project and bounded WorkItem.
-14. Memory is explicit, typed, and scoped; hidden agent memory is not business truth.
-15. Failures are resolvable states, not hidden log lines.
-16. Production ownership continues after deployment through incident and maintenance state.
-17. Scale infrastructure is introduced only when measured triggers justify it.
-18. Parallel/multi-agent work is evidence- and dependency-gated, never the default substitute for clear architecture.
+1. Workspace is the isolation boundary.
+2. Project is the top-level operational delivery unit.
+3. Engagement is commercial context, not Project execution state.
+4. WIR is canonical only for business workflows inside a Project.
+5. Project Pack is the case-specific execution contract compiled from canonical state.
+6. External providers never own canonical Project/WorkItem meaning.
+7. Models and runtimes are replaceable and separately routed.
+8. Paid execution requires explicit prior approval.
+9. Human authority is required for consequential commercial/risk/production decisions.
+10. Full logical roster does not mean all agents run.
+11. Agent-created material scope becomes a proposal, not automatic canonical work.
+12. Activity Feed is derived from events/evidence, not chat narration.
+13. Deterministic mechanisms are preferred where reasoning is unnecessary.
+14. Every loop is bounded and verifiable.
+15. Raw reusable secrets are references/bindings, never embedded in Project Packs/prompts.
+16. Production ownership continues after deployment.
+17. Scale infrastructure is evidence-driven.
+18. Core Project state remains understandable when any AI provider is unavailable.
 
-## Deferred choices
+## Current phase
 
-The repository intentionally does not preselect a frontend framework, API framework, ORM, cloud provider, Kubernetes architecture, multi-region design, final long-term workflow engine, final coding-agent vendor, final agent runtime/model provider, or final observability vendor unless an ADR explicitly resolves it.
+Foundation v3 changes the implementation order. The first serious coding milestone is the local canonical control plane, not an Activepieces or Paperclip integration.
+
+See `docs/plans/phase-1-core-control-plane.md`.

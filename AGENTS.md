@@ -1,67 +1,117 @@
 # AGENTS.md
 
-This repository is spec-first. Repository documentation is the system of record.
+This repository is **spec-first**. The documentation defines the product and architectural boundaries before implementation.
 
-## Required reading before implementation
+`workflow-os` is a temporary repository/product name.
+
+## Read before changing implementation
 
 1. `docs/product/goal.md`
-2. `docs/product/project-operating-model.md`
-3. `docs/product/project-command-center.md`
-4. `docs/product/scope-mvp.md`
+2. `docs/product/scope-mvp.md`
+3. `docs/product/project-operating-model.md`
+4. `docs/product/operator-experience.md`
 5. `ARCHITECTURE.md`
 6. `docs/decisions/index.md`
 7. `docs/testing/acceptance-criteria.md`
-8. `docs/plans/foundation-v2.md`
-9. the active phase plan and task-specific contracts.
+8. `docs/plans/phase-1-core-control-plane.md`
+9. task-specific contracts referenced by the active WorkItem.
 
-## Operating rules
+## Product invariant
 
-- Do not expand MVP scope without explicit approval.
-- Do not implement a future-phase capability merely because its specification exists.
-- Do not implement future-scale infrastructure merely because it appears in the maturity model.
-- Treat `Project` as the top-level operational unit; WIR remains canonical for workflow definitions within a Project.
-- Workflow OS owns Project, WorkItem, approval, evidence, deployment, incident, and maintenance state. Agents do not keep authoritative process state in hidden context or memory.
-- The Project Command Center is a derived read model over canonical state/events; do not create manually maintained status that can drift from reality.
-- Prefer deterministic workflow steps. Use AI/agents only where ambiguity, semantic reasoning, or dynamic tool selection adds value.
-- Internal AI agents receive bounded assignments with explicit inputs, outputs, permissions, budgets, verification, and escalation.
-- Parallel agent work is allowed only when dependencies permit isolation and the merge/verification path is explicit.
-- Human approval is a first-class workflow primitive.
-- Treat every external side effect as a reliability and authorization concern.
-- Client/workspace isolation is mandatory from MVP.
-- Workflow/role/project definitions must never contain raw reusable secrets.
-- Every mutating action must declare an idempotency strategy or explicitly document why it cannot.
-- Every loop must have explicit termination/budget constraints.
-- Every implementation task must map to acceptance criteria and tests.
-- Agent claims are not completion evidence. Material work requires machine-checkable or independently reviewable evidence appropriate to risk.
-- Update affected documentation when a design decision changes.
+The product is a **human-governed autonomous delivery operating system for a solo builder**, not a wrapper around one model/vendor and not a generic prompt pack.
 
-## Foundation v2 discipline
+The intended human role is:
 
-Foundation v2 broadens the North Star from an automation-only control plane to a solo AI business delivery operating system. It does **not** authorize building an unrestricted autonomous software company in Phase 1.
+- give/revise goals;
+- answer consequential questions;
+- provide credentials when required;
+- approve/reject/revise consequential decisions;
+- approve any paid execution before spend.
 
-Phase 1 must establish the smallest Project + Command Center + workflow vertical slice while preserving the existing Activepieces adapter evidence gate.
+## Canonical state rules
 
-## Phase 1
+- `Workspace` is the isolation boundary.
+- `Client` and `Engagement` capture commercial context.
+- `Project` is the top-level delivery/operational unit.
+- `WorkItem` is the bounded unit of work.
+- `Project Pack` is the case-specific machine-readable execution contract compiled from canonical Project state.
+- WIR remains canonical only for business workflow definitions inside a Project.
+- Agent/runtime/provider state is never canonical Project truth.
+- Activity Feed and Command Center are derived from canonical events/state/evidence.
+- Hidden chat/session memory is not business truth.
 
-Current implementation work is governed by `docs/plans/phase-1-mvp.md`.
+## Provider independence
 
-AI Employee specifications under `docs/ai-employees/` are **future Phase 3 client-facing contracts**. Their existence does not authorize implementing:
+Never design a core entity around one vendor's schema.
 
-- client AI Employee Role Registry;
-- client AI Employee persistent memory;
-- autonomous client-facing role execution;
-- unrestricted multi-agent delegation.
+Models and runtimes are separate concepts:
 
-Internal engineering/delivery agents are a different concern. Phase 1 may define their contracts and use bounded reviewer/subagent execution in development environments, but must not add a self-organizing autonomous agent fleet to the product.
+- model: the intelligence/capability source;
+- runtime: the environment that can execute work with tools/files/terminal/browser/etc.
 
-### Phase 3
+All provider-specific execution sits behind capability-aware adapters/brokers.
 
-When explicitly activated, read `docs/plans/phase-3-ai-employees.md` and `docs/ai-employees/acceptance-criteria.md`.
+Do not assume OpenAI, Anthropic, Google, GitHub Copilot, Codex, Claude Code, Kimi, OpenCode, Paperclip, Activepieces, or any other provider is permanently available.
 
-AI Employee means a governed client-facing role abstraction, not an unrestricted long-running agent.
+## Local-first rule
 
-## Reviewer roles
+The control plane must remain understandable and operable when external AI/runtime providers are unavailable.
 
-When parallel/subagent capability is available, use bounded reviewer roles defined in `docs/agents/reviewer-contracts.md` and internal delivery roles defined in `docs/agents/internal-ai-workforce.md`.
+Phase 1 must not require a paid AI service to create/read/update Projects, approvals, events, Project Packs, or Command Center state.
 
-Reviewers identify violations; they do not silently change product scope or approve their own high-impact actions.
+## Human authority
+
+The system may autonomously continue bounded, already-approved, in-scope work.
+
+It must stop and create a `Needs My Attention` item for material changes to:
+
+- client commitment or commercial scope;
+- price or deadline;
+- architecture with meaningful consequence;
+- risk acceptance;
+- production/destructive action;
+- credentials/permissions;
+- paid execution without an approved spend envelope.
+
+Provider-created subtasks remain provider-local when safely inside the accepted assignment. Material new work becomes a WorkItem Proposal.
+
+## AI/workforce rules
+
+- Every Project may have a full logical role roster, but activate roles dynamically.
+- Do not simulate a human company by spawning agents without measurable benefit.
+- Every active agent receives a bounded AgentAssignment.
+- No agent may approve its own high-impact work.
+- Prefer independent verification for material changes.
+- Parallel work requires dependency and mutable-resource isolation.
+- Every loop has a checkable goal, budget, termination, and escalation condition.
+
+## Spend rule
+
+Any paid AI/model/runtime execution requires explicit operator approval before spend begins. Approval should be a bounded envelope attached to an Assignment/WorkItem/Project purpose. Exceeding it requires new approval.
+
+## Prompt/instruction rule
+
+Do not make one giant generic prompt the architecture.
+
+Provider-specific instruction files are generated projections of the Project Pack. When the system eventually compiles `AGENTS.md`, `CLAUDE.md`, Copilot rules, OpenCode configuration, or runtime instructions for a client Project, those files must be case-specific and reproducible from canonical state.
+
+## Verification
+
+Agent claims are not evidence. Completion requires the applicable level of verification described in `docs/testing/verification-ladder.md`.
+
+No task is `complete` merely because:
+
+- code was generated;
+- a provider says `done`;
+- an agent says it tested something;
+- a deployment command returned success.
+
+## Phase 1 discipline
+
+Phase 1 proves the local canonical control plane before real autonomous provider orchestration.
+
+Do not add Paperclip, Activepieces, paid models, a full autonomous coding fleet, automated production deployment, invoicing integrations, or client-facing AI Employees merely because future contracts exist.
+
+## Public repository
+
+Use synthetic examples. Never commit real client names/data, secrets, payment data, API keys, proprietary prompts, private contracts, or production payloads.

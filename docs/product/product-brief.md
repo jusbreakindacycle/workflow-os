@@ -1,118 +1,93 @@
 # Product Brief
 
+## Working description
+
+Workflow OS is the temporary name for a personal, local-first command center and autonomy layer that lets one solo builder operate a small AI-native delivery business across multiple clients/projects without becoming the manual dispatcher between AI tools.
+
 ## Primary user
 
-One solo builder / freelance AI-software-and-automation operator who may simultaneously run client deliveries, internal products, experiments, deployed systems, and recurring maintenance.
+One technical or AI-assisted solo builder delivering websites, applications, automations, internal systems, data/integration work, AI features, and related maintenance.
 
-## Secondary users
+## Core problem
 
-Client operators, managers, approvers, technical owners, and future human owners of governed client-facing AI Employee roles.
+Today a solo builder often becomes the coordination bus:
 
-## Problem
+- client request lives in chat/notes;
+- research happens in one AI;
+- architecture in another;
+- implementation in Codex/Claude Code/Copilot;
+- tasks in Markdown or memory;
+- approvals in chat;
+- code in GitHub;
+- workflows in automation platforms;
+- deployments elsewhere;
+- failures/maintenance in separate dashboards.
 
-A solo builder can increasingly use AI to research, plan, code, test, automate, and deploy, but the work still fragments across chats, repositories, prompts, agents, task lists, automation engines, CI systems, cloud providers, notes, and production dashboards.
+Even if individual AI tools are capable, the human still has to transfer context, decide what to prompt next, remember dependencies, and verify what actually happened.
 
-The bottleneck shifts from “can AI perform the task?” to:
+## Product answer
 
-- what should happen next;
-- which specialist should do it;
-- what context is authoritative;
-- which tasks can run in parallel;
-- what is blocked;
-- what needs human approval;
-- whether an agent actually proved completion;
-- what was deployed;
-- what failed in production;
-- what needs maintenance;
-- what knowledge should be reused on the next project.
+Create one canonical operating layer that:
 
-Without a control layer, a solo builder becomes the manual project manager, dispatcher, context copier, reviewer, deployment coordinator, and incident tracker for their own AI workforce.
+- accepts raw project/client input;
+- asks adaptive questions;
+- distinguishes the requested solution from the underlying problem;
+- records commercial commitments;
+- creates explicit Project/WorkItem state;
+- generates a case-specific Project Pack;
+- chooses eligible models/runtimes/skills;
+- activates the needed internal specialist roles;
+- runs bounded loops/routines;
+- captures evidence and Activity events;
+- asks the operator only for consequential authority;
+- continues through deployment and maintenance.
 
-The core problem is:
+## UX thesis
 
-> How can one person run an AI-native delivery business where a raw problem or project idea is converted into a maintainable production outcome without manually coordinating every agent, workflow, repository, test, deployment, and maintenance action?
+The main UI should feel less like an agent chatroom and more like an **owner/operator cockpit**.
 
-## Value proposition
+Primary surfaces:
 
-Workflow OS provides a consistent Project/portfolio control plane above heterogeneous workflow engines, coding agents, deployment systems, AI runtimes, and human work while preserving:
+- New Project;
+- Needs My Attention;
+- Activity Feed;
+- Projects;
+- Clients/Engagements;
+- Costs;
+- Production/Maintenance.
 
-- problem/outcome context;
-- Project lifecycle state;
-- work dependencies and next-ready actions;
-- policy and human approval;
-- artifacts, decisions, and versions;
-- verification/evaluation evidence;
-- workflow and agent run history;
-- deployment/environment records;
-- incidents and maintenance obligations;
-- reusable client-neutral patterns;
-- operator visibility through one Command Center.
+Detailed model/runtime/agent logs are drill-down diagnostics.
 
-## Product layers
+## Non-goals
 
-### 1. Project and portfolio layer
+Workflow OS is not intended to become:
 
-Canonical Projects, lifecycle phases, work graphs, decisions, artifacts, evidence, blockers, approvals, and the operator-facing Command Center.
+- its own foundation model;
+- a universal IDE;
+- a replacement for GitHub;
+- a replacement for every workflow engine;
+- a generic remote desktop;
+- a giant prompt marketplace;
+- a full accounting/ERP suite;
+- an unrestricted self-organizing agent swarm;
+- a system that silently spends money or changes client scope.
 
-### 2. Internal AI delivery workforce
+## Differentiation
 
-Bounded research, product, architecture, engineering, verification, deployment, maintenance, and documentation agents. These agents receive assignments from Project state rather than owning the Project in hidden conversation context.
+The differentiator is not “more agents.”
 
-### 3. Workflow layer
+It is the combination of:
 
-Deterministic, AI-assisted, agentic, and human-in-the-loop business-process execution modeled through WIR and external execution adapters.
+- case-specific Project truth;
+- commercial + delivery context;
+- provider-neutral model/runtime routing;
+- generated instruction projections;
+- bounded autonomous loops;
+- human authority gates;
+- cross-provider evidence;
+- long-lived production/maintenance ownership;
+- one operator attention surface.
 
-### 4. Agent-engineering layer
+## Product principle
 
-Project/repository maps, verification harnesses, machine-enforced constraints, evaluation cases, independent review, and isolated execution environments that make coding agents capable of proving their work rather than merely generating code.
-
-### 5. Production operations and maintenance layer
-
-Deployment registry, production health, incident/change/maintenance work, recovery evidence, and continuing ownership after launch.
-
-### 6. Future client-facing AI Employee layer
-
-A governed business-facing role that:
-
-- owns explicit responsibilities/non-responsibilities;
-- receives bounded tasks;
-- uses approved workflows/tools/knowledge;
-- has explicit identity and authority;
-- escalates to a human owner;
-- earns autonomy through evaluation;
-- is measured by business outcome.
-
-The client-facing AI Employee layer is not the same as the internal delivery workforce.
-
-## Design principles
-
-1. Project state above agent state.
-2. Spec-first before broad implementation.
-3. Deterministic-first where exact rules are sufficient.
-4. Agents receive bounded assignments, not unrestricted company authority.
-5. Engine/runtime/vendor-agnostic canonical state where practical.
-6. WIR remains canonical for workflows; Project is canonical for delivery state.
-7. Responsibility is not permission.
-8. Human-in-the-loop where consequence requires it.
-9. Verification evidence matters more than agent confidence.
-10. Machine-enforced constraints are preferred over endlessly longer prompts.
-11. Reliability around every side effect.
-12. Workspace isolation from the first usable version.
-13. Memory is explicit and scoped.
-14. Deployment is a lifecycle transition, not the end of ownership.
-15. Observability and maintenance are product features.
-16. Reuse without copying confidential client material.
-17. Parallelism and multi-agent complexity are dependency- and evidence-driven.
-18. The Command Center must reduce, not recreate, project-management overhead for the operator.
-
-## North-star outcomes
-
-- operator can start from a problem/idea instead of manually constructing the whole delivery process;
-- every active Project has visible phase, health, owner/assignee, next action, blockers, and evidence;
-- research/specification/engineering/deployment handoffs are reproducible rather than chat-dependent;
-- coding agents can run and verify the real product with less human babysitting;
-- failures create reusable tests/constraints/knowledge;
-- deployed Projects remain observable and maintainable;
-- increasing reuse across projects without client-data leakage;
-- fewer manual coordination steps per delivered Project;
-- measurable cycle-time, quality, reliability, and business-outcome improvements.
+> Automate coordination, not accountability.
