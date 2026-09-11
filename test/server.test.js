@@ -28,7 +28,7 @@ test('local app serves control-plane UI and Phase 2 database-backed health endpo
   assert.equal(health.phase, 'phase-2');
   assert.equal(health.gate, 'autonomy-kernel-implemented-live-certification-pending');
   assert.equal(health.database.status, 'ready');
-  assert.equal(health.database.migrations, 5);
+  assert.equal(health.database.migrations, 6);
 
   const uiResponse = await fetch(`${origin}/`);
   assert.equal(uiResponse.status, 200);
