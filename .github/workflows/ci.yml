@@ -1,0 +1,26 @@
+name: Phase 1 Gate 1
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node 24.15
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.15.0
+      - name: Verify source and tests
+        run: npm run verify
+      - name: Verify migration and backup commands
+        run: |
+          npm run db:migrate
+          npm run db:backup

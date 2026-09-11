@@ -14,6 +14,8 @@ Before coding: README/goal/scope/architecture/ADRs agree; ADR-019 supersedes Act
 
 Choose the simplest local stack consistent with local web UI, local API/domain layer, persistent development database, migrations, schema/type validation, test runner, and documented startup. Framework choice is an implementation ADR only when it creates durable lock-in.
 
+**Selected implementation:** ADR-020 uses Node.js `>=24.15.0`, built-in HTTP + SQLite, a plain local web shell, ordered SQL migrations, runtime shape guards/JSDoc contracts, and `node:test`, with no runtime npm dependencies in Gate 1. Gate 1 is complete only when local/CI verification evidence passes and the implementation is merged.
+
 ## Gate 2 — Canonical entities and invariants
 
 Implement Workspace, Client, Engagement, Project/ProjectBrief version, ProjectRevision, WorkItem/dependencies, Proposal, Decision, Approval, Artifact/Evidence refs, ProjectEvent, ProjectPackVersion, ContextSlice, SpendEnvelope/CostRecord, and Assignment state **only to the depth required by the golden path**.

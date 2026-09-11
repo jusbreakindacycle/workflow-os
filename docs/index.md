@@ -50,6 +50,10 @@
 - [Phase 1 Acceptance Criteria](testing/acceptance-criteria.md)
 - [Production and Maintenance](operations/production-maintenance.md)
 
+## Implementation
+
+- [Local Development — Phase 1 Gate 1](implementation/local-development.md)
+
 ## Providers
 
 - [Provider Strategy](providers/strategy.md)
