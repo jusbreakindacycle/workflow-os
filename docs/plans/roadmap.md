@@ -1,6 +1,6 @@
 # Roadmap
 
-The roadmap is capability-gated. Phase numbers do not promise dates.
+The roadmap is capability-gated. Phase numbers do not promise dates, and a later Project's actual delivery strategy may justify moving one adapter evaluation earlier without changing canonical authority.
 
 ## Foundation v3 — current documentation reset
 
@@ -8,29 +8,35 @@ Align the repository with the human-governed, local-first, provider-independent 
 
 ## Phase 1 — Core Control Plane
 
-Build locally: Workspace/Client/Engagement/Project; New Project intake; discovery/unknowns/approval; goal revision/impact; WorkItems/dependencies/proposals; Decisions/Approvals; Project Pack + Context Slice; synthetic SpendEnvelope policy; Activity/Attention/Command Center; mock Assignment + evidence/verification.
+Build locally: Workspace/Client/Engagement/Project; New Project intake; discovery/unknowns/strategy/approval; goal revision/impact; WorkItems/dependencies/proposals; Decisions/Approvals; Project Pack + Context Slice; synthetic SpendEnvelope; Activity/Attention/Command Center; mock Assignment + evidence/verification.
 
-No real AI provider required.
+No real AI provider required. Exit once the semantics pass; do not turn Phase 1 into a PM suite.
 
-## Phase 2 — Autonomy Kernel
+## Phase 2 — Autonomy Kernel / First Real Execution
 
-Add model/runtime capability registry, ProviderConnection/entitlement registry + health, Broker + Spend Gate enforcement, one real Model Adapter and one real Runtime Adapter selected by evidence/availability, Project Bootstrapper, instruction compilation to at least two target formats/fixtures, Skill Registry, bounded Loop Engine, and independent verifier route.
+Add normalized capability registry, ProviderConnection/entitlement registry + health, Broker + Spend Gate enforcement, one real model/runtime route selected by evidence/availability, Project Bootstrapper, instruction compilation, Skill Registry, bounded Loop Engine, and independent verifier route.
 
-Goal: one WorkItem can be routed/executed without the operator copying prompts.
+Goal: one WorkItem can be routed/executed without operator prompt-copying.
 
-Before claiming **operational provider portability**, configure a second eligible real route/provider for representative synthetic work and execute a replacement/rerouting drill. If only one real route is available, provider-neutral architecture may exist but operational portability remains unproven.
+Before claiming **operational provider portability**, configure a second eligible real route/provider for representative synthetic work and execute a replacement/rerouting drill. With only one real route, provider-neutral architecture may exist but portability remains unproven.
 
-## Phase 3 — End-to-end Project Delivery
+## Phase 3 — End-to-end Delivery Golden Path
 
-Add AI-assisted discovery/research/challenge, dynamic internal role activation, approved repository creation/bootstrap, implementation/test/PR path, controlled deployment adapter, human deployment approval, and production/maintenance records.
+Add AI-assisted discovery/research/challenge and dynamic internal role activation, then choose the first complete delivery path from an actual controlled Project's **delivery strategy**.
 
-Goal: one controlled synthetic/internal MVP delivered from raw idea to deployed result.
+Examples:
+
+- `custom_build` / hybrid software: approved repository/bootstrap -> implementation -> test/review -> controlled deploy/delivery;
+- `automate` / integrate: evaluate/activate Workflow Engine Adapter earlier and execute the governed automation path;
+- `configure` / adopt existing: use appropriate tool/provider adapters and evidence without inventing source-code/repository/deployment steps.
+
+Goal: one controlled internal/synthetic Project reaches a verified real outcome from raw request with minimal operator coordination. The system does not privilege coding merely because coding agents are available.
 
 If unattended/background execution becomes valuable, define an `ExecutionHost` topology (local desktop, always-on self-hosted machine, or replaceable remote host). Canonical state must not depend on one hosting vendor.
 
-## Phase 4 — Business Workflow Automation
+## Phase 4 — Broaden Delivery Adapters
 
-Add WIR execution and evaluate Activepieces (or alternative) against Workflow Engine Adapter contract.
+Expand beyond the first golden path. If business workflow automation was not already the Phase 3 path, add WIR execution and evaluate Activepieces (or alternative). Add additional source/deployment/tool adapters only from measured Project needs.
 
 ## Phase 5 — Commercial Operations
 
