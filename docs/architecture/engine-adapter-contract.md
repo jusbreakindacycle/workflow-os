@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Execution engines are replaceable implementation targets. Workflow OS owns the canonical workflow and normalized lifecycle.
+Execution engines are replaceable implementation targets. Workflow OS owns canonical Project/workflow intent and normalized control-plane lifecycle.
 
 An adapter must translate the supported WIR subset into engine-specific operations without silently changing business semantics.
 
@@ -23,6 +23,8 @@ An MVP adapter must expose logical operations equivalent to:
 - `health()`
 
 These are conceptual contract operations. A specific engine may expose them through REST, MCP, SDK, webhooks, or another supported control transport.
+
+Project identity does not need to be passed to the execution engine if the engine has no Project concept, but Workflow OS must preserve Workspace + Project + workflow/deployment attribution around every adapter operation.
 
 ## Capability declaration
 
@@ -56,7 +58,7 @@ Workflow OS must not silently rely on undocumented/private endpoints or direct e
 
 ## Workspace isolation mapping
 
-Every deployment must document how a Workflow OS workspace maps to an execution-engine isolation boundary.
+Every deployment must document how a Workflow OS Workspace maps to an execution-engine isolation boundary.
 
 Examples:
 
@@ -73,24 +75,41 @@ The adapter manifest must state:
 
 If the engine cannot provide an acceptable boundary for the intended deployment, deployment validation fails.
 
+Project is **not** a substitute for Workspace isolation. Multiple Projects may intentionally share one authorized Workspace/engine boundary while retaining distinct Workflow OS Project attribution.
+
 ## No silent degradation
 
 If a workflow uses semantics that the target cannot preserve, deployment validation must fail or require an explicit approved transformation. The adapter must not ignore unsupported policy.
 
 ## Identifier mapping
 
-Workflow OS identifiers remain canonical. Adapter-specific instance/project/workflow/deployment/run identifiers are stored as mappings.
+Workflow OS identifiers remain canonical.
+
+Adapter mappings must retain enough context to resolve:
+
+- `workspace_id`;
+- `project_id`;
+- `workflow_id` / immutable `workflow_version`;
+- Workflow OS `deployment_id`;
+- adapter-specific tenant/project/flow/deployment identifiers;
+- Workflow OS `run_id` and adapter run/execution identifier.
+
+An adapter-specific “project” or “workspace” term must not be confused with Workflow OS `Project` semantics.
 
 ## State ownership
 
 The engine may own physical runtime state. Workflow OS owns normalized control-plane state and a run/event ledger sufficient to explain:
 
+- which Workspace/Project requested the work;
 - what was requested;
 - which immutable workflow version executed;
 - which engine/deployment handled it;
 - current/terminal status;
 - side effects known/uncertain;
+- applicable WorkItem/approval/evidence references;
 - recovery options.
+
+Engine status can update the applicable Project/WorkItem through normalized events, but the engine itself is not the source of Project lifecycle truth.
 
 ## Failure normalization
 
