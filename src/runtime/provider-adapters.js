@@ -45,11 +45,12 @@ export async function executeProviderRoute({ route, connection, prompt, env = pr
 
 function executeFixture(route, prompt) {
   const config = parseJson(route.config_json, {});
+  if (config.always_fail === true) throw new Error(`fixture_route_failure:${route.id}`);
   const mode = config.mode ?? 'worker';
   if (mode === 'verifier') {
-    const shouldFail = prompt.includes('FORCE_VERIFIER_FAIL');
+    const shouldFail = config.always_reject === true || prompt.includes('FORCE_VERIFIER_FAIL');
     const value = shouldFail
-      ? { outcome: 'fail', summary: 'Fixture verifier rejected the synthetic result.' }
+      ? { outcome: 'fail', summary: String(config.reject_summary ?? 'Fixture verifier rejected the synthetic result.') }
       : { outcome: 'pass', summary: 'Fixture verifier independently accepted the synthetic result.' };
     return Promise.resolve({
       text: JSON.stringify(value),
