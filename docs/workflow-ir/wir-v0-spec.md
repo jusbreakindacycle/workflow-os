@@ -2,22 +2,23 @@
 
 ## Purpose
 
-WIR is the vendor-neutral representation of **business workflow automation inside a Project**.
+WIR is the vendor-neutral canonical representation of **business workflow automation inside a Project**.
 
-WIR is not the Project model, not the internal agent work graph, and not the Project Pack.
+It is not the Project model, not the internal agent WorkItem graph, and not the Project Pack.
 
-## Required workflow fields
+## Document shape
+
+Required top-level fields:
 
 - `wir_version`
-- workflow `id`, `name`, `version`
-- `workspace_ref`
-- `project_ref`
-- `environment`
+- `workflow`
 - `nodes`
 - `edges`
 - `policy`
 
-## v0 node classes
+The `workflow` object includes `id`, `name`, `workspace_ref`, `project_ref`, `version`, and `environment`.
+
+## v0.1 node types
 
 - `trigger.manual`
 - `trigger.webhook`
@@ -34,42 +35,47 @@ WIR is not the Project model, not the internal agent work graph, and not the Pro
 
 Where relevant:
 
-- input/output schema refs;
-- integration reference;
+- tool/integration refs;
+- input/output schema refs in config/extensions;
 - timeout;
-- retry/idempotency policy;
+- retry policy;
+- idempotency/reconciliation mode;
 - concurrency/rate policy;
-- risk/data classification;
-- observability tags;
-- test fixture refs;
+- risk tier;
+- data classification;
+- observability/test refs;
 - engine extension object.
 
 ## Policy
 
-WIR can declare maximum runtime, timeout/retry ceilings, AI cost/iteration ceilings, approval policy, data classification/retention, and allowed execution target.
+WIR policy can declare maximum runtime, default timeout, data classification, AI cost/iteration ceilings, approval policy, and allowed execution constraints.
 
-Paid AI execution inside a WIR still requires the system Spend Gate unless an exact applicable SpendEnvelope already exists.
+`max_ai_cost_usd` is an execution ceiling, not permission to spend. Paid execution still requires an applicable operator-approved SpendEnvelope.
 
-## Secrets
+## Sensitive values
 
-Store logical integration references only. Never raw reusable secret values.
+WIR stores logical integration references, never reusable raw secret values.
 
 ## Versioning
 
-Published WorkflowVersions are immutable. Engine-specific deployment objects reference the exact WIR version.
+- `wir_version` versions the representation (`0.1` for this schema).
+- `workflow.version` versions the business workflow.
+- published WorkflowVersions are immutable.
+- deployment/provider mappings reference the exact WIR version.
 
 ## Validation
 
-A valid WIR must:
+A WIR document must:
 
-1. validate against schema;
-2. contain an allowed trigger and terminal path;
-3. have no dangling edges;
-4. satisfy risk/approval policy;
-5. declare safe retry/idempotency for relevant side effects;
-6. declare explicit budgets for repeating/AI behavior;
-7. remain attributable to Workspace + Project.
+1. validate against the JSON Schema;
+2. use allowed node types;
+3. contain a trigger and reachable terminal path (semantic validation beyond JSON Schema);
+4. contain no dangling edge refs;
+5. satisfy risk/approval policy;
+6. declare retry/idempotency behavior for relevant actions;
+7. declare explicit budgets for AI/repeating behavior;
+8. remain attributable to Workspace + Project.
 
 ## Extensions
 
-Engine-specific configuration belongs under `extensions` and cannot redefine core portable meaning.
+Engine-specific fields live under `extensions` and cannot redefine portable core semantics.

@@ -40,6 +40,7 @@
 ## Safety / operations
 
 - [Security Model](security/security-model.md)
+- [Risk and Approval Policy](security/risk-and-approval-policy.md)
 - [Reliability Model](reliability/reliability-model.md)
 - [Production and Maintenance](operations/production-maintenance.md)
 - [Verification Ladder](testing/verification-ladder.md)

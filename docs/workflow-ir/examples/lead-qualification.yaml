@@ -1,4 +1,4 @@
-wir_version: "0"
+wir_version: "0.1"
 workflow:
   id: synthetic-lead-qualification
   name: Synthetic Lead Qualification
@@ -6,35 +6,39 @@ workflow:
   project_ref: proj-synthetic
   version: "1"
   environment: test
-  nodes:
-    - id: start
-      type: trigger.webhook
-      risk_tier: R0
-    - id: normalize
-      type: transform
-      risk_tier: R0
-    - id: score
-      type: ai_transform
-      risk_tier: R1
-      config:
-        output_schema: lead_score_v1
-    - id: review
-      type: human_approval
-      risk_tier: R2
-    - id: end
-      type: end
-  edges:
-    - from: start
-      to: normalize
-    - from: normalize
-      to: score
-    - from: score
-      to: review
-    - from: review
-      to: end
-  policy:
-    max_runtime_ms: 300000
-    max_retries: 2
-    max_ai_iterations: 1
-    requires_human_approval_for_r3: true
-    data_classification: synthetic
+nodes:
+  - id: start
+    type: trigger.webhook
+    risk_tier: R0
+  - id: normalize
+    type: transform
+    risk_tier: R0
+  - id: score
+    type: ai_transform
+    timeout_seconds: 30
+    risk_tier: R1
+    config:
+      output_schema: lead_score_v1
+  - id: review
+    type: human_approval
+    risk_tier: R2
+  - id: end
+    type: end
+    risk_tier: R0
+edges:
+  - from: start
+    to: normalize
+  - from: normalize
+    to: score
+  - from: score
+    to: review
+  - from: review
+    to: end
+policy:
+  max_runtime_seconds: 300
+  default_timeout_seconds: 30
+  data_classification: Public
+  max_ai_cost_usd: 0
+  max_agent_iterations: 1
+  approval:
+    r3_requires_human: true
