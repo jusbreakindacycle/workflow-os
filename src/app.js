@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { assertFoundationStatus } from './domain/foundation-status.js';
 import { openDatabase } from './db/database.js';
 import { handleApi, statusForApiError } from './http/intake-api.js';
+import { handleControlPlaneApi, statusForControlPlaneError } from './http/control-plane-api.js';
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(moduleDir, '..');
@@ -28,7 +29,7 @@ export function createApp(options) {
   const status = {
     service: 'workflow-os',
     phase: 'phase-1',
-    gate: 'gate-3-new-project-discovery',
+    gate: 'gate-10-phase-1-complete',
     database: { status: 'ready', migrations }
   };
   assertFoundationStatus(status);
@@ -39,8 +40,10 @@ export function createApp(options) {
       if (request.method === 'GET' && url.pathname === '/api/health') return sendJson(response, 200, status);
 
       if (url.pathname.startsWith('/api/')) {
-        const result = await handleApi({ request, url, db });
-        if (result) return sendJson(response, result.status, result.body);
+        const intakeResult = await handleApi({ request, url, db });
+        if (intakeResult) return sendJson(response, intakeResult.status, intakeResult.body);
+        const controlPlaneResult = await handleControlPlaneApi({ request, url, db });
+        if (controlPlaneResult) return sendJson(response, controlPlaneResult.status, controlPlaneResult.body);
         return sendJson(response, 404, { error: 'not_found' });
       }
 
@@ -49,7 +52,8 @@ export function createApp(options) {
     } catch (error) {
       console.error(error);
       if ((request.url ?? '').startsWith('/api/')) {
-        return sendJson(response, statusForApiError(error), { error: error instanceof Error ? error.message : 'request_failed' });
+        const statusCode = Math.max(statusForApiError(error), statusForControlPlaneError(error));
+        return sendJson(response, statusCode, { error: error instanceof Error ? error.message : 'request_failed' });
       }
       return sendJson(response, 500, { error: 'internal_error' });
     }
