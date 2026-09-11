@@ -21,7 +21,7 @@ npm run db:backup
 
 The Phase 1 CI workflow runs these commands on pull requests and `main`.
 
-At the first full Gates 1–10 green run after implementation, the suite reported 28 tests, 28 passed, 0 failed; source/JSON checks, four migrations, and SQLite backup also passed. If later commits modify code/tests, the current PR check is authoritative and must remain green before merge.
+The full Gates 1–10 verification suite reports **29 tests, 29 passed, 0 failed**. Source/JSON checks pass, all four ordered migrations apply, repeat migration is idempotent, and SQLite backup succeeds. The current PR check remains authoritative and must be green before merge.
 
 ## Gate evidence map
 
@@ -31,10 +31,10 @@ At the first full Gates 1–10 green run after implementation, the suite reporte
 | Gate 1 — Repository foundation | `test/config.test.js`, `test/server.test.js`, migration/backup CI, `docs/implementation/local-development.md` |
 | Gate 2 — Canonical entities | `test/canonical-schema.test.js`, `test/canonical-store.test.js`, migration `0002_canonical_entities.sql`, ADR-021 |
 | Gate 3 — New Project/discovery | `test/gate3-intake.test.js`, `test/gate3-api.test.js`, migration `0003_project_intake_discovery.sql` |
-| Gate 4 — Work graph/attention | `test/phase1-control-plane.test.js` Gate 4 test, ProjectEvents, Command Center read models |
-| Gate 5 — Pack/Context | Gate 5 + secret tests in `test/phase1-control-plane.test.js`; `test/phase1-contracts.test.js`; canonical schemas |
-| Gate 6 — Revision impact | Gate 6 test proves selective stale/superseded propagation and preserved unaffected work |
-| Gate 7 — Repository approval | Gate 7 test proves strategy-conditional proposal, explicit approval, mock-only execution |
+| Gate 4 — Work graph/attention | Gate 4 test in `test/phase1-control-plane.test.js`, ProjectEvents, Command Center read models |
+| Gate 5 — Pack/Context | Gate 5 + secret tests, `test/phase1-contracts.test.js`, canonical schemas |
+| Gate 6 — Revision impact | selective invalidation test plus `test/phase1-pack-revision.test.js` proving new Pack version and inspectable diff |
+| Gate 7 — Repository approval | strategy-conditional proposal, explicit approval, mock-only execution test |
 | Gate 8 — Assignment/verification | pass/fail tests plus `test/phase1-api.test.js`; `execution_finished` never directly completes WorkItem |
 | Gate 9 — Spend | Gate 9 test plus database approval/cost-envelope triggers |
 | Gate 10 — Recovery/Command Center | restart test, HTTP golden-path test, server/health test and local UI |
@@ -67,7 +67,8 @@ At the first full Gates 1–10 green run after implementation, the suite reporte
 - readiness is dependency/version/policy aware and explainable;
 - WorkItem Proposals cannot silently become canonical WorkItems;
 - material revision appends Brief/Revision history;
-- selected affected work/approval/assignment/pack state is invalidated while unaffected work remains valid.
+- selected affected WorkItem/Approval/Assignment/Pack state is invalidated while unaffected work remains valid;
+- regenerated accepted state creates a new Project Pack version and a deterministic, inspectable structural diff.
 
 ### Project Pack / Context Slice
 
@@ -75,6 +76,7 @@ At the first full Gates 1–10 green run after implementation, the suite reporte
 - malformed strategy, work graph, policy, requirement, Assignment, and Context data is rejected;
 - equivalent accepted state regenerates an equivalent current Pack;
 - raw secret patterns are rejected;
+- provenance and Pack versions are persisted and visible;
 - commercial price data is absent from normal Assignment Context Slice fixtures.
 
 ### Assignment / evidence
