@@ -541,7 +541,8 @@ export class Phase2AutonomyKernel {
     if (primary.provider_connection_id === secondary.provider_connection_id) throw new Error('portability_requires_distinct_connections');
     if (primary.independence_group === secondary.independence_group) throw new Error('portability_requires_distinct_independence_groups');
 
-    const created = this.createRoutedAssignment({ workspaceId, projectId, workItemId, maxIterations: 1, maxMinutes: 5, spendEnvelopeId, spendPurpose, maxIncrementalCostMinor: Math.max(primary.estimated_cost_minor ?? 0, secondary.estimated_cost_minor ?? 0) });
+    const portabilityBudgetMinor = Number(primary.estimated_cost_minor ?? 0) + Number(secondary.estimated_cost_minor ?? 0);
+    const created = this.createRoutedAssignment({ workspaceId, projectId, workItemId, maxIterations: 1, maxMinutes: 5, spendEnvelopeId, spendPurpose, maxIncrementalCostMinor: portabilityBudgetMinor });
     const assignment = created.assignment;
     const prompt = created.instructionBundle.instructions_text;
     const primaryDecision = this.#insertExplicitRouteDecision({ workspaceId, projectId, workItemId, assignmentId: assignment.id, purpose: 'worker', route: primary, note: 'portability_primary' });
