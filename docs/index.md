@@ -18,6 +18,7 @@
 - [Data and Event Model](architecture/data-and-event-model.md)
 - [Local-first Control Plane](architecture/local-first-control-plane.md)
 - [Model / Runtime Broker](architecture/model-runtime-broker.md)
+- [Capability Vocabulary](architecture/capability-vocabulary.md)
 - [Project Bootstrapper and Instruction Compiler](architecture/project-bootstrapper-and-instruction-compiler.md)
 - [Loop / Routine Engine](architecture/loop-routine-engine.md)
 - [Skill Registry](architecture/skill-registry.md)
@@ -72,5 +73,7 @@ Templates are scaffolds used to generate case-specific records. They are not gen
 - `templates/agent-assignment.example.yaml`
 - `templates/work-item-proposal.md`
 - `schemas/project-pack.schema.json`
+- `schemas/context-slice.schema.json`
 - `schemas/agent-assignment.schema.json`
 - `schemas/model-runtime-profile.schema.json`
+- `schemas/provider-connection.schema.json`

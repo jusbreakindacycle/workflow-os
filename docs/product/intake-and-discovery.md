@@ -2,18 +2,11 @@
 
 ## Purpose
 
-Convert incomplete human intent into accepted Project facts without forcing the operator to become the requirements engineer for every domain.
+Convert incomplete human intent into accepted Project facts without forcing the operator to become the requirements engineer for every domain — and without assuming that every problem should become custom software.
 
 ## Input classes
 
-A Project may begin from:
-
-- client request;
-- user problem;
-- internal product idea;
-- observed operational pain;
-- bug/change request;
-- maintenance need.
+A Project may begin from client request, user problem, internal product idea, observed operational pain, bug/change request, or maintenance need.
 
 ## State separation
 
@@ -27,6 +20,7 @@ Store/reference distinct concepts:
 - `ResearchFinding`;
 - `AssumptionProposal`;
 - `SolutionOption`;
+- `DeliveryStrategyDecision`;
 - `Decision`;
 - accepted `ProjectBrief` fields.
 
@@ -34,36 +28,49 @@ This prevents an AI-generated assumption from becoming client truth merely becau
 
 ## Interview behavior
 
-Questions should be:
+Questions should be adaptive to known context, plain-language, prioritized by impact on scope/risk/architecture, skippable with `I don't know`, and avoided when the answer can be safely researched/derived.
 
-- adaptive to known context;
-- plain-language;
-- one decision at a time where practical;
-- prioritized by how much the answer changes scope/risk/architecture;
-- skippable with `I don't know`.
+## Requested solution vs actual problem
 
-The system should avoid asking for information it can safely derive or research itself.
+Preserve what the client/operator requested, but do not assume the requested artifact is the best intervention.
 
-## Challenge loop
+Before architecture, compare the problem/outcome against plausible delivery strategies such as:
 
-Before locking a solution, compare:
+- `process_change` — fix/standardize the process before software;
+- `adopt_existing` — use an existing product/service;
+- `configure` — configure an existing system;
+- `integrate` — connect existing systems;
+- `automate` — automate a repeatable workflow;
+- `custom_build` — build bespoke software;
+- `hybrid` — combine approaches;
+- `research_or_pilot` — uncertainty too high for full commitment;
+- `decline_or_defer` — value/feasibility/risk does not justify proceeding yet.
 
-1. what was requested;
-2. the underlying problem/outcome;
-3. constraints and commercial commitments;
-4. at least the simplest viable solution;
-5. material alternatives where they change cost/risk/time/value.
+The decision is case-specific. No strategy wins by default.
 
-The output is a recommendation, not unilateral authority.
+## Feasibility/value challenge
+
+For material options, evaluate the evidence that actually changes the decision, for example:
+
+- user/business value;
+- process clarity and exception rate;
+- interface/API/tool availability;
+- data quality;
+- privacy/security/legal constraints;
+- reversibility/verifiability;
+- implementation/operating cost;
+- expected maintenance burden;
+- time-to-value;
+- whether a simpler existing solution satisfies the outcome.
+
+Do not fabricate numeric ROI or weighted scores when reliable inputs do not exist. Unknowns remain explicit.
+
+## Client request rule
+
+The system may recommend something different from what the client requested, but it never silently substitutes the recommendation for the request/commitment. Present the trade-off and record the human/client decision required.
 
 ## Stop condition
 
-Discovery is sufficient to move forward when:
+Discovery is sufficient to move forward when the target problem/outcome is explicit; material constraints are captured; a working delivery strategy is chosen or a strategy-comparison WorkItem exists; unresolved unknowns are non-blocking or represented as work/risks; success/acceptance is describable; and required operator/client decisions are recorded.
 
-- the target problem/outcome is explicit;
-- unresolved unknowns are either non-blocking or represented as WorkItems/risks;
-- material constraints are captured;
-- success/acceptance can be described;
-- the operator/client decision required to choose the working direction is recorded.
-
-Do not seek perfect certainty before building an MVP.
+Do not seek perfect certainty before an MVP/pilot.

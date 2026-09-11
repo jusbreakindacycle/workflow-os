@@ -8,7 +8,7 @@
     "project_pack_version": { "const": "0.1" },
     "project": {
       "type": "object",
-      "required": ["workspace_id", "project_id", "project_brief_version", "kind", "problem", "desired_outcome", "requirements", "non_goals", "work_graph", "policy", "verification", "escalation"],
+      "required": ["workspace_id", "project_id", "project_brief_version", "kind", "problem", "desired_outcome", "delivery_strategy", "requirements", "non_goals", "work_graph", "policy", "verification", "escalation"],
       "properties": {
         "workspace_id": { "type": "string", "minLength": 1 },
         "project_id": { "type": "string", "minLength": 1 },
@@ -16,6 +16,15 @@
         "kind": { "enum": ["client_delivery", "internal_product", "experiment"] },
         "problem": { "type": "string", "minLength": 1 },
         "desired_outcome": { "type": "string", "minLength": 1 },
+        "delivery_strategy": {
+          "type": "object",
+          "required": ["primary", "decision_ref"],
+          "properties": {
+            "primary": { "enum": ["process_change", "adopt_existing", "configure", "integrate", "automate", "custom_build", "hybrid", "research_or_pilot", "decline_or_defer"] },
+            "decision_ref": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
         "engagement_ref": { "type": ["string", "null"] },
         "requirements": {
           "type": "array",

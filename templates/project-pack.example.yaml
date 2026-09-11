@@ -6,6 +6,9 @@ project:
   kind: client_delivery
   problem: "Synthetic example problem"
   desired_outcome: "Synthetic measurable outcome"
+  delivery_strategy:
+    primary: custom_build
+    decision_ref: "decision://delivery-strategy-v1"
   engagement_ref: engagement-synthetic
   requirements:
     - id: req-1
