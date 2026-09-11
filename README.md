@@ -21,6 +21,8 @@ The operator primarily does four things:
 
 Everything else should be coordinated by the system as far as evidence, policy, available compute, and approved authority allow.
 
+A goal revision is not a silent text edit. The system must version it, assess impact, invalidate stale derived work/approvals when required, and regenerate the affected Project Pack/plan before continuing.
+
 ## Target lifecycle
 
 ```text
@@ -67,7 +69,9 @@ The control plane, Project state, commercial records, approvals, activity histor
 
 Local-first does **not** mean every high-capability AI model must run on the operator's laptop. The system may route suitable work to local models and may use remote/free/paid models when available and approved.
 
-Any paid AI execution requires an explicit operator-approved spend envelope before money is spent.
+Continuous autonomous work also requires an available execution/coordinator host. If the local host is shut down or asleep and no approved always-on host exists, work waits; the product must not pretend it continued running.
+
+Any new metered/variable-cost external execution requires an applicable operator-approved spend envelope before incremental cost is incurred.
 
 ## Not a generic template generator
 
@@ -75,11 +79,13 @@ Every Project gets a **case-specific Project Pack** compiled from its actual pro
 
 Provider-specific files such as `AGENTS.md`, `CLAUDE.md`, Copilot instructions, or OpenCode/runtime configuration are generated projections of that Project Pack. They are not the canonical Project state.
 
+Workers receive a minimum-authorized Assignment Context/Context Slice, not blanket permission to transmit the full Project Pack or commercial record to every provider.
+
 ## Internal workforce
 
 A complete logical delivery roster may exist for every Project, but roles are activated dynamically. The system should not run fourteen agents merely because fourteen role names exist.
 
-Typical capabilities include intake, research, product/requirements, architecture, planning, implementation, QA/verification, security/reliability, adversarial review, deployment, maintenance, and documentation.
+Typical capabilities include intake, research, product/requirements, UX/product design, architecture, planning, implementation, QA/verification, security/reliability, adversarial review, deployment, maintenance, and documentation.
 
 ## Operator experience
 
