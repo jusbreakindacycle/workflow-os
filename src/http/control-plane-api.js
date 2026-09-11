@@ -1,5 +1,6 @@
 // @ts-check
 import { Phase1ControlPlane } from '../domain/phase1-control-plane.js';
+import { diffProjectPackVersions } from '../domain/project-pack-diff.js';
 
 const maxBodyBytes = 256 * 1024;
 
@@ -14,7 +15,20 @@ export async function handleControlPlaneApi({ request, url, db }) {
     return { status: 200, body: control.getCommandCenter({ workspaceId: requiredQuery(url, 'workspaceId') }) };
   }
 
-  let match = url.pathname.match(/^\/api\/projects\/([^/]+)\/(command-center|work-graph|work-graph\/initialize|readiness\/refresh|project-pack|context-slices|revisions|repository-proposals|assignments|spend-requests|metered-actions)$/);
+  let match = url.pathname.match(/^\/api\/projects\/([^/]+)\/project-pack-diff$/);
+  if (match && request.method === 'GET') {
+    return {
+      status: 200,
+      body: diffProjectPackVersions(db, {
+        workspaceId: requiredQuery(url, 'workspaceId'),
+        projectId: decodeURIComponent(match[1]),
+        fromVersion: requiredQueryInteger(url, 'fromVersion'),
+        toVersion: requiredQueryInteger(url, 'toVersion')
+      })
+    };
+  }
+
+  match = url.pathname.match(/^\/api\/projects\/([^/]+)\/(command-center|work-graph|work-graph\/initialize|readiness\/refresh|project-pack|context-slices|revisions|repository-proposals|assignments|spend-requests|metered-actions)$/);
   if (match) {
     const projectId = decodeURIComponent(match[1]);
     const action = match[2];
@@ -165,6 +179,12 @@ function requiredQuery(url, key) {
   const value = url.searchParams.get(key);
   if (!value) throw new TypeError(`${key}_required`);
   return value;
+}
+function requiredQueryInteger(url, key) {
+  const value = requiredQuery(url, key);
+  const number = Number(value);
+  if (!Number.isInteger(number) || number < 1) throw new TypeError(`${key}_positive_integer_required`);
+  return number;
 }
 function requiredString(object, key) {
   const value = object[key];
