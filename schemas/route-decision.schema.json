@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:autonomous-delivery:route-decision:0.1",
+  "title": "Route Decision v0.1",
+  "type": "object",
+  "required": ["route_decision_version","id","workspace_id","project_id","work_item_id","purpose","selected_route_ref","candidate_snapshot","rationale"],
+  "properties": {
+    "route_decision_version":{"const":"0.1"},
+    "id":{"type":"string","minLength":1},
+    "workspace_id":{"type":"string","minLength":1},
+    "project_id":{"type":"string","minLength":1},
+    "work_item_id":{"type":"string","minLength":1},
+    "assignment_id":{"type":["string","null"]},
+    "purpose":{"enum":["worker","verifier"]},
+    "selected_route_ref":{"type":"string","minLength":1},
+    "candidate_snapshot":{"type":"array","items":{"type":"object"}},
+    "rationale":{"type":"object"}
+  },
+  "additionalProperties":false
+}
