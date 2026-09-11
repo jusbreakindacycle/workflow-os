@@ -6,23 +6,39 @@ Prove the product's canonical semantics and operator UX locally without dependin
 
 Phase 1 is an **architecture-risk retirement slice**, not permission to build a polished project-management suite. Exit as soon as the golden-path semantics/evidence pass, then move to real provider execution in Phase 2.
 
+## Implementation status
+
+| Gate | Status | Primary evidence |
+|---|---|---|
+| 0 — Foundation v3 | Merged | Foundation v3 + PR #7 adversarial review |
+| 1 — Repository foundation | Merged | ADR-020, local-development runbook, CI/startup/migration/backup tests |
+| 2 — Canonical entities | Merged | ADR-021, canonical schema/store tests |
+| 3 — New Project / discovery | Implemented + green in current PR | Gate 3 intake/API tests |
+| 4 — Work graph / attention | Implemented + green in current PR | Gate 4 control-plane test |
+| 5 — Project Pack / Context Slice | Implemented + green in current PR | deterministic contract/context tests |
+| 6 — Goal revision / impact | Implemented + green in current PR | selective invalidation test |
+| 7 — Repository approval | Implemented + green in current PR | strategy + approval + mock-only test |
+| 8 — Assignment / verification | Implemented + green in current PR | pass/fail evidence-verification tests + HTTP golden path |
+| 9 — Spend Gate | Implemented + green in current PR | approval/envelope/limit tests |
+| 10 — Recovery / Command Center | Implemented + green in current PR | restart and Command Center tests |
+
+Phase 1 becomes formally exited when the current PR is green and merged. The canonical evidence record is `docs/reviews/phase-1-completion-report.md`.
+
 ## Gate 0 — Foundation v3 accepted
 
-Before coding: README/goal/scope/architecture/ADRs agree; ADR-019 supersedes Activepieces-first order; provider integrations are deferred; Phase 1 acceptance criteria are stable enough to build against.
+README/goal/scope/architecture/ADRs agree; ADR-019 supersedes the old Activepieces-first order; provider integrations are deferred; Phase 1 acceptance criteria define the local proof.
 
 ## Gate 1 — Repository implementation foundation
 
-Choose the simplest local stack consistent with local web UI, local API/domain layer, persistent development database, migrations, schema/type validation, test runner, and documented startup. Framework choice is an implementation ADR only when it creates durable lock-in.
+ADR-020 selects Node.js `>=24.15.0`, built-in HTTP + SQLite, a plain local web shell, ordered SQL migrations, runtime shape guards/JSDoc contracts, and `node:test`, with no runtime npm dependencies.
 
-**Selected implementation:** ADR-020 uses Node.js `>=24.15.0`, built-in HTTP + SQLite, a plain local web shell, ordered SQL migrations, runtime shape guards/JSDoc contracts, and `node:test`, with no runtime npm dependencies in Gate 1. Gate 1 is complete only when local/CI verification evidence passes and the implementation is merged.
+The application starts locally, owns a persistent SQLite database, applies checksum-protected migrations, exposes a local API/UI, and has a documented backup path.
 
 ## Gate 2 — Canonical entities and invariants
 
-Implement Workspace, Client, Engagement, Project/ProjectBrief version, ProjectRevision, WorkItem/dependencies, Proposal, Decision, Approval, Artifact/Evidence refs, ProjectEvent, ProjectPackVersion, ContextSlice, SpendEnvelope/CostRecord, and Assignment state **only to the depth required by the golden path**.
+Workspace, Client, Engagement, Project/ProjectBrief version, ProjectRevision, WorkItem/dependencies, Proposal, Decision, Approval, Artifact/Evidence refs, ProjectEvent, ProjectPackVersion, ContextSlice, SpendEnvelope/CostRecord, and Assignment foundations are persisted only to the depth needed by the golden path.
 
-Do not turn quote/payment/maintenance placeholders into separate subsystems in Phase 1.
-
-Prove Workspace scoping and version-safe state transitions.
+Workspace isolation and optimistic versioning are enforced in both domain behavior and database relationships where representable.
 
 ## Gate 3 — New Project / discovery / delivery strategy
 
@@ -38,25 +54,23 @@ Prove Workspace scoping and version-safe state transitions.
   -> operator accepts problem/outcome/working scope/strategy summary
 ```
 
-No AI required. Client work may record `proposed_to_client`/`client_accepted` separately; operator approval alone must not fabricate client acceptance.
+No AI is required. Client work keeps operator approval separate from actual client acceptance.
 
 ## Gate 4 — Work graph + attention
 
-Create initial synthetic WorkItems, derive readiness, Needs My Attention, Activity Feed, and next-ready work. Prove proposals cannot silently change canonical scope.
+Accepted Projects can create a small synthetic Work graph. Readiness is derived from canonical status, dependencies, active Assignments, and pending approval. Needs My Attention and Activity Feed are read models over source records/events. WorkItem Proposals never silently become canonical work.
 
 ## Gate 5 — Project Pack + Context Slice
 
-Generate/validate Project Pack v0.1 from accepted canonical state. Regeneration/version/diff/provenance must be testable. Create an Assignment Context Slice containing only authorized WorkItem-relevant context.
+Project Pack v0.1 is generated deterministically from accepted canonical state, validated, hashed, versioned, and stored with provenance. Context Slice binds one exact WorkItem version to minimum-authorized execution context. Raw reusable secrets are rejected.
 
 ## Gate 6 — Goal revision / impact propagation
 
-Revise an already accepted synthetic Project goal. Prove new ProjectBrief/ProjectRevision version; affected WorkItems/approvals/Pack become stale/superseded as applicable; unaffected work remains valid when safe; revised Pack is generated only from accepted state.
+A material revision appends a new accepted ProjectBrief/ProjectRevision. Explicitly affected WorkItems/approvals/Assignments/Pack state become stale/superseded while unaffected work remains valid when its basis did not change.
 
 ## Gate 7 — Optional repository approval branch
 
-For a synthetic `custom_build` or repository-requiring strategy, create RepositoryProposal/approval flow in canonical state/UI. Actual source-control API creation remains deferred; use mock adapter/result.
-
-A `process_change`, `adopt_existing`, or other strategy that does not need a repository must be able to continue without inventing one.
+`custom_build` and `hybrid` Projects may create RepositoryProposal + Approval state. Non-repository strategies continue without inventing one. Phase 1 uses only `mock://repository/...` results; no source-control provider API is called.
 
 ## Gate 8 — Mock Assignment / verification
 
@@ -66,27 +80,29 @@ WorkItem ready
   -> execution_finished
   -> evidence attached
   -> verifier pass/fail
-  -> WorkItem complete OR repair/blocked
+  -> WorkItem complete OR needs_attention
 ```
 
-Provider completion must not bypass verification. Mock worker must not receive unrelated client/commercial context.
+Execution finish does not complete the WorkItem. A pass requires evidence and completion authority stays in verification. A failed verification leaves work incomplete and visible to the operator.
 
 ## Gate 9 — Spend Gate semantics
 
-Use synthetic metered-route/action fixtures to prove unapproved incremental cost cannot start and envelope limits are enforced.
+Synthetic metered execution requires an approved bounded SpendEnvelope. Unknown cost is not silently treated as zero; purpose/currency/WorkItem/balance are enforced; cost records reconcile spend; expansion requires a new Approval.
 
 ## Gate 10 — Restart/recovery + Command Center
 
-Restart during synthetic in-flight Assignment and prove state remains explainable. Complete Command Center/Activity/attention criteria.
+A persisted in-flight Assignment remains explainable after SQLite reopen and is not falsely completed. The Command Center derives portfolio phase/status/health, next-ready work, Needs My Attention, Activity Feed, Assignment recovery state, Pack versions, repository proposals, and spend state from canonical records.
 
 ## Anti-PM-suite stop rule
 
 Do **not** add Gantt charts, generic boards, chatrooms, full CRM/accounting, rich invoicing, multi-user collaboration, workflow canvas, provider dashboards, or UI polish not required to prove the golden path.
 
+This stop rule now applies immediately after merge of the completed Phase 1 PR. Do not reopen Phase 1 for generic product polish unless implementation exposes a real correctness defect.
+
 ## Exit
 
-Every applicable checkbox in `docs/testing/acceptance-criteria.md` has reproducible evidence. Once this passes, the next meaningful task is Phase 2 real execution — not another foundation expansion.
+Every Phase 1 acceptance criterion has reproducible implementation/test evidence mapped in `docs/reviews/phase-1-completion-report.md`. Once the current PR is green and merged, proceed to Phase 2 real execution rather than another foundation expansion.
 
 ## Explicit non-goals
 
-No Paperclip, Activepieces, real ProviderConnection/model API, automated coding, automated deployment, payment processor, client portal, or production autonomous loop in Phase 1.
+No Paperclip, Activepieces, real ProviderConnection/model API, automated coding, automated deployment, payment processor, client portal, or production autonomous loop is part of Phase 1.
