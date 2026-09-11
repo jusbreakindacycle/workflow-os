@@ -20,7 +20,7 @@
           "type": "object",
           "required": ["primary", "decision_ref"],
           "properties": {
-            "primary": { "enum": ["process_change", "adopt_existing", "configure", "integrate", "automate", "custom_build", "hybrid", "research_or_pilot", "decline_or_defer"] },
+            "primary": { "enum": ["process_change", "adopt_existing", "configure", "integrate", "automate", "custom_build", "hybrid", "research_pilot", "defer"] },
             "decision_ref": { "type": "string", "minLength": 1 }
           },
           "additionalProperties": false
