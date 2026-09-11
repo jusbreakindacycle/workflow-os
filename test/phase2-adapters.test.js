@@ -2,8 +2,14 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { executeProviderRoute, inspectConnectionHealth } from '../src/runtime/provider-adapters.js';
 
-function response(body, status = 200) {
-  return { ok: status >= 200 && status < 300, status, async json() { return body; } };
+function response(body, status = 200, headers = {}) {
+  const normalized = new Map(Object.entries(headers).map(([key, value]) => [key.toLowerCase(), String(value)]));
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    headers: { get(name) { return normalized.get(String(name).toLowerCase()) ?? null; } },
+    async json() { return body; }
+  };
 }
 
 test('OpenAI Responses adapter normalizes text and never needs a raw secret in route state', async () => {
@@ -26,6 +32,37 @@ test('OpenAI Responses adapter normalizes text and never needs a raw secret in r
   assert.equal(JSON.parse(request.options.body).store, false);
   assert.doesNotMatch(JSON.stringify(route), /secret-not-persisted/);
   assert.doesNotMatch(JSON.stringify(connection), /secret-not-persisted/);
+});
+
+test('Groq-compatible Responses route omits unsupported store field and retains quota headers', async () => {
+  const connection = { id: 'groq', provider_key: 'groq', connection_type: 'api_key', credential_ref: 'TEST_GROQ_KEY', enabled: 1, status: 'degraded', endpoint_url: 'https://api.groq.com/openai/v1/responses' };
+  const route = { id: 'groq-route', adapter_kind: 'openai_responses', model_key: 'openai/gpt-oss-120b', config_json: '{"max_output_tokens":100}' };
+  let body;
+  const result = await executeProviderRoute({
+    connection,
+    route,
+    prompt: 'synthetic prompt',
+    env: { TEST_GROQ_KEY: 'secret-not-persisted' },
+    fetchImpl: async (_url, options) => {
+      body = JSON.parse(options.body);
+      return response(
+        { id: 'groq_1', output_text: 'free result', usage: { input_tokens: 12, output_tokens: 3, total_tokens: 15 } },
+        200,
+        {
+          'x-ratelimit-limit-requests': '1000',
+          'x-ratelimit-remaining-requests': '998',
+          'x-ratelimit-limit-tokens': '8000',
+          'x-ratelimit-remaining-tokens': '7900',
+          'x-ratelimit-reset-requests': '1h',
+          'x-ratelimit-reset-tokens': '2s'
+        }
+      );
+    }
+  });
+  assert.equal('store' in body, false);
+  assert.equal(result.text, 'free result');
+  assert.equal(result.usage.rate_limits.remaining_requests, '998');
+  assert.equal(result.usage.rate_limits.remaining_tokens, '7900');
 });
 
 test('Anthropic Messages adapter normalizes text blocks', async () => {
