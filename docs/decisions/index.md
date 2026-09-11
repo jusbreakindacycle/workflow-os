@@ -16,7 +16,7 @@ ADRs capture decisions that must remain understandable after chat context is gon
 | [ADR-010](ADR-010-multi-agent-deferred.md) | Client-facing AI Employee multi-agent collaboration is deferred until single-role value is proven | Accepted |
 | [ADR-011](ADR-011-project-top-level-operational-unit.md) | Project is the top-level operational unit; WIR remains canonical within Project | Accepted |
 | [ADR-012](ADR-012-internal-agent-collaboration-gated.md) | Internal agent collaboration is work-graph and verification gated | Accepted |
-| [ADR-013](ADR-013-internal-workforce-adapter-boundary.md) | Internal AI workforce orchestration stays behind a provider-neutral adapter boundary | Proposed |
+| [ADR-013](ADR-013-internal-workforce-adapter-boundary.md) | Internal AI workforce orchestration stays behind a provider-neutral adapter boundary | Accepted |
 
 ## ADR rules
 
