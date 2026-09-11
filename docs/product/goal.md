@@ -19,7 +19,7 @@ The long-term operator responsibility is intentionally small:
 - answer important discovery questions, including `I don't know`;
 - provide credentials when needed;
 - approve/reject/revise consequential decisions;
-- approve any paid AI/runtime execution before spend;
+- approve any new metered/variable-cost external execution before spend;
 - accept commercial/production commitments that require human authority.
 
 ## System job
@@ -46,6 +46,21 @@ Subject to policy, evidence, available capability, and approved budgets, the sys
 18. incident/maintenance/change work;
 19. lessons/reuse.
 
+## Goal revision rule
+
+`Give or revise the goal` is a first-class operation.
+
+A material revision must:
+
+- create a new accepted ProjectBrief/goal version;
+- record who/what changed and why;
+- compute which requirements, WorkItems, decisions, approvals, architecture artifacts, Project Pack versions, repository/deployment plans, and commercial commitments may be stale;
+- stop affected ready/running work when continuing would be unsafe or wasteful;
+- create impact/decision items rather than silently rewriting history;
+- regenerate derived Project Pack/Assignment context only after the revised direction is accepted.
+
+Revision does not erase historical evidence.
+
 ## Independence goal
 
 Workflow OS must not require one specific AI platform to preserve or understand a Project.
@@ -54,17 +69,21 @@ Switching from Codex to Claude Code, Copilot, OpenCode, a local/open model runti
 
 Provider-specific prompts/instruction files are compiled projections of canonical Project state.
 
+Provider independence is not considered operationally proven merely because interfaces are abstract: representative provider-replacement/rerouting drills must eventually demonstrate it.
+
 ## Local-first goal
 
 The operator's Project/commercial state, decisions, approvals, evidence, Activity Feed, and Command Center should remain locally usable even when external providers are unavailable.
 
-Local-first is not a promise that every advanced AI workload runs locally. The system should route work according to capability, privacy, cost, availability, and approved policy.
+Local-first is not a promise that every advanced AI workload runs locally. The system should route work according to capability, privacy, cost, availability, configured provider access, and approved policy.
+
+Continuous autonomous execution requires an available coordinator/execution host. When no approved host is online, work waits visibly instead of pretending it continued.
 
 ## Human-governance goal
 
 Autonomy is bounded by explicit authority.
 
-The system may continue routine, in-scope, already-authorized work without asking the operator for every microscopic step. It must stop for material scope/price/deadline/risk/credential/production decisions and before unapproved paid execution.
+The system may continue routine, in-scope, already-authorized work without asking the operator for every microscopic step. It must stop for material scope/price/deadline/risk/credential/production decisions and before unapproved metered external execution.
 
 ## Success condition
 
