@@ -1,0 +1,20 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"urn:autonomous-delivery:skill-definition:0.1",
+  "title":"Skill Definition v0.1",
+  "type":"object",
+  "required":["skill_version","id","skill_key","version","status","description","required_capabilities","instructions","risk_tier","content_sha256"],
+  "properties":{
+    "skill_version":{"const":"0.1"},
+    "id":{"type":"string","minLength":1},
+    "skill_key":{"type":"string","minLength":1},
+    "version":{"type":"integer","minimum":1},
+    "status":{"enum":["active","disabled","superseded"]},
+    "description":{"type":"string","minLength":1},
+    "required_capabilities":{"type":"array","items":{"type":"string","minLength":1},"uniqueItems":true},
+    "instructions":{"type":"string","minLength":1},
+    "risk_tier":{"enum":["R0","R1","R2","R3"]},
+    "content_sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}
+  },
+  "additionalProperties":false
+}
