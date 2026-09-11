@@ -58,13 +58,14 @@ export class FreeFirstBroker {
   }
 
   /**
-   * Provision zero-incremental routes. Credentials are referenced by environment
-   * variable name only. Antigravity uses a loopback bridge endpoint supplied by
-   * the caller after local CLI authentication.
+   * Provision zero-incremental routes. Credentials are references only.
+   * Every provider/model gets separate worker and verifier projections so a
+   * quota bucket can be reserved for verification without remaining eligible
+   * as an ordinary worker route.
    */
   provisionFreeRoutes({ workspaceId, antigravity = null, groq = null, openrouter = null }) {
     this.ensurePolicy({ workspaceId });
-    const routes = [];
+
     if (antigravity?.endpointUrl && Array.isArray(antigravity.models) && antigravity.models.length) {
       const connection = this.#ensureConnection({
         workspaceId,
@@ -79,31 +80,37 @@ export class FreeFirstBroker {
       for (const model of antigravity.models) {
         if (!model?.slug) continue;
         const tier = ['economy', 'balanced', 'frontier'].includes(model.tier) ? model.tier : 'balanced';
-        const name = `free-antigravity-${model.slug}`;
-        discoveredNames.add(name);
-        routes.push(this.#ensureRoute({
-          workspaceId,
-          connection,
-          routeName: name,
-          modelKey: model.slug,
-          runtimeKey: 'antigravity-cli-bridge',
-          adapterKind: 'openai_responses',
-          capabilities: ['reasoning', 'verification', 'structured_output'],
-          independenceGroup: 'antigravity-free-account',
-          qualityScore: tier === 'frontier' ? 95 : tier === 'balanced' ? 84 : 70,
-          reliabilityScore: 75,
-          latencyScore: tier === 'economy' ? 90 : tier === 'balanced' ? 75 : 60,
-          config: {
-            free_first: true,
-            source: FREE_SOURCE,
-            provider_family: 'antigravity',
-            model_tier: tier,
-            display_label: model.label ?? model.slug,
-            quota_bucket_key: antigravityBucket(model.slug, model.label),
-            base_quality_score: tier === 'frontier' ? 95 : tier === 'balanced' ? 84 : 70,
-            max_output_tokens: 800
-          }
-        }));
+        const base = tier === 'frontier' ? 95 : tier === 'balanced' ? 84 : 70;
+        const latency = tier === 'economy' ? 90 : tier === 'balanced' ? 75 : 60;
+        const common = {
+          free_first: true,
+          source: FREE_SOURCE,
+          provider_family: 'antigravity',
+          model_tier: tier,
+          display_label: model.label ?? model.slug,
+          quota_bucket_key: antigravityBucket(model.slug, model.label),
+          base_quality_score: base,
+          discovered_active: true,
+          max_output_tokens: 800
+        };
+        const workerName = `free-antigravity-${model.slug}`;
+        const verifierName = `${workerName}-verifier`;
+        discoveredNames.add(workerName);
+        discoveredNames.add(verifierName);
+        this.#ensureRoute({
+          workspaceId, connection, routeName: workerName, modelKey: model.slug,
+          runtimeKey: 'antigravity-cli-bridge', adapterKind: 'openai_responses',
+          capabilities: ['reasoning', 'structured_output'], independenceGroup: 'antigravity-free-account',
+          qualityScore: base, reliabilityScore: 75, latencyScore: latency,
+          config: { ...common, route_role: 'worker' }
+        });
+        this.#ensureRoute({
+          workspaceId, connection, routeName: verifierName, modelKey: model.slug,
+          runtimeKey: 'antigravity-cli-bridge', adapterKind: 'openai_responses',
+          capabilities: ['verification'], independenceGroup: 'antigravity-free-account',
+          qualityScore: base, reliabilityScore: 75, latencyScore: latency,
+          config: { ...common, route_role: 'verifier' }
+        });
       }
       this.#disableStaleRoutes(workspaceId, connection.id, 'antigravity', discoveredNames);
     }
@@ -119,29 +126,29 @@ export class FreeFirstBroker {
         locality: 'remote',
         entitlement: { plan: 'free', free_only_asserted: true, source: 'operator_account' }
       });
-      routes.push(this.#ensureRoute({
-        workspaceId,
-        connection,
-        routeName: 'free-groq-gpt-oss-120b',
-        modelKey: groq.model ?? 'openai/gpt-oss-120b',
-        runtimeKey: 'groq-responses-api',
-        adapterKind: 'openai_responses',
-        capabilities: ['reasoning', 'verification', 'structured_output'],
-        independenceGroup: 'groq-free-account',
-        qualityScore: 86,
-        reliabilityScore: 90,
-        latencyScore: 95,
-        config: {
-          free_first: true,
-          source: FREE_SOURCE,
-          provider_family: 'groq',
-          model_tier: 'balanced',
-          quota_bucket_key: 'groq:free-api',
-          base_quality_score: 86,
-          daily_request_limit: groq.dailyRequestLimit ?? 1000,
-          max_output_tokens: 800
-        }
-      }));
+      const common = {
+        free_first: true,
+        source: FREE_SOURCE,
+        provider_family: 'groq',
+        model_tier: 'balanced',
+        quota_bucket_key: 'groq:free-api',
+        base_quality_score: 86,
+        discovered_active: true,
+        daily_request_limit: groq.dailyRequestLimit ?? 1000,
+        max_output_tokens: 800
+      };
+      this.#ensureRoute({
+        workspaceId, connection, routeName: 'free-groq-gpt-oss-120b', modelKey: groq.model ?? 'openai/gpt-oss-120b',
+        runtimeKey: 'groq-responses-api', adapterKind: 'openai_responses', capabilities: ['reasoning', 'structured_output'],
+        independenceGroup: 'groq-free-account', qualityScore: 86, reliabilityScore: 90, latencyScore: 95,
+        config: { ...common, route_role: 'worker' }
+      });
+      this.#ensureRoute({
+        workspaceId, connection, routeName: 'free-groq-gpt-oss-120b-verifier', modelKey: groq.model ?? 'openai/gpt-oss-120b',
+        runtimeKey: 'groq-responses-api', adapterKind: 'openai_responses', capabilities: ['verification'],
+        independenceGroup: 'groq-free-account', qualityScore: 86, reliabilityScore: 90, latencyScore: 95,
+        config: { ...common, route_role: 'verifier' }
+      });
     }
 
     if (openrouter?.credentialRef) {
@@ -153,31 +160,31 @@ export class FreeFirstBroker {
         credentialRef: openrouter.credentialRef,
         endpointUrl: openrouter.endpointUrl ?? 'https://openrouter.ai/api/v1/responses',
         locality: 'remote',
-        entitlement: { plan: 'free-no-purchased-credits', free_router_only: true, source: 'operator_account' }
+        entitlement: { plan: 'free-route-only', free_router_only: true, source: 'operator_account' }
       });
-      routes.push(this.#ensureRoute({
-        workspaceId,
-        connection,
-        routeName: 'free-openrouter-router',
-        modelKey: 'openrouter/free',
-        runtimeKey: 'openrouter-responses-api',
-        adapterKind: 'openai_responses',
-        capabilities: ['reasoning', 'verification', 'structured_output'],
-        independenceGroup: 'openrouter-free-account',
-        qualityScore: 65,
-        reliabilityScore: 55,
-        latencyScore: 60,
-        config: {
-          free_first: true,
-          source: FREE_SOURCE,
-          provider_family: 'openrouter',
-          model_tier: 'fallback',
-          quota_bucket_key: 'openrouter:free-router',
-          base_quality_score: 65,
-          daily_request_limit: this.getPolicy({ workspaceId }).openrouter_daily_request_limit,
-          max_output_tokens: 800
-        }
-      }));
+      const common = {
+        free_first: true,
+        source: FREE_SOURCE,
+        provider_family: 'openrouter',
+        model_tier: 'fallback',
+        quota_bucket_key: 'openrouter:free-router',
+        base_quality_score: 65,
+        discovered_active: true,
+        daily_request_limit: this.getPolicy({ workspaceId }).openrouter_daily_request_limit,
+        max_output_tokens: 800
+      };
+      this.#ensureRoute({
+        workspaceId, connection, routeName: 'free-openrouter-router', modelKey: 'openrouter/free',
+        runtimeKey: 'openrouter-responses-api', adapterKind: 'openai_responses', capabilities: ['reasoning', 'structured_output'],
+        independenceGroup: 'openrouter-free-account', qualityScore: 65, reliabilityScore: 55, latencyScore: 60,
+        config: { ...common, route_role: 'worker' }
+      });
+      this.#ensureRoute({
+        workspaceId, connection, routeName: 'free-openrouter-router-verifier', modelKey: 'openrouter/free',
+        runtimeKey: 'openrouter-responses-api', adapterKind: 'openai_responses', capabilities: ['verification'],
+        independenceGroup: 'openrouter-free-account', qualityScore: 65, reliabilityScore: 55, latencyScore: 60,
+        config: { ...common, route_role: 'verifier' }
+      });
     }
     return { policy: this.getPolicy({ workspaceId }), routes: this.listFreeRoutes({ workspaceId }) };
   }
@@ -280,8 +287,8 @@ export class FreeFirstBroker {
   }
 
   /**
-   * Apply quota reservation and model-tier preference by updating only derived
-   * operational route scores. Canonical Project meaning is untouched.
+   * Apply quota reservation and task-aware preference by updating only derived
+   * operational route scores/eligibility. Canonical Project meaning is untouched.
    */
   applyPolicy({ workspaceId, taskClass = 'standard' }) {
     const policy = this.ensurePolicy({ workspaceId });
@@ -294,18 +301,29 @@ export class FreeFirstBroker {
       const status = latest?.status ?? 'unknown';
       const base = Number.isInteger(config.base_quality_score) ? config.base_quality_score : route.quality_score;
       const tier = config.model_tier ?? 'balanced';
+      const role = ['worker', 'verifier'].includes(config.route_role) ? config.route_role : 'both';
+      const discoveredActive = config.discovered_active !== false;
       const freeConnection = route.billing_mode === 'zero_incremental';
-      let enabled = freeConnection && route.connection_enabled === 1;
-      let workerAllowed = enabled;
-      if (status === 'exhausted' || status === 'reserved') workerAllowed = false;
-      if (status === 'unknown' && policy.unknown_quota_behavior !== 'allow_fallback') workerAllowed = false;
-      if (status === 'unknown' && policy.unknown_quota_behavior === 'block') enabled = false;
-      if (status === 'exhausted') enabled = false;
-      const quality = enabled ? clampInt(base + taskTierAdjustment(taskClass, tier) + quotaAdjustment(status), 0, 100) : 0;
-      const effectiveQuality = workerAllowed ? quality : 0;
+      const connectionReady = route.connection_enabled === 1 && ['available', 'degraded'].includes(route.connection_status);
+      const roleAllowed = routeAllowedForQuota({ status, role, unknownQuotaBehavior: policy.unknown_quota_behavior });
+      const enabled = freeConnection && connectionReady && discoveredActive && roleAllowed;
+      const quality = enabled
+        ? clampInt(base + taskTierAdjustment(taskClass, tier, role) + quotaAdjustment(status, role), 0, 100)
+        : 0;
       this.db.prepare('UPDATE execution_routes SET enabled = ?, quality_score = ?, updated_at = ? WHERE id = ? AND workspace_id = ?')
-        .run(enabled ? 1 : 0, effectiveQuality, isoNow(), route.id, workspaceId);
-      states.push({ routeId: route.id, routeName: route.route_name, providerKey: route.provider_key, tier, quotaStatus: status, workerAllowed, enabled, qualityScore: effectiveQuality, remainingFractionBp: latest?.remaining_fraction_bp ?? null });
+        .run(enabled ? 1 : 0, quality, isoNow(), route.id, workspaceId);
+      states.push({
+        routeId: route.id,
+        routeName: route.route_name,
+        providerKey: route.provider_key,
+        role,
+        tier,
+        quotaStatus: status,
+        allowed: enabled,
+        enabled,
+        qualityScore: quality,
+        remainingFractionBp: latest?.remaining_fraction_bp ?? null
+      });
     }
     return { policy, taskClass, routes: states };
   }
@@ -320,11 +338,18 @@ export class FreeFirstBroker {
     this.#assertNoEligibleNonFreeRoute(workspaceId);
 
     const candidates = this.listFreeRoutes({ workspaceId }).map((route) => ({ route, config: parseJson(route.config_json, {}) }));
-    const workerCandidates = candidates.filter(({ route }) => route.enabled === 1 && route.quality_score > 0 && route.billing_mode === 'zero_incremental' && ['available', 'degraded'].includes(route.connection_status));
-    if (!workerCandidates.length) throw new Error('free_first_quota_reserved_or_exhausted');
+    const workerCandidates = candidates.filter(({ route, config }) =>
+      route.enabled === 1 && route.billing_mode === 'zero_incremental' && ['available', 'degraded'].includes(route.connection_status) &&
+      (config.route_role ?? 'both') !== 'verifier' && parseJson(route.capabilities_json, []).includes('reasoning')
+    );
+    if (!workerCandidates.length) throw new Error('free_first_worker_quota_unavailable');
     workerCandidates.sort((a, b) => b.route.quality_score - a.route.quality_score);
     const likelyWorker = workerCandidates[0].route;
-    const verifierCandidates = candidates.filter(({ route }) => route.enabled === 1 && route.billing_mode === 'zero_incremental' && ['available', 'degraded'].includes(route.connection_status) && route.independence_group !== likelyWorker.independence_group);
+    const verifierCandidates = candidates.filter(({ route, config }) =>
+      route.enabled === 1 && route.billing_mode === 'zero_incremental' && ['available', 'degraded'].includes(route.connection_status) &&
+      route.independence_group !== likelyWorker.independence_group && (config.route_role ?? 'both') !== 'worker' &&
+      parseJson(route.capabilities_json, []).includes('verification')
+    );
     if (!verifierCandidates.length) throw new Error('free_first_independent_verifier_unavailable');
 
     const result = await this.phase2.runWorkItem({
@@ -395,13 +420,17 @@ export class FreeFirstBroker {
     const rows = this.db.prepare('SELECT * FROM execution_routes WHERE workspace_id = ? AND provider_connection_id = ?').all(workspaceId, connectionId);
     for (const row of rows) {
       const config = parseJson(row.config_json, {});
-      if (config.provider_family === providerFamily && !discoveredNames.has(row.route_name)) this.db.prepare('UPDATE execution_routes SET enabled = 0, updated_at = ? WHERE id = ?').run(isoNow(), row.id);
+      if (config.provider_family !== providerFamily || discoveredNames.has(row.route_name)) continue;
+      config.discovered_active = false;
+      this.db.prepare('UPDATE execution_routes SET enabled = 0, config_json = ?, updated_at = ? WHERE id = ? AND workspace_id = ?')
+        .run(JSON.stringify(config), isoNow(), row.id, workspaceId);
     }
   }
 
   #latestQuota(workspaceId, route) {
     const config = parseJson(route.config_json, {});
-    return this.db.prepare(`SELECT * FROM quota_snapshots WHERE workspace_id = ? AND (route_id = ? OR (route_id IS NULL AND bucket_key = ?))
+    return this.db.prepare(`SELECT * FROM quota_snapshots
+      WHERE workspace_id = ? AND (route_id = ? OR bucket_key = ?)
       ORDER BY observed_at DESC LIMIT 1`).get(workspaceId, route.id, config.quota_bucket_key ?? '');
   }
 
@@ -423,9 +452,11 @@ export class FreeFirstBroker {
 
   #snapshotFromLocalCounter({ workspaceId, attempt, config, defaultLimit }) {
     const periodKey = String(attempt.started_at).slice(0, 10);
-    const counter = this.db.prepare("SELECT * FROM provider_usage_counters WHERE workspace_id = ? AND route_id = ? AND period_kind = 'day' AND period_key = ?").get(workspaceId, attempt.route_id, periodKey);
+    const aggregate = this.db.prepare(`SELECT COALESCE(SUM(request_count), 0) AS requests
+      FROM provider_usage_counters WHERE workspace_id = ? AND provider_connection_id = ? AND period_kind = 'day' AND period_key = ?`)
+      .get(workspaceId, attempt.provider_connection_id, periodKey);
     const limit = Number.isInteger(config.daily_request_limit) ? config.daily_request_limit : defaultLimit;
-    const remaining = Math.max(0, limit - Number(counter?.request_count ?? 0));
+    const remaining = Math.max(0, limit - Number(aggregate?.requests ?? 0));
     return this.recordQuotaSnapshot({
       workspaceId,
       providerConnectionId: attempt.provider_connection_id,
@@ -435,7 +466,7 @@ export class FreeFirstBroker {
       source: 'local_counter',
       remainingFraction: remaining / limit,
       remainingRequests: remaining,
-      detail: { requestLimit: limit, periodKey }
+      detail: { requestLimit: limit, periodKey, requestsAcrossConnection: Number(aggregate?.requests ?? 0) }
     });
   }
 
@@ -463,13 +494,27 @@ function quotaStatus(bp, policy) {
   if (bp >= policy.verifier_reserve_bp) return 'reserved';
   return 'exhausted';
 }
+
+function routeAllowedForQuota({ status, role, unknownQuotaBehavior }) {
+  if (status === 'exhausted') return false;
+  if (status === 'reserved') return role === 'verifier';
+  if (status === 'unknown') {
+    if (unknownQuotaBehavior === 'block') return false;
+    if (unknownQuotaBehavior === 'reserve_only') return role === 'verifier';
+    return true;
+  }
+  return true;
+}
+
 function taskClassFromRisk(riskTier) {
   if (riskTier === 'R3') return 'critical';
   if (riskTier === 'R2') return 'complex';
   if (riskTier === 'R0') return 'routine';
   return 'standard';
 }
-function taskTierAdjustment(taskClass, tier) {
+
+function taskTierAdjustment(taskClass, tier, role) {
+  if (role === 'verifier') return tier === 'frontier' ? 10 : tier === 'balanced' ? 8 : tier === 'economy' ? 2 : 0;
   const table = {
     routine: { economy: 20, balanced: 0, frontier: -25, fallback: -15 },
     standard: { economy: 10, balanced: 12, frontier: -5, fallback: -15 },
@@ -478,22 +523,28 @@ function taskTierAdjustment(taskClass, tier) {
   };
   return table[taskClass]?.[tier] ?? 0;
 }
-function quotaAdjustment(status) {
+
+function quotaAdjustment(status, role) {
   if (status === 'healthy') return 10;
   if (status === 'conserve') return -5;
-  if (status === 'reserved') return -60;
+  if (status === 'reserved') return role === 'verifier' ? 5 : -100;
   if (status === 'exhausted') return -100;
   return -20;
 }
+
 function antigravityBucket(slug, label = '') {
   return /gemini/i.test(`${slug} ${label}`) ? 'antigravity:gemini' : 'antigravity:third-party';
 }
+
 function assertPolicy(values) {
-  for (const key of ['healthyThresholdBp', 'reserveThresholdBp', 'verifierReserveBp']) if (!Number.isInteger(values[key]) || values[key] < 0 || values[key] > 10000) throw new TypeError(`${key}_invalid`);
+  for (const key of ['healthyThresholdBp', 'reserveThresholdBp', 'verifierReserveBp']) {
+    if (!Number.isInteger(values[key]) || values[key] < 0 || values[key] > 10000) throw new TypeError(`${key}_invalid`);
+  }
   if (!(values.verifierReserveBp <= values.reserveThresholdBp && values.reserveThresholdBp < values.healthyThresholdBp)) throw new TypeError('quota_threshold_order_invalid');
   if (!Number.isInteger(values.openrouterDailyRequestLimit) || values.openrouterDailyRequestLimit < 1) throw new TypeError('openrouterDailyRequestLimit_invalid');
   if (!['allow_fallback', 'reserve_only', 'block'].includes(values.unknownQuotaBehavior)) throw new TypeError('unknownQuotaBehavior_invalid');
 }
+
 function integerOr(...values) { for (const value of values) if (Number.isInteger(value)) return value; return 0; }
 function nullableInt(value) { return Number.isInteger(value) && value >= 0 ? value : null; }
 function nonNegativeInt(value) { const number = Number(value); return Number.isInteger(number) && number >= 0 ? number : 0; }
