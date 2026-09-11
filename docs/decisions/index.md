@@ -15,6 +15,7 @@ Foundation v3 consolidates the active working tree. Earlier Foundation v1/v2 ADR
 | [ADR-019](ADR-019-core-control-plane-before-provider-spikes.md) | Build provider-independent core control plane before provider spikes | Accepted |
 | [ADR-020](ADR-020-gate-1-implementation-stack.md) | Gate 1 uses a dependency-light local Node/SQLite/web foundation | Accepted |
 | [ADR-021](ADR-021-canonical-state-persistence-invariants.md) | Canonical state uses Workspace-scoped relationships and optimistic versioning | Accepted |
+| [ADR-022](ADR-022-phase2-autonomy-kernel-and-live-certification.md) | Phase 2 execution stays behind normalized routes; fixture, live execution, and real portability claims require distinct evidence | Proposed until Phase 2 PR merge |
 
 ## Rules
 
