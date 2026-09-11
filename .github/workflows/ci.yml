@@ -24,10 +24,16 @@ jobs:
         run: |
           npm run db:migrate
           npm run db:backup
-      - name: Confirm live provider harness is opt-in only
+      - name: Confirm live provider harnesses are opt-in only
         run: |
           if npm run phase2:live >/tmp/phase2-live.out 2>&1; then
             echo "phase2:live unexpectedly ran without explicit operator approval" >&2
             exit 1
           fi
           grep -q "Live execution is disabled" /tmp/phase2-live.out
+
+          if npm run phase21:certify >/tmp/phase21-free.out 2>&1; then
+            echo "phase21:certify unexpectedly ran without explicit operator approval" >&2
+            exit 1
+          fi
+          grep -q "Free-First live execution is disabled" /tmp/phase21-free.out
