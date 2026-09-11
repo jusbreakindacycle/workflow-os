@@ -72,19 +72,18 @@ function executeFixture(route, prompt) {
 }
 
 async function executeOpenAIResponses({ route, connection, prompt, env, fetchImpl, timeoutMs }) {
-  const apiKey = credentialValue(connection, env);
   const config = parseJson(route.config_json, {});
   const endpoint = connection.endpoint_url || 'https://api.openai.com/v1/responses';
+  const localBridge = connection.connection_type === 'local_service' && isLoopbackEndpoint(endpoint);
+  const apiKey = localBridge ? null : credentialValue(connection, env);
   const body = {
     model: requiredModel(route),
     input: prompt,
     store: false,
     max_output_tokens: positiveInteger(config.max_output_tokens, 1200)
   };
-  const headers = {
-    authorization: `Bearer ${apiKey}`,
-    'content-type': 'application/json'
-  };
+  const headers = { 'content-type': 'application/json' };
+  if (apiKey) headers.authorization = `Bearer ${apiKey}`;
   if (connection.provider_key === 'openrouter') headers['x-openrouter-metadata'] = 'enabled';
   const response = await timedFetch(fetchImpl, endpoint, {
     method: 'POST',
@@ -213,6 +212,13 @@ function positiveInteger(value, fallback) {
 
 function isSafeCredentialRef(value) {
   return typeof value === 'string' && /^[A-Z][A-Z0-9_]{2,127}$/.test(value);
+}
+
+function isLoopbackEndpoint(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' && ['127.0.0.1', 'localhost', '::1'].includes(url.hostname);
+  } catch { return false; }
 }
 
 function parseJson(text, fallback) {
