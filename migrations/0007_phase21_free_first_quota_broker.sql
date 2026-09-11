@@ -61,6 +61,15 @@ CREATE TABLE provider_usage_counters (
   FOREIGN KEY (route_id, workspace_id) REFERENCES execution_routes(id, workspace_id) ON DELETE CASCADE
 ) STRICT;
 
+CREATE TABLE provider_usage_accounted_attempts (
+  attempt_id TEXT PRIMARY KEY,
+  workspace_id TEXT NOT NULL,
+  route_id TEXT NOT NULL,
+  accounted_at TEXT NOT NULL,
+  FOREIGN KEY (attempt_id, workspace_id) REFERENCES execution_attempts(id, workspace_id) ON DELETE CASCADE,
+  FOREIGN KEY (route_id, workspace_id) REFERENCES execution_routes(id, workspace_id) ON DELETE CASCADE
+) STRICT;
+
 CREATE INDEX idx_quota_snapshots_route_observed
   ON quota_snapshots(workspace_id, route_id, observed_at DESC);
 CREATE INDEX idx_quota_snapshots_bucket_observed
