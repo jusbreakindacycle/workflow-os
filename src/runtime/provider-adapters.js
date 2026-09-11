@@ -81,21 +81,25 @@ async function executeOpenAIResponses({ route, connection, prompt, env, fetchImp
     store: false,
     max_output_tokens: positiveInteger(config.max_output_tokens, 1200)
   };
+  const headers = {
+    authorization: `Bearer ${apiKey}`,
+    'content-type': 'application/json'
+  };
+  if (connection.provider_key === 'openrouter') headers['x-openrouter-metadata'] = 'enabled';
   const response = await timedFetch(fetchImpl, endpoint, {
     method: 'POST',
-    headers: {
-      authorization: `Bearer ${apiKey}`,
-      'content-type': 'application/json'
-    },
+    headers,
     body: JSON.stringify(body)
   }, timeoutMs);
   const payload = await readResponseJson(response, 'openai_responses');
   const text = extractOpenAIText(payload);
   if (!text) throw new Error('provider_empty_output:openai_responses');
+  const usage = payload.usage && typeof payload.usage === 'object' ? payload.usage : {};
+  const rateLimits = extractRateLimitHeaders(response.headers);
   return {
     text,
     externalRef: typeof payload.id === 'string' ? payload.id : null,
-    usage: payload.usage && typeof payload.usage === 'object' ? payload.usage : {},
+    usage: Object.keys(rateLimits).length ? { ...usage, rate_limits: rateLimits } : usage,
     actualCostMinor: null
   };
 }
@@ -123,10 +127,12 @@ async function executeAnthropicMessages({ route, connection, prompt, env, fetchI
     ? payload.content.filter((part) => part && part.type === 'text' && typeof part.text === 'string').map((part) => part.text).join('\n').trim()
     : '';
   if (!text) throw new Error('provider_empty_output:anthropic_messages');
+  const usage = payload.usage && typeof payload.usage === 'object' ? payload.usage : {};
+  const rateLimits = extractRateLimitHeaders(response.headers);
   return {
     text,
     externalRef: typeof payload.id === 'string' ? payload.id : null,
-    usage: payload.usage && typeof payload.usage === 'object' ? payload.usage : {},
+    usage: Object.keys(rateLimits).length ? { ...usage, rate_limits: rateLimits } : usage,
     actualCostMinor: null
   };
 }
@@ -150,7 +156,9 @@ async function readResponseJson(response, adapter) {
   catch { throw new Error(`provider_invalid_json:${adapter}:${response.status}`); }
   if (!response.ok) {
     const message = payload?.error?.message ?? payload?.message ?? `http_${response.status}`;
-    throw new Error(`provider_http_error:${adapter}:${response.status}:${String(message).slice(0, 240)}`);
+    const retryAfter = response?.headers?.get?.('retry-after');
+    const suffix = retryAfter ? `:retry_after=${String(retryAfter).slice(0, 40)}` : '';
+    throw new Error(`provider_http_error:${adapter}:${response.status}:${String(message).slice(0, 220)}${suffix}`);
   }
   return payload;
 }
@@ -166,6 +174,25 @@ function extractOpenAIText(payload) {
     }
   }
   return parts.join('\n').trim();
+}
+
+function extractRateLimitHeaders(headers) {
+  if (!headers || typeof headers.get !== 'function') return {};
+  const mapping = {
+    limit_requests: 'x-ratelimit-limit-requests',
+    limit_tokens: 'x-ratelimit-limit-tokens',
+    remaining_requests: 'x-ratelimit-remaining-requests',
+    remaining_tokens: 'x-ratelimit-remaining-tokens',
+    reset_requests: 'x-ratelimit-reset-requests',
+    reset_tokens: 'x-ratelimit-reset-tokens',
+    retry_after: 'retry-after'
+  };
+  const value = {};
+  for (const [key, header] of Object.entries(mapping)) {
+    const raw = headers.get(header);
+    if (raw !== null && raw !== undefined && String(raw).trim() !== '') value[key] = String(raw).trim();
+  }
+  return value;
 }
 
 function credentialValue(connection, env) {
