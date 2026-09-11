@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:autonomous-delivery:execution-route:0.1",
+  "title": "Execution Route v0.1",
+  "type": "object",
+  "required": ["route_version","id","provider_connection_ref","runtime_key","adapter_kind","capabilities","independence_group","billing"],
+  "properties": {
+    "route_version": {"const":"0.1"},
+    "id": {"type":"string","minLength":1},
+    "provider_connection_ref": {"type":"string","minLength":1},
+    "model_key": {"type":["string","null"]},
+    "runtime_key": {"type":"string","minLength":1},
+    "adapter_kind": {"enum":["fixture","openai_responses","anthropic_messages"]},
+    "capabilities": {"type":"array","items":{"type":"string","minLength":1},"minItems":1,"uniqueItems":true},
+    "allowed_data_classes": {"type":"array","items":{"enum":["Public","Internal","Confidential","Restricted"]},"minItems":1,"uniqueItems":true},
+    "independence_group": {"type":"string","minLength":1},
+    "billing": {
+      "type":"object",
+      "required":["mode","currency","estimated_cost_minor"],
+      "properties": {
+        "mode":{"enum":["zero_incremental","included_subscription","metered","unknown"]},
+        "currency":{"type":"string","minLength":1},
+        "estimated_cost_minor":{"type":["integer","null"],"minimum":0}
+      },
+      "additionalProperties":false
+    }
+  },
+  "additionalProperties":false
+}
