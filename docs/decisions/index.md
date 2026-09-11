@@ -16,10 +16,12 @@ ADRs capture decisions that must remain understandable after chat context is gon
 | [ADR-010](ADR-010-multi-agent-deferred.md) | Client-facing AI Employee multi-agent collaboration is deferred until single-role value is proven | Accepted |
 | [ADR-011](ADR-011-project-top-level-operational-unit.md) | Project is the top-level operational unit; WIR remains canonical within Project | Accepted |
 | [ADR-012](ADR-012-internal-agent-collaboration-gated.md) | Internal agent collaboration is work-graph and verification gated | Accepted |
+| [ADR-013](ADR-013-internal-workforce-adapter-boundary.md) | Internal AI workforce orchestration stays behind a provider-neutral adapter boundary | Accepted |
 
 ## ADR rules
 
 - Accepted ADRs are authoritative until superseded.
+- Proposed ADRs are review artifacts and are not authoritative until explicitly accepted.
 - A new decision that contradicts an accepted ADR must explicitly supersede it.
 - ADRs explain context, decision, consequences, and revisit conditions.
 - Implementation convenience alone is not sufficient reason to bypass an ADR.
