@@ -25,8 +25,9 @@ test('local app serves UI and database-backed health endpoint', async (t) => {
   const healthResponse = await fetch(`${origin}/api/health`);
   assert.equal(healthResponse.status, 200);
   const health = await healthResponse.json();
+  assert.equal(health.gate, 'gate-2-canonical-entities');
   assert.equal(health.database.status, 'ready');
-  assert.equal(health.database.migrations, 1);
+  assert.equal(health.database.migrations, 2);
 
   const uiResponse = await fetch(`${origin}/`);
   assert.equal(uiResponse.status, 200);

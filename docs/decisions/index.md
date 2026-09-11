@@ -14,6 +14,7 @@ Foundation v3 consolidates the active working tree. Earlier Foundation v1/v2 ADR
 | [ADR-018](ADR-018-local-first-command-center.md) | Local-first web Command Center first; desktop shell optional later | Accepted |
 | [ADR-019](ADR-019-core-control-plane-before-provider-spikes.md) | Build provider-independent core control plane before provider spikes | Accepted |
 | [ADR-020](ADR-020-gate-1-implementation-stack.md) | Gate 1 uses a dependency-light local Node/SQLite/web foundation | Accepted |
+| [ADR-021](ADR-021-canonical-state-persistence-invariants.md) | Canonical state uses Workspace-scoped relationships and optimistic versioning | Accepted |
 
 ## Rules
 

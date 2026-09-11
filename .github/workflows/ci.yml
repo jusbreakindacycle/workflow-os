@@ -1,4 +1,4 @@
-name: Phase 1 Gate 1
+name: Phase 1 Verify
 
 on:
   pull_request:
