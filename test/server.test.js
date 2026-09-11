@@ -8,7 +8,7 @@ import { createApp } from '../src/app.js';
 const migrationsDir = path.resolve('migrations');
 const publicDir = path.resolve('public');
 
-test('local app serves Gate 3 UI and database-backed health endpoint', async (t) => {
+test('local app serves completed Phase 1 UI and database-backed health endpoint', async (t) => {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'workflow-os-server-'));
   const app = createApp({ databasePath: path.join(dataDir, 'test.sqlite'), dataDir, migrationsDir, publicDir });
 
@@ -25,11 +25,14 @@ test('local app serves Gate 3 UI and database-backed health endpoint', async (t)
   const healthResponse = await fetch(`${origin}/api/health`);
   assert.equal(healthResponse.status, 200);
   const health = await healthResponse.json();
-  assert.equal(health.gate, 'gate-3-new-project-discovery');
+  assert.equal(health.gate, 'gate-10-phase-1-complete');
   assert.equal(health.database.status, 'ready');
-  assert.equal(health.database.migrations, 3);
+  assert.equal(health.database.migrations, 4);
 
   const uiResponse = await fetch(`${origin}/`);
   assert.equal(uiResponse.status, 200);
-  assert.match(await uiResponse.text(), /New Project/);
+  const ui = await uiResponse.text();
+  assert.match(ui, /Local Control Plane/);
+  assert.match(ui, /Command Center/);
+  assert.match(ui, /Start from the real request/);
 });
