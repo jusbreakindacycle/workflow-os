@@ -1,10 +1,11 @@
 # Paperclip Due Diligence for Workflow OS
 
-**Status:** Research / non-authoritative
+**Status:** Research / provider candidate; architecture boundary accepted in ADR-013
 
-**Reviewed:** 2026-09-11
+**Initial review:** 2026-09-11  
+**Adversarial update:** 2026-09-12
 
-**Purpose:** Determine whether Paperclip should be copied, adopted, integrated, or treated as an execution/runtime dependency for Workflow OS after Foundation v2.
+**Purpose:** Determine whether Paperclip should become the first implementation behind Workflow OS's provider-neutral Internal Workforce Adapter.
 
 ## Executive conclusion
 
@@ -12,19 +13,45 @@ Paperclip is the strongest public overlap found so far with Workflow OS's **inte
 
 It is **not** a replacement for Workflow OS as currently defined.
 
-Paperclip is best treated as a candidate **Internal Workforce Adapter**: a replaceable external control/execution subsystem for internal AI agents. Workflow OS should continue to own the meaning and canonical state of Workspace, Project, WorkItem, business/domain policy, WIR, evidence, deployment, incident, maintenance, and client-facing AI Employee semantics.
+Paperclip is best treated as a candidate **Internal Workforce Adapter**: a replaceable external control/execution subsystem for internal AI agents.
 
-The recommendation from desk research is therefore:
+Workflow OS continues to own the meaning and canonical state of:
 
-> **ADAPTER CANDIDATE — do not make Paperclip the canonical Workflow OS database or product model. Do not rebuild Paperclip's agent-runtime/company primitives until a hands-on adapter spike proves they are unsuitable.**
+- Workspace;
+- Project;
+- WorkItem;
+- business/domain policy;
+- WIR;
+- Decisions, Artifacts, Evidence, and Project events;
+- consequential human approvals;
+- deployment, incident, maintenance, and recovery;
+- client-facing AI Employee semantics;
+- cross-provider portfolio state and ROI.
+
+The architectural adapter boundary is accepted by ADR-013. **Paperclip itself is not yet an accepted dependency.**
 
 No production dependency should be accepted from desk research alone.
 
 ---
 
+## Approved D1-D8 constraints
+
+The Paperclip evaluation must preserve the following approved decisions:
+
+1. **D1 — canonical authority:** Workflow OS remains the sole canonical Project/WorkItem authority.
+2. **D2 — provider-created work:** agent-created provider tasks remain provider-local execution detail or become WorkItem Proposals; they do not silently become canonical WorkItems.
+3. **D3 — isolation:** default mapping is `Workflow OS Workspace -> Paperclip Company`, but adapter/control credentials must also have acceptable Workspace-bounded blast radius; stronger instance isolation is the fallback if needed.
+4. **D4 — asymmetric synchronization:** Paperclip reports facts/proposals; provider UI edits cannot silently mutate canonical Workflow OS state.
+5. **D5 — completion:** Paperclip `done` maps to `execution_finished` / evidence available, not canonical WorkItem `complete`.
+6. **D6 — approvals:** consequential human approvals remain authoritative in Workflow OS; Paperclip review/approval is worker-level control/evidence.
+7. **D7 — worktrees/parallelism:** isolated workspaces/worktrees are an advanced capability, not required for the initial single-worker pass.
+8. **D8 — phase boundary:** Paperclip is not part of Phase 1 acceptance criteria; Phase 1 first proves Workflow OS's canonical Project/WorkItem/WIR/evidence/Command Center slice.
+
+---
+
 ## Sources reviewed
 
-Primary sources:
+Primary sources reviewed during the desk-research pass:
 
 - Paperclip repository: https://github.com/paperclipai/paperclip
 - Architecture: https://github.com/paperclipai/paperclip/blob/master/docs/start/architecture.md
@@ -45,17 +72,19 @@ Primary sources:
 - Export/import: https://docs.paperclip.ing/guides/power/export-import/
 - Releases: https://github.com/paperclipai/paperclip/releases
 
-At review time the latest listed stable release was `v2026.831.1`, released 2026-09-02. Paperclip is MIT-licensed.
+At the initial review time, the latest stable release identified was `v2026.831.1` (2026-09-02). Paperclip is MIT-licensed.
+
+Exact version/release assumptions must be refreshed during the hands-on spike.
 
 ---
 
 # 1. What Paperclip actually is
 
-Paperclip describes itself as an operating system for an AI company. It is a control plane for:
+Paperclip describes itself as an operating system/control plane for an AI company. Its relevant concepts include:
 
 - companies;
 - human board operators;
-- agents and reporting hierarchy;
+- agents/reporting hierarchy;
 - goals;
 - projects;
 - issues/tasks and dependencies;
@@ -69,31 +98,27 @@ Paperclip describes itself as an operating system for an AI company. It is a con
 - activity/audit history;
 - human attention/decision queues.
 
-Its architecture is currently roughly:
+Its architecture is broadly:
 
 ```text
 React UI
-  -> Express REST API
-      -> PostgreSQL/PGlite
+  -> REST API
+      -> persistence
       -> agent runtime adapters
-          -> Claude Code / Codex / other CLI/runtime
+          -> Claude Code / Codex / other runtime
 ```
 
-Paperclip explicitly positions itself as a **control plane rather than an execution plane**. Agent runtimes execute externally through adapters and report back.
-
-This is architecturally similar to Workflow OS's adapter philosophy.
+This overlaps strongly with Workflow OS's internal-workforce mechanics but not with Workflow OS's broader business-delivery semantics.
 
 ---
 
-# 2. Important Paperclip capabilities
+# 2. Capability assessment
 
 ## 2.1 Company as tenant boundary
 
-Paperclip states that every agent, project, issue, approval, cost event, and asset belongs to one Company, and company boundaries are enforced by the API.
+Paperclip Company is a useful candidate provider-side tenant boundary.
 
-This maps well to Workflow OS's client/workspace isolation requirement, but the safest mapping is **not** `one Paperclip company = the operator's whole freelance business`.
-
-For real client isolation the candidate mapping should be:
+Candidate mapping:
 
 ```text
 Workflow OS Workspace
@@ -101,329 +126,308 @@ Workflow OS Workspace
 Paperclip Company
 ```
 
-This prevents a broadly capable internal agent for Client A from automatically seeing Client B merely because both are in the same Paperclip company.
+This mapping must be tested, not assumed.
 
-A standardized company package can seed the same internal workforce into multiple client companies if needed.
+### Critical addition: adapter credential blast radius
+
+Company scoping alone is not sufficient if the integration/control identity can freely cross multiple unrelated client companies.
+
+The spike must prove:
+
+- which identity/credential Workflow OS uses to control a Paperclip Company;
+- whether that identity can be constrained per Workspace/company;
+- what happens after credential compromise;
+- how rotation/revocation works;
+- whether a dedicated provider instance per Workspace is required for stronger isolation.
+
+The production goal is **Workspace-bounded control capability**, not merely company labels.
 
 ## 2.2 Projects
 
-Paperclip Projects group related Issues and attach concrete execution context such as repositories, local paths, workspaces, environment bindings, target dates, lead agents, and project budgets.
+Paperclip Projects are useful runtime/project context for agents, repositories, workspaces, budgets, and tasks.
 
-Paperclip's Project status is intentionally simple:
+Workflow OS Project remains semantically richer and canonical across:
 
-- backlog
-- planned
-- in_progress
-- completed
-- cancelled
+`intake -> research -> definition -> architecture -> planning -> build -> verification -> review -> deployment -> production -> maintenance -> closure`
 
-Workflow OS Project is semantically richer. It must carry a delivery lifecycle including intake, research, definition, architecture, planning, build, verification, deployment, production, maintenance, and closure.
-
-Therefore Paperclip Project can be a **runtime mirror/reference**, but cannot replace Workflow OS Project semantics without losing important domain state.
+Therefore Paperclip Project is a provider projection/reference, not a replacement.
 
 ## 2.3 Issues/tasks
 
-Paperclip Issues have:
+Paperclip Issues overlap heavily with Workflow OS WorkItems for AI-executed work.
 
-- hierarchy (`parentId`);
-- blockers/dependencies;
-- assignees;
-- one active checkout at a time;
-- statuses such as backlog/todo/in_progress/in_review/done/blocked/cancelled;
-- reviewers and approvers;
-- execution workspaces;
-- linked runs and costs.
+Do not mirror every WorkItem into Paperclip. Create/mirror provider work only when the Internal Workforce Adapter actually needs AI-agent execution or provider-local coordination.
 
-This overlaps heavily with Workflow OS WorkItem.
+### Provider-created child tasks
 
-The important difference is that Workflow OS WorkItem can represent work assigned to:
+Provider agents may create child tasks as internal execution detail.
 
-- a human;
-- an internal AI agent;
-- a deterministic workflow;
-- an external tool/runtime;
-- an approval;
-- an incident/maintenance process.
+Those child tasks may stay provider-local if they remain within accepted assignment scope.
 
-Paperclip Issue is strongest as an **agent-work execution object**.
+If they imply a material change to scope, architecture, priority, risk, budget, deployment, maintenance, or acceptance criteria, the adapter must surface a **WorkItem Proposal**.
 
-Recommended rule:
-
-> Do not mirror every Workflow OS WorkItem into Paperclip. Create a Paperclip Issue only when an Internal Workforce Adapter needs Paperclip to execute or coordinate an AI-agent assignment.
+Provider task creation never automatically expands canonical Workflow OS scope.
 
 ## 2.4 Heartbeats and session persistence
 
-Paperclip agents run in bounded heartbeats triggered by schedules, assignments, mentions, approvals, or manual invocation. Adapters can persist underlying sessions between heartbeats.
+Paperclip's wake/resume/session model may save Workflow OS from rebuilding:
 
-This solves several mechanisms Workflow OS should avoid rebuilding prematurely:
+- worker wakeups;
+- resumption;
+- run status;
+- usage/cost capture;
+- pause/termination;
+- recurring worker routines.
 
-- waking workers;
-- resuming sessions;
-- capturing run status;
-- tracking usage/cost;
-- scheduling recurring agent work;
-- pausing/terminating workers.
+Persistent model/session state remains convenience context, not canonical Project knowledge.
 
-However persisted model conversation/session state must remain **non-authoritative convenience context**. Workflow OS artifacts, decisions, evidence, and WorkItem state remain authoritative.
+Every material handoff must persist artifacts/evidence outside hidden model context.
 
 ## 2.5 Agent runtime adapters
 
-Paperclip already supports multiple execution adapter classes and has first-class local integrations for coding agents including Claude Code and Codex. It also exposes adapter APIs and supports custom/external adapters.
+Existing Codex/Claude/runtime integration is one of Paperclip's highest-value reuse opportunities.
 
-This is high-value reuse because Workflow OS does not need to invent process spawning, session restoration, log capture, usage extraction, adapter diagnostics, and multiple vendor-specific runtime integrations before delivering value.
+Workflow OS should not prematurely rebuild process spawning, session restoration, runtime diagnostics, and vendor-specific agent process management if a provider passes the adapter contract.
 
-## 2.6 Execution workspaces
+## 2.6 Execution workspaces/worktrees
 
-Paperclip can create isolated Git worktrees per task, reuse workspaces, and manage project-primary workspaces. It explicitly addresses dependency finalization and environment mismatch.
+Paperclip workspaces/worktrees are promising but are treated as an **advanced parallel-engineering capability**.
 
-This closely matches Workflow OS's dependency-safe parallel-agent requirement.
+Core Paperclip adoption must not depend on them.
 
-Recommendation: if Paperclip is adopted as a Workforce Adapter, prefer its isolated workspace capability rather than building a second worktree manager in Workflow OS.
+A provider may pass the core single-worker adapter gates while parallel coding stays disabled.
 
-Workflow OS should only store normalized workspace/run references and verification evidence.
+Parallel coding becomes eligible only after separate advanced tests prove:
+
+- isolation;
+- branch/worktree safety;
+- dependency finalization;
+- integration ownership;
+- collision handling;
+- verification.
+
+This aligns with ADR-012.
 
 ## 2.7 Review and approval policy
 
-Paperclip has runtime-enforced execution policies. An executor trying to finish an issue can be automatically routed through reviewer and approver stages. Agent-to-agent change-request loops are bounded and may escalate to a human.
+Paperclip review/execution-policy stages can provide worker-level control and evidence.
 
-This is stronger than prompt-only review.
-
-However Paperclip review/approval must not silently replace Workflow OS policy.
-
-Recommended distinction:
+Distinction:
 
 ```text
-Paperclip review
-= worker/execution acceptance evidence
+Paperclip review/approval
+= provider worker/execution control + evidence
 
 Workflow OS approval
-= canonical business/risk authorization
+= canonical consequential business/risk authorization
 ```
 
-For high-impact Workflow OS actions, authoritative approval remains in Workflow OS even if Paperclip also records a review or approval.
+Production deployment, high-impact external actions, material scope/risk acceptance, privilege expansion, and policy exceptions remain Workflow OS approvals.
 
 ## 2.8 Budgets and costs
 
-Paperclip tracks provider/model/token/cost data and supports company, agent, and project budget policies with enforcement/auto-pause.
+Paperclip cost/token/budget data may be normalized into Workflow OS Project/WorkItem cost records.
 
-Workflow OS should not rebuild per-agent token accounting if Paperclip supplies reliable data. Instead normalize Paperclip cost events into Workflow OS Project/WorkItem cost/evidence records.
-
-Workflow OS still owns project/business budget semantics because costs may also come from workflow engines, SaaS APIs, cloud infrastructure, or human services.
+Workflow OS retains canonical cross-provider budget/ROI semantics because costs can also come from workflow engines, cloud/deployment providers, APIs, human work, and other services.
 
 ## 2.9 Secrets
 
-Paperclip has company-scoped secrets, agent grants, encrypted local storage, and run-bound API secret access. It can avoid permanently injecting all secrets into every run.
+Workflow OS stores canonical integration/secret **references and policy**, not reusable raw values in Project/WorkItem/WIR/agent instructions.
 
-This is useful, but it creates a dual-secret-store risk if Workflow OS also owns integration references.
+The adapter may map those references to provider secret bindings.
 
-Recommended rule:
+Required tests include:
 
-- Workflow OS stores canonical integration/secret **references**, not raw reusable secrets.
-- An adapter maps those references to Paperclip secret bindings when Paperclip must deliver a credential to an internal agent.
-- A Paperclip agent may never gain broader secret access merely because its role title is broad.
+- company/tenant isolation;
+- worker-specific grants;
+- adapter/control credential scope;
+- run-bound/on-demand access when available;
+- read auditing;
+- rotation/revocation;
+- redaction;
+- unauthorized access denial.
 
 ## 2.10 Dashboard, decisions, and audit
 
-Paperclip already has:
+Workflow OS should not recreate every detailed provider workforce screen.
 
-- company dashboard health;
-- agent status;
-- task counts;
-- blocked work;
-- costs/budget incidents;
-- pending approvals;
-- Decisions attention queue;
-- activity/audit feeds;
-- run logs/events.
+Early UX may deep-link into Paperclip for:
 
-Workflow OS should not reproduce these surfaces merely for aesthetic duplication.
+- agent runtime details;
+- sessions;
+- provider task history;
+- worker settings;
+- detailed provider cost/run views.
 
-The Workflow OS Command Center remains necessary because it must aggregate:
+Workflow OS Command Center remains necessary because it aggregates:
 
 - multiple client Workspaces;
-- non-agent WorkItems;
+- human/non-agent WorkItems;
 - WIR workflow runs;
+- approvals;
 - deployments;
 - production health;
 - incidents/maintenance;
 - evidence/business outcomes;
 - client-facing AI Employees.
 
-Recommended UX:
-
-> Workflow OS shows normalized portfolio/project state and may deep-link into Paperclip for detailed agent-company/runtime views during early implementation.
-
 ## 2.11 API/OpenAPI
 
-Paperclip exposes a REST API and machine-readable OpenAPI document. This is a strong reason to integrate through an adapter rather than fork or query its database.
-
-Preferred initial integration boundary:
+Preferred integration boundary:
 
 ```text
 Workflow OS
-  -> Paperclip Adapter
+  -> Internal Workforce Adapter
       -> Paperclip REST/OpenAPI
 ```
 
-Do **not** use direct Paperclip database writes.
+Do not use direct provider-database writes.
 
 ## 2.12 Plugins
 
-Paperclip supports plugins, jobs, webhooks, data/actions, dashboard contributions, and custom UI surfaces.
+Do not make an unstable/alpha plugin surface the first integration boundary when supported API surfaces are available.
 
-This could eventually allow Workflow OS-specific functionality inside Paperclip.
-
-But Paperclip's plugin runtime is documented as alpha and may change across releases.
-
-Recommendation:
-
-- REST/OpenAPI first;
-- plugin only after the adapter model is proven;
-- pin Paperclip/plugin versions together if a plugin is later required.
+REST/OpenAPI first. Plugin use, if later justified, requires its own version compatibility policy.
 
 ## 2.13 Portability
 
-Paperclip can export/import company configurations and task state into human-readable packages. This reduces lock-in and may help seed reusable internal agent-company templates per client workspace.
+Provider export/import can help with templates and recovery but is not sufficient as Workflow OS's canonical audit/history backup.
 
-Not everything is exported (for example some audit/cost/approval history), so Workflow OS cannot treat Paperclip export alone as complete audit backup.
+Workflow OS must retain enough normalized state/evidence that Paperclip can be removed without losing Project meaning or history.
 
 ---
 
-# 3. Where Paperclip overlaps Workflow OS
+# 3. Capability overlap matrix
 
 | Capability | Paperclip | Workflow OS | Decision implication |
 |---|---|---|---|
-| Tenant/company | Company | Workspace | map carefully; Workspace remains canonical |
-| Project | Project | Project | mirror/reference, not replacement |
-| Task graph | Issue hierarchy/dependencies | WorkItem dependency graph | use Paperclip for agent-executed work only |
+| Tenant/company | Company | Workspace | candidate 1:1 mapping; Workspace canonical |
+| Control credential | provider identity/token | Workspace isolation policy | must prove Workspace-bounded blast radius |
+| Project | Project | Project | provider projection/reference |
+| Task graph | Issues/dependencies | WorkItem graph | mirror only AI-executed work |
+| Provider-created child work | issue hierarchy | WorkItem/Proposal | keep local or emit proposal; never auto-promote |
 | AI workforce | agents/org/heartbeats | internal AI workforce | strong adapter candidate |
-| Runtime adapters | built in | planned | prefer reuse first |
-| Worktree isolation | built in/experimental | required conceptually | reuse if spike passes |
-| Costs/budgets | agent/project/company | Project/WorkItem + ROI | normalize, do not duplicate |
-| Review gates | execution policy | verification/reviewer/evidence | complementary |
-| Human attention | Decisions/approvals | Needs My Attention | aggregate in Workflow OS |
-| Audit | activity/run feeds | Project/Event/Evidence ledger | ingest normalized events |
-| Skills | company skills | engineering/business skills | names overlap; semantics must remain explicit |
-| Business workflow IR | no | WIR | Workflow OS differentiation |
-| Workflow execution engines | not core | Activepieces/other adapters | Workflow OS differentiation |
-| Business risk/side-effect policy | agent governance | explicit workflow/project risk model | Workflow OS remains authoritative |
-| Deployment/production incidents | generic work objects | first-class Project state | Workflow OS differentiation |
-| Client AI Employees | generic agents | governed deliverable role model | Workflow OS differentiation |
-| ROI/time-saved | not primary | first-class | Workflow OS differentiation |
+| Runtime adapters | built in | provider-neutral contract | prefer reuse first |
+| Worktree isolation | available/fast-moving capability | advanced parallel requirement | separate advanced gate |
+| Costs/budgets | worker/project/company | cross-provider Project/WorkItem/ROI | normalize |
+| Review gates | execution policy | verification/evidence | complementary |
+| Consequential approval | provider approvals | Workflow OS policy | Workflow OS authoritative |
+| Human attention | provider Decisions | Command Center | aggregate cross-domain in Workflow OS |
+| Audit | activity/run feeds | Project/Event/Evidence ledger | ingest/normalize |
+| Skills | provider/company skills | engineering/business skills | semantics must remain explicit |
+| WIR/business automation | not core | WIR | Workflow OS owns |
+| Deterministic workflow execution | not core | engine adapter | Activepieces/other engine |
+| Business risk/side-effect policy | not equivalent | explicit model | Workflow OS owns |
+| Deployment/incidents/maintenance | generic work possible | first-class Project state | Workflow OS owns |
+| Client AI Employee role model | generic agents | governed deliverable model | Workflow OS owns contract |
+| ROI/time saved | not primary | first-class | Workflow OS owns |
 
 ---
 
 # 4. Adversarial findings
 
-## Finding A — two control planes can become worse than one
+## Finding A — two peer control planes are unacceptable
 
-If Workflow OS and Paperclip both believe they own Project and task truth, state divergence is inevitable.
+Required invariant:
 
-Examples:
+> Workflow OS canonical state wins. Provider objects are mapped execution records/projections unless a future ADR explicitly changes ownership.
 
-- Paperclip Issue says `done`, Workflow OS verifier says failure.
-- Paperclip Project says `completed`, Workflow OS has an open production incident.
-- Paperclip agent creates child tasks that Workflow OS never sees.
-- human changes Paperclip task priority but Workflow OS schedules from a different priority.
+## Finding B — provider `done` is not canonical `complete`
 
-**Required invariant:** Workflow OS canonical state wins. Paperclip objects are mapped execution records unless an explicit future ADR changes ownership.
-
-## Finding B — Paperclip `done` is not Workflow OS `complete`
-
-Paperclip's `done` is a terminal issue state after configured execution policy. Workflow OS has higher-order verification, side-effect reconciliation, deployment, and business acceptance requirements.
-
-Therefore:
+Required translation:
 
 ```text
-Paperclip issue done
-!=
-Workflow OS WorkItem complete
+Paperclip done/success
+  -> execution_finished
+  -> evidence collection
+  -> Workflow OS verification/reconciliation/policy
+  -> WorkItem complete OR changes required / failed / escalated
 ```
 
-An adapter must translate `done` into something equivalent to **execution candidate finished / evidence available**, and Workflow OS decides whether canonical completion follows.
+## Finding C — tenant labels do not prove credential isolation
 
-If Workflow OS later delegates all required verification stages into Paperclip, the adapter may accept `done` only when a compatibility policy explicitly proves equivalence.
+The spike must test both provider tenant isolation and adapter/control-identity scope.
 
-## Finding C — company mapping matters for client isolation
+A single broadly privileged credential crossing unrelated client Workspaces is a production concern even if provider objects are company-scoped.
 
-One Paperclip company for every client Project would be convenient but could create unnecessary cross-client visibility for agents.
+## Finding D — provider-created work can silently expand scope
 
-Safest default:
+Provider child tasks are execution detail unless a material semantic change becomes a WorkItem Proposal and is explicitly promoted by Workflow OS.
 
-```text
-Workflow OS Workspace == Paperclip Company
-```
+## Finding E — manual provider UI edits create drift
 
-This must be tested rather than assumed.
+Workflow OS and Paperclip are not peers.
 
-## Finding D — Paperclip is evolving quickly
+Provider-side changes to canonical-like fields become:
 
-Recent stable releases contain hundreds of commits and changing runtime/plugin surfaces. This is healthy project velocity but creates integration churn.
+- runtime facts;
+- drift;
+- conflict; or
+- proposals.
 
-A Workflow OS adapter therefore needs:
+They do not silently overwrite canonical Workflow OS state.
+
+## Finding F — fast provider velocity creates compatibility risk
+
+Require:
 
 - pinned supported versions;
-- adapter capability manifest;
-- contract tests against the running Paperclip version;
-- upgrade gate;
-- no dependency on undocumented/private API;
-- graceful `unsupported` result when semantics change.
+- exact-version contract tests;
+- upgrade gates;
+- supported API surfaces only;
+- provider/adapter version attribution on evidence;
+- fail-closed behavior for unknown semantics.
 
-## Finding E — Paperclip plugins are not yet the safest integration surface
+## Finding G — session memory can hide material state
 
-The plugin runtime is documented as alpha. Building Workflow OS as a Paperclip plugin now would couple the product to a fast-moving extension SDK.
+No Project should require reopening an old model session to understand why work is in its current state.
 
-REST/OpenAPI is the preferred first boundary.
-
-## Finding F — session memory can hide state
-
-Persistent coding-agent sessions are useful, but they can create invisible assumptions.
-
-Workflow OS should require every material handoff/completion to persist compact artifacts/evidence. Resuming a Paperclip/Claude/Codex session must never be the only way to reconstruct why work is in its current state.
-
-## Finding G — agent routines are not business workflow execution
-
-Paperclip Routines can schedule/wake AI-agent work. They should not replace WIR/Activepieces for deterministic business automations.
-
-Use the right execution plane:
+## Finding H — agent routines are not WIR business workflows
 
 ```text
-agent recurring job -> Paperclip routine may be appropriate
-business process -> WIR + execution engine
+recurring internal agent work -> workforce provider may be appropriate
+business process automation -> WIR + workflow engine
 ```
 
-## Finding H — duplication of dashboards would waste effort
+## Finding I — duplicate dashboards waste effort
 
-Paperclip already has excellent detailed agent/task/run views. Workflow OS should build the cross-domain, cross-workspace portfolio view and not initially recreate every transcript, agent settings screen, worktree inspector, or budget page.
+Workflow OS builds the cross-domain command center. Provider specialist runtime UI may remain provider-native initially.
+
+## Finding J — worktrees must not block basic provider value
+
+Single bounded agent execution can be useful without parallel worktrees. Worktree/parallel capability is separately gated.
 
 ---
 
 # 5. Candidate mapping contract
 
-The following mapping should be tested in a future spike, not yet treated as final implementation.
-
-| Workflow OS canonical concept | Paperclip execution concept | Direction |
+| Workflow OS canonical concept | Paperclip concept | Direction |
 |---|---|---|
-| Workspace | Company | 1:1 default candidate |
-| Project | Project | reference/mirror |
-| WorkItem assigned to AI | Issue | conditional mirror |
-| WorkItem dependency | blocked-by / parent issue | only when relevant to mirrored issues |
-| Internal role | Agent configuration/template | execution implementation |
-| AgentAssignment | issue assignment + heartbeat context | execution implementation |
-| Agent run | Heartbeat run | normalized run evidence |
-| Project repo/env | Project workspace | runtime mapping |
-| isolated coding work | execution workspace/worktree | runtime implementation |
-| cost record | cost events/budget observation | ingest/normalize |
-| agent review | execution-policy decision | evidence |
-| human risk approval | approval/decision may mirror | Workflow OS remains authoritative |
-| activity | Activity/audit event | ingest/normalize |
-| artifact/evidence | documents/work products/comments/run refs | reference/ingest |
+| Workspace | Company | candidate 1:1 mapping |
+| Workspace control identity | board/integration identity | must be scoped/tested separately |
+| Project | Project | reference/projection |
+| AI-assigned WorkItem | Issue | conditional mirror |
+| provider-local child task | child Issue | provider local unless promoted via proposal |
+| WorkItem dependency | blocked-by / parent issue | mirror only when relevant |
+| internal role | Agent configuration/template | provider implementation |
+| AgentAssignment | Issue assignment + run/heartbeat context | provider implementation |
+| Agent run | heartbeat/run | normalized evidence |
+| Project repo/env | provider workspace | runtime mapping |
+| isolated coding work | execution workspace/worktree | advanced capability |
+| cost record | provider cost event | ingest/normalize |
+| agent review | provider execution-policy decision | evidence |
+| consequential human approval | provider approval may mirror | Workflow OS authoritative |
+| activity | activity/audit event | ingest/normalize |
+| artifact/evidence | work products/run refs | reference/ingest |
+| material newly discovered work | child issue/proposal | WorkItem Proposal -> Workflow OS decision |
 
 ---
 
-# 6. Proposed Internal Workforce Adapter responsibilities
+# 6. Internal Workforce Adapter requirements
 
-A future Workflow OS `InternalWorkforceAdapter` should expose conceptual operations equivalent to:
+The provider must fit `docs/architecture/internal-workforce-adapter-contract.md`.
+
+At minimum it must support or safely report capability gaps for:
 
 ```text
 health()
@@ -438,164 +442,224 @@ cancelAssignment(assignmentRef)
 listAssignmentEvents(assignmentRef, cursor)
 listArtifacts(assignmentRef)
 listCosts(assignmentRef)
+listProposals(assignmentRef)
 reconcile(assignmentRef)
 pauseWorker(workerRef)
 resumeWorker(workerRef)
 ```
 
-The adapter must additionally declare:
-
-- supported runtime providers;
-- session-persistence semantics;
-- task-state mapping;
-- worktree/isolation behavior;
-- review/approval capabilities;
-- cost fidelity;
-- secret-delivery model;
-- cancellation guarantees;
-- event/audit fidelity;
-- supported Paperclip versions;
-- recovery behavior when Paperclip is unavailable.
-
-This contract should be separate from the client-facing AI Employee Agent Runtime Adapter because an internal workforce manager and one bounded role runtime are different abstraction levels.
+The adapter contract remains provider-neutral.
 
 ---
 
-# 7. Paperclip spike gate
+# 7. Hands-on spike gates
 
-Do not adopt Paperclip into Workflow OS production architecture until a hands-on spike proves the following.
+Paperclip can receive two distinct results:
 
-## Gate P0 — reproducible install
+1. **CORE PASS** — acceptable for bounded/sequential internal workforce execution.
+2. **ADVANCED PARALLEL-ENGINEERING PASS** — additional approval for isolated concurrent coding work.
 
-- pin an exact stable Paperclip version;
+Do not conflate these.
+
+## Core Gate P0 — reproducible install
+
+- refresh and pin an exact stable Paperclip version;
 - document Node/database/runtime requirements;
-- run locally/self-hosted without a Paperclip cloud account;
-- confirm backup/export path.
+- run locally/self-hosted without requiring a Paperclip cloud account when the intended deployment assumes self-hosting;
+- confirm backup/export/recovery path.
 
-## Gate P1 — API contract
+## Core Gate P1 — supported API contract
 
-- obtain board API token;
-- fetch `/api/openapi.json`;
-- create/read/update synthetic Company, Project, Issue;
-- verify error semantics and authentication;
-- no direct database writes.
+- obtain an appropriate integration/control credential;
+- fetch `/api/openapi.json` or the current documented machine-readable API contract;
+- create/read/update synthetic Company, Project, and Issue objects through supported APIs;
+- verify authentication/error semantics;
+- prove no direct database writes are required.
 
-## Gate P2 — client isolation
+## Core Gate P2 — tenant **and credential** isolation
 
-- create two synthetic Workflow OS Workspaces mapped to two Paperclip Companies;
-- prove agents/credentials/issues cannot cross company boundary;
-- verify normalized references cannot be confused across tenants.
+Create two synthetic Workflow OS Workspaces mapped to two Paperclip Companies.
 
-## Gate P3 — Codex worker execution
+Prove:
+
+- agents/issues/artifacts/secrets/costs cannot cross the intended company boundary;
+- normalized mappings cannot be confused across Workspaces;
+- the adapter/control credential's real permissions and blast radius are documented;
+- a credential intended for Workspace A cannot silently act as Workspace B unless explicitly designed/approved;
+- if acceptable Workspace-bounded credential scoping is unavailable, document/test the stronger per-Workspace-instance fallback.
+
+Failure of this gate blocks real multi-client production use.
+
+## Core Gate P3 — bounded Codex worker execution
 
 - configure one bounded Codex internal worker;
-- create one synthetic Assignment;
+- create one synthetic AgentAssignment from a Workflow OS WorkItem;
 - run it;
-- collect run/log/cost/evidence;
-- cancel/retry safely.
+- collect run/log/cost/artifact/evidence data;
+- cancel/retry safely;
+- prove authority cannot silently broaden beyond the Assignment contract.
 
-## Gate P4 — lifecycle/review mapping
+## Core Gate P4 — lifecycle, completion, proposals, and drift
 
-- map ready/running/blocked/review/done states;
-- configure independent reviewer;
-- force changes-requested loop;
-- force escalation;
-- prove Paperclip `done` cannot prematurely mark Workflow OS WorkItem `complete`.
+- map provider ready/running/blocked/review/done states into normalized assignment states;
+- prove provider `done` maps to `execution_finished`, never direct WorkItem `complete`;
+- force Workflow OS verification failure after provider success and prove canonical state stays incomplete;
+- let the provider create an in-scope child task and prove it can remain provider-local;
+- let the provider propose a material out-of-scope/new architecture task and prove it becomes a WorkItem Proposal rather than automatic canonical work;
+- manually alter provider priority/status/scope-like metadata and prove Workflow OS emits drift/conflict/proposal rather than silently accepting the change.
 
-## Gate P5 — isolated workspace
-
-- execute two independent coding assignments in separate worktrees;
-- prove no file collision;
-- verify dependency finalization before downstream work;
-- reconcile resulting branches/PR references.
-
-## Gate P6 — audit/cost/event reconciliation
+## Core Gate P5 — audit/cost/event reconciliation
 
 - incrementally consume activity/run events;
 - ensure idempotent ingestion;
-- simulate duplicate polling/retry;
-- prove no duplicated Workflow OS events or cost records.
+- simulate duplicate polling/event delivery;
+- simulate out-of-order events;
+- prove no duplicated Workflow OS events/cost records;
+- prove provider-runtime progress can be reconciled without giving the provider canonical authority.
 
-## Gate P7 — secrets
+## Core Gate P6 — secrets and grants
 
-- bind a synthetic secret by reference;
+- bind a synthetic canonical secret/integration reference to a provider binding;
 - prove an unauthorized worker cannot read it;
-- use run-bound access where possible;
-- verify logs/evidence do not leak the value.
+- use least-privilege/run-bound/on-demand access where supported;
+- verify secret reads are auditable when supported;
+- verify logs/evidence do not leak the value;
+- test rotation/revocation behavior;
+- include the adapter/control credential itself in the threat model.
 
-## Gate P8 — outage and restart
+## Core Gate P7 — outage and restart
 
 - stop Paperclip during active/queued work;
-- restart it;
-- reconcile state without false completion;
-- Workflow OS Project remains explainable while Paperclip is unavailable.
+- keep Workflow OS Project/WorkItem state explainable while unavailable;
+- restart Paperclip;
+- reconcile without false completion or duplicate assignment mutation;
+- prove uncertain outcomes fail closed until reconciled.
 
-## Gate P9 — version compatibility
+## Core Gate P8 — version compatibility
 
-- run adapter contract tests against pinned version;
+- run adapter contract tests against the pinned version;
 - upgrade to a later version in a disposable environment;
-- detect compatibility failure instead of silently accepting changed semantics.
+- detect incompatible API/semantic changes rather than silently accepting them;
+- record provider + adapter versions on test evidence.
 
-### Pass condition
+### Core PASS condition
 
-Paperclip receives **PASS** only if Workflow OS can remove/replace the adapter without losing canonical Project/WorkItem meaning, authorization, evidence, and history.
+Paperclip receives **CORE PASS** only if:
+
+> Workflow OS can remove/replace the adapter without losing canonical Project/WorkItem meaning, authorization, evidence, history, recoverability, or client isolation.
+
+CORE PASS authorizes further provider-integration design; it does not automatically authorize every real-client or high-impact use.
 
 ---
 
-# 8. Preliminary decision
+# 8. Advanced parallel-engineering gates
 
-**Paperclip: ADAPTER, not BUILD and not wholesale ADOPT.**
+Run these only after CORE PASS and only if parallel coding materially improves delivery.
 
-Use it when it is better at:
+## Advanced Gate A1 — isolated workspace/worktree behavior
 
-- agent org/runtime management;
+- execute independent assignments in isolated workspaces/worktrees;
+- prove file/state isolation;
+- prove cleanup/recovery after worker failure;
+- verify branch/worktree references can be reconciled into Workflow OS evidence.
+
+## Advanced Gate A2 — dependency and integration correctness
+
+- create two parallel independent coding WorkItems plus one dependent integration WorkItem;
+- prove the dependent task cannot start until required predecessors are finalized according to Workflow OS state;
+- prove provider-local completion cannot bypass dependency readiness;
+- identify explicit integration ownership;
+- exercise merge/conflict handling.
+
+## Advanced Gate A3 — parallel verification and collision safety
+
+- run concurrent workers that intentionally attempt a shared-resource conflict;
+- prove the provider/adapter blocks, isolates, or surfaces the conflict deterministically;
+- run independent verification after integration;
+- confirm failed verification reopens/creates repair work rather than leaving canonical work complete.
+
+### Advanced PASS condition
+
+Paperclip receives **ADVANCED PARALLEL-ENGINEERING PASS** only if isolated concurrency does not weaken ADR-012's dependency, authority, integration, and verification guarantees.
+
+If advanced gates fail, Paperclip may still remain a CORE PASS provider for sequential/bounded work.
+
+---
+
+# 9. Preliminary provider decision
+
+**Paperclip: ADAPTER CANDIDATE.**
+
+Do not build a bespoke internal agent-company runtime until Paperclip or another provider has been tested against the core gates and fails in a way that justifies owning those mechanics.
+
+Use Paperclip, if it passes, for concerns it is better positioned to provide:
+
+- worker/runtime management;
 - heartbeats/scheduling;
 - session persistence;
-- local coding-agent adapters;
-- worktree provisioning;
-- task checkout;
-- agent costs/budgets;
-- agent-run logs;
-- review stages;
-- detailed runtime/operator inspection.
+- Codex/Claude adapters;
+- provider-native task checkout;
+- agent cost/runtime detail;
+- worker-level review stages;
+- detailed workforce/runtime inspection;
+- advanced worktree/parallel mechanics only after advanced pass.
 
-Workflow OS must continue to own:
+Workflow OS continues to own:
 
-- client Workspace identity and business isolation intent;
-- Project lifecycle from problem through maintenance;
-- canonical WorkItem graph;
-- WIR and workflow semantics;
-- business risk and side-effect authorization;
-- canonical Decisions/Approvals;
-- cross-engine evidence;
-- deployment/production/incident/maintenance state;
-- client-facing AI Employee semantics;
+- Workspace/client semantics;
+- Project lifecycle;
+- canonical WorkItem graph and proposals;
+- WIR;
+- risk/authorization/approval;
+- canonical evidence/acceptance;
+- deployment/incident/maintenance;
+- client AI Employee contracts;
 - portfolio Command Center;
-- ROI/business-outcome records.
+- ROI/business outcomes.
 
 ---
 
-# 9. Why not fork Paperclip immediately
+# 10. Why not fork Paperclip first
 
-A fork is legally possible under MIT, but architecturally unattractive now:
+A fork may be legally possible under its license, but it is not the preferred first architecture because it would:
 
-- large fast-moving codebase;
-- high upstream maintenance cost;
-- Workflow OS would inherit many product decisions outside its differentiation;
-- harder upgrades/security fixes;
-- greater temptation to make Paperclip's schema the canonical Workflow OS schema.
+- increase upstream maintenance burden;
+- couple Workflow OS to provider internals;
+- encourage provider schema to become canonical;
+- complicate upgrades/security fixes;
+- duplicate functionality outside Workflow OS differentiation.
 
-A fork should be revisited only if a required extension cannot be expressed safely through the documented API/adapter/plugin surfaces and the value clearly exceeds long-term maintenance burden.
+Revisit a fork only if a high-value required extension cannot be safely expressed through supported APIs/adapters and the long-term maintenance cost is justified.
 
 ---
 
-# 10. Decision to carry into the wider review
+# 11. Relationship to Phase 1
 
-The strongest current position is:
+Paperclip integration is **not** a Phase 1 acceptance requirement.
+
+Phase 1 first proves:
+
+```text
+Workspace
+ -> Project
+ -> WorkItem(s)
+ -> Workflow Brief
+ -> WIR
+ -> workflow adapter execution
+ -> evidence
+ -> Command Center
+ -> deployment/maintenance attribution
+```
+
+Only after canonical Workflow OS semantics exist should an Internal Workforce Adapter be attached.
+
+---
+
+# 12. Decision carried forward
 
 ```text
 Workflow OS
-  = domain/product control plane
+  = canonical domain/product/business-delivery control plane
 
 Paperclip
   = candidate internal AI workforce execution/control subsystem
