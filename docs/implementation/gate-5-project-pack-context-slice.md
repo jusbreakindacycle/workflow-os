@@ -21,7 +21,9 @@ Compile accepted canonical Project state into a deterministic machine-execution 
 
 The Pack is validated by `validateProjectPack()`, serialized using deterministic key ordering, SHA-256 hashed, versioned in `project_pack_versions`, and stored with provenance. Regenerating from equivalent canonical inputs returns the equivalent current Pack rather than generating meaningless churn.
 
-The canonical strategy identifiers are `research_pilot` and `defer`; the JSON schema was aligned to those persisted identifiers.
+The canonical strategy identifiers are `research_pilot` and `defer`; the JSON schema is aligned to those persisted identifiers.
+
+`diffProjectPackVersions()` compares any two persisted Pack versions and returns deterministic changed paths plus before/after values. The local API exposes this as `GET /api/projects/:projectId/project-pack-diff` with `workspaceId`, `fromVersion`, and `toVersion` query parameters.
 
 ## Secret rule
 
@@ -42,7 +44,7 @@ It deliberately does not copy client pricing, unrelated commercial notes, the ra
 
 ## Evidence
 
-`test/phase1-control-plane.test.js` proves deterministic Pack regeneration and that a client Engagement price note is absent from normal Assignment context. `test/phase1-contracts.test.js` adversarially rejects malformed requirements, strategy, work graph and policy objects and rejects reusable secrets in Context Slice data.
+`test/phase1-control-plane.test.js` proves deterministic Pack regeneration and that a client Engagement price note is absent from normal Assignment context. `test/phase1-contracts.test.js` adversarially rejects malformed requirements, strategy, work graph and policy objects and rejects reusable secrets in Context Slice data. `test/phase1-pack-revision.test.js` proves a material accepted revision creates Pack v2 and an inspectable diff from Pack v1.
 
 ## Non-goals
 
