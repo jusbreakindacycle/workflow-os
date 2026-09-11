@@ -7,6 +7,7 @@ import { assertFoundationStatus } from './domain/foundation-status.js';
 import { openDatabase } from './db/database.js';
 import { handleApi, statusForApiError } from './http/intake-api.js';
 import { handleControlPlaneApi, statusForControlPlaneError } from './http/control-plane-api.js';
+import { handlePhase2Api, statusForPhase2Error } from './http/phase2-api.js';
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(moduleDir, '..');
@@ -28,8 +29,8 @@ export function createApp(options) {
 
   const status = {
     service: 'workflow-os',
-    phase: 'phase-1',
-    gate: 'gate-10-phase-1-complete',
+    phase: 'phase-2',
+    gate: 'autonomy-kernel-implemented-live-certification-pending',
     database: { status: 'ready', migrations }
   };
   assertFoundationStatus(status);
@@ -44,6 +45,8 @@ export function createApp(options) {
         if (intakeResult) return sendJson(response, intakeResult.status, intakeResult.body);
         const controlPlaneResult = await handleControlPlaneApi({ request, url, db });
         if (controlPlaneResult) return sendJson(response, controlPlaneResult.status, controlPlaneResult.body);
+        const phase2Result = await handlePhase2Api({ request, url, db });
+        if (phase2Result) return sendJson(response, phase2Result.status, phase2Result.body);
         return sendJson(response, 404, { error: 'not_found' });
       }
 
@@ -52,7 +55,7 @@ export function createApp(options) {
     } catch (error) {
       console.error(error);
       if ((request.url ?? '').startsWith('/api/')) {
-        const statusCode = Math.max(statusForApiError(error), statusForControlPlaneError(error));
+        const statusCode = Math.max(statusForApiError(error), statusForControlPlaneError(error), statusForPhase2Error(error));
         return sendJson(response, statusCode, { error: error instanceof Error ? error.message : 'request_failed' });
       }
       return sendJson(response, 500, { error: 'internal_error' });
