@@ -2,7 +2,9 @@
 
 ## Objective
 
-Workflow OS may coordinate client systems, repositories, credentials, paid AI execution, and production actions. Security/isolation are foundational requirements.
+Workflow OS may coordinate client systems, repositories, credentials, paid execution, production actions, and untrusted AI/retrieved content. Security/isolation are foundational requirements.
+
+See `agent-threat-and-data-policy.md` for agent threats, data classification, routing compatibility, and retention.
 
 ## Principles
 
@@ -17,33 +19,28 @@ Workflow OS may coordinate client systems, repositories, credentials, paid AI ex
 9. authenticated/verifiable inbound events;
 10. safe outbound network behavior;
 11. provider credential blast-radius analysis;
-12. fail closed on unknown authorization semantics.
+12. untrusted content never grants authority;
+13. fail closed on unknown authorization/data-routing semantics.
 
 ## Workspace isolation
 
-Every security-relevant canonical entity is Workspace-scoped. For external client work the default is one Client per Workspace.
-
-Authorization must be enforced at the data/action boundary, not by prompt instruction alone.
+Every security-relevant canonical entity is Workspace-scoped. For external client work the default is one Client per Workspace. Authorization is enforced at the data/action boundary, not by prompt instruction alone.
 
 ## Provider credentials
 
-A provider's own tenant boundary is not enough. The integration/control credential used by Workflow OS must have documented actual permissions and acceptable blast radius.
-
-If a provider cannot safely scope control credentials across clients, evaluate stronger per-Workspace instance/account separation.
+Provider tenancy is insufficient by itself. Workflow OS control credentials require documented permissions and acceptable blast radius; stronger per-Workspace account/instance isolation is evaluated when safe scoping is unavailable.
 
 ## Agents/tools
 
-Each Assignment declares an allowlist of tools/capabilities. Role title does not grant permission.
-
-No wildcard production credentials by default.
+Each Assignment declares an allowlist of tools/capabilities. Role title does not grant permission. Delegation may only narrow authority unless a new authorized Assignment is created. No wildcard production credentials by default.
 
 ## Secrets
 
-Canonical Project/WorkItem/ProjectPack/WIR data contains logical refs such as `client-a.supabase.production`, never the reusable secret itself.
+Canonical Project/WorkItem/ProjectPack/WIR data contains logical secret/integration references, never reusable secret values. Runtime adapters resolve minimum necessary run-bound/provider bindings where possible. Access should be auditable/revocable and systematically redacted.
 
-A runtime adapter resolves the reference into minimum necessary run-bound/provider binding where possible.
+## Context minimization
 
-Secret access should be auditable and revocable. Redaction must be systematic, not dependent on workers remembering.
+A provider/runtime receives only the minimum authorized Context Slice for the Assignment. A Project Pack reference does not grant blanket permission to transmit every Project/commercial artifact to a model/provider.
 
 ## Paid execution
 
@@ -51,11 +48,15 @@ Spend authorization is a security/authority boundary. Model reasoning cannot gra
 
 ## Generic HTTP / SSRF
 
-Any generic network action must enforce destination policy and block metadata/internal control targets unless explicitly allowed.
+Generic network actions enforce destination policy and block metadata/internal control targets unless explicitly allowed.
 
 ## Application baseline
 
-Account for broken authorization, injection, unsafe rendering, CSRF/session risks when applicable, CORS, rate/resource abuse, dependency vulnerabilities, TLS/secure headers, backup confidentiality, and migration safety.
+Account for broken authorization, injection, unsafe rendering, CSRF/session risks when applicable, CORS, rate/resource abuse, dependency vulnerabilities, TLS/secure headers, backup confidentiality, migration safety, local-data-at-rest policy, and safe localhost/network exposure.
+
+## Before real client use
+
+Define/test local database and backup protection, secret-store integration, provider data-class compatibility, retention/deletion, and canonical-state recovery.
 
 ## Public repository
 

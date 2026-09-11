@@ -1,18 +1,36 @@
 # Legacy Foundation Decision Disposition
 
-Foundation v3 removes many older ADR files from the active working tree to reduce duplicated/speculative documentation. Their full text remains in Git history.
+Foundation v3 removes duplicated historical ADR files from the active working tree, but **carried-forward decisions remain normative here**. Their original full text remains in Git history.
 
-| Legacy ADR | Disposition in v3 |
+## Carried-forward invariants
+
+### ADR-001 — control plane, not universal execution engine
+Workflow OS owns delivery meaning/governance and delegates specialized execution through replaceable adapters. Do not build a second general-purpose executor unless a later ADR proves a measured need.
+
+### ADR-002 — WIR canonical for business workflows
+WIR is the canonical portable representation of a business workflow **inside a Project**. Provider/engine workflow definitions are derived projections. WIR does not replace Project/WorkItem/Project Pack state.
+
+### ADR-003 — deterministic first
+Use deterministic rules/workflows when stable business rules can define the action. Use bounded AI for semantic reasoning; use agents only when dynamic contextual action selection is genuinely required.
+
+### ADR-005 — Workspace/client isolation
+Workspace is the security/data-isolation boundary. Provider tenancy alone is insufficient; control credentials, context routing, logs, evidence, and local storage must preserve isolation.
+
+### ADR-006 — evidence-driven scale
+Do not add Kubernetes, multi-region, sharding, complex queues, service discovery, or similar infrastructure without measured need.
+
+### ADR-011 — Project top-level operational unit
+Project is the top-level delivery/maintenance unit. Repositories, workflows/WIR, AgentAssignments, deployments, incidents, and future client-facing AI roles exist inside/reference a Project.
+
+### ADR-012 — internal collaboration is gated
+Parallel/multi-agent work requires dependency-safe decomposition, mutable-resource isolation, explicit integration ownership, bounded assignments, and independent verification.
+
+## Superseded / deferred
+
+| Legacy ADR | Current disposition |
 |---|---|
-| ADR-001 control plane, not universal engine | **Carried forward** in `ARCHITECTURE.md` and provider-adapter contracts |
-| ADR-002 WIR canonical model | **Carried forward with narrower wording:** WIR is canonical for business workflow definitions inside a Project |
-| ADR-003 deterministic-first | **Carried forward** as an architectural invariant |
-| ADR-004 Activepieces initial MVP engine | **Superseded by ADR-019.** Activepieces remains a future candidate, not Phase 1 prerequisite |
-| ADR-005 client isolation | **Carried forward**; Workspace remains the security boundary |
-| ADR-006 evidence-driven scale | **Carried forward**; no speculative Kubernetes/multi-region/etc. |
-| ADR-007–010 client-facing AI Employee contracts | **Deferred/condensed.** Detailed Phase 3 documents removed from active tree; future client roles remain a possible later capability and require fresh review before implementation |
-| ADR-011 Project top-level operational unit | **Carried forward** |
-| ADR-012 internal agent collaboration gated | **Carried forward and expanded** into full-roster/dynamic-activation + bounded parallelism rules |
-| ADR-013 internal workforce adapter | **Retained as an active ADR** with D1–D8 authority rules |
+| ADR-004 Activepieces first MVP engine | **Superseded by ADR-019.** Activepieces remains a future candidate. |
+| ADR-007–010 client-facing AI Employee contracts | **Deferred.** Re-research after internal delivery value is proven. |
+| ADR-013 internal workforce adapter | **Retained as active ADR-013** with D1–D8 authority rules. |
 
-Removing an old file from the working tree does not mean the historical decision never existed. It means the current repository should present the smallest set of authoritative documents needed for the new architecture.
+This file prevents a shallow checkout/future worker from needing Git archaeology to recover still-active invariants.

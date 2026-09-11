@@ -26,25 +26,28 @@
 - [Internal Workforce Adapter](architecture/internal-workforce-adapter-contract.md)
 - [Workflow Engine Adapter](architecture/workflow-engine-adapter-contract.md)
 
-## Internal workforce
+## Internal workforce / engineering harness
 
 - [Internal Workforce](agents/internal-workforce.md)
 - [Agent Assignment Contract](agents/assignment-contract.md)
 - [Verification and Review](agents/verification-and-review.md)
+- [Agent Operability](engineering/agent-operability.md)
 
 ## Workflow automation
 
 - [WIR v0](workflow-ir/wir-v0-spec.md)
 - [WIR v0 Schema](workflow-ir/wir-v0.schema.json)
 
-## Safety / operations
+## Safety / testing / operations
 
 - [Security Model](security/security-model.md)
+- [Agent Threat and Data Policy](security/agent-threat-and-data-policy.md)
 - [Risk and Approval Policy](security/risk-and-approval-policy.md)
 - [Reliability Model](reliability/reliability-model.md)
-- [Production and Maintenance](operations/production-maintenance.md)
+- [Testing Strategy](testing/testing-strategy.md)
 - [Verification Ladder](testing/verification-ladder.md)
 - [Phase 1 Acceptance Criteria](testing/acceptance-criteria.md)
+- [Production and Maintenance](operations/production-maintenance.md)
 
 ## Providers
 
@@ -55,6 +58,7 @@
 ## Decisions and plans
 
 - [Decision Index](decisions/index.md)
+- [Legacy Decision Disposition](decisions/legacy-foundation-decisions.md)
 - [Roadmap](plans/roadmap.md)
 - [Phase 1 Core Control Plane](plans/phase-1-core-control-plane.md)
 

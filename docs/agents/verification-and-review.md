@@ -4,30 +4,23 @@
 
 Workers do not grade their own success for material work.
 
-## Verification ladder
-
-See `docs/testing/verification-ladder.md` for levels. Apply the lowest level that is sufficient for consequence, and raise it as risk increases.
+Use `docs/testing/verification-ladder.md`, `docs/testing/testing-strategy.md`, and `docs/engineering/agent-operability.md`.
 
 ## Independent verification
 
-Prefer an independent verifier for material code, architecture, security, high-impact automation, deployment, and client acceptance.
-
-Independence means the verifier should be able to judge from authoritative requirements/artifacts/evidence without relying on the implementing worker's hidden reasoning.
+Prefer an independent verifier for material code, architecture, security, high-impact automation, deployment, and client acceptance. The verifier judges from authoritative requirements/artifacts/evidence without requiring the implementer's hidden reasoning.
 
 ## Review types
 
-- requirements/acceptance review;
-- architecture review;
-- code/static/test review;
-- real-flow verification;
-- security/reliability review;
-- side-effect reconciliation;
-- adversarial/falsification review;
-- production health verification.
+Requirements/acceptance, architecture, code/static/test, real-flow, security/reliability, side-effect reconciliation, adversarial/falsification, and production-health review may apply.
 
 ## Failure
 
-Failed verification blocks/reopens the applicable WorkItem or creates bounded repair work. It must not leave canonical completion true merely because the provider had already reported success.
+Failed verification blocks/reopens the applicable WorkItem or creates bounded repair work. It must not leave canonical completion true because a provider reported success.
+
+## Harness expectation
+
+For material engineering work, verification should be operable by the worker/verifier: start the system, determine readiness, invoke the relevant path, inspect failures, run checks, capture evidence, and clean up without repeatedly requiring the operator to perform basic technical actions.
 
 ## Evidence before prose
 
