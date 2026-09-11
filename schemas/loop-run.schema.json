@@ -1,0 +1,23 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"urn:autonomous-delivery:loop-run:0.1",
+  "title":"Bounded Loop Run v0.1",
+  "type":"object",
+  "required":["loop_version","id","workspace_id","project_id","work_item_id","assignment_id","worker_route_ref","status","max_iterations","current_iteration","max_minutes"],
+  "properties":{
+    "loop_version":{"const":"0.1"},
+    "id":{"type":"string","minLength":1},
+    "workspace_id":{"type":"string","minLength":1},
+    "project_id":{"type":"string","minLength":1},
+    "work_item_id":{"type":"string","minLength":1},
+    "assignment_id":{"type":"string","minLength":1},
+    "worker_route_ref":{"type":"string","minLength":1},
+    "verifier_route_ref":{"type":["string","null"]},
+    "status":{"enum":["running","passed","failed","blocked","exhausted","canceled"]},
+    "max_iterations":{"type":"integer","minimum":1,"maximum":20},
+    "current_iteration":{"type":"integer","minimum":0},
+    "max_minutes":{"type":"integer","minimum":1,"maximum":1440},
+    "stop_reason":{"type":["string","null"]}
+  },
+  "additionalProperties":false
+}
