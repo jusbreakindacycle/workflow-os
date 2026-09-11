@@ -48,6 +48,7 @@
 - [Testing Strategy](testing/testing-strategy.md)
 - [Verification Ladder](testing/verification-ladder.md)
 - [Phase 1 Acceptance Criteria](testing/acceptance-criteria.md)
+- [Phase 2 Acceptance Criteria](testing/phase-2-acceptance-criteria.md)
 - [Production and Maintenance](operations/production-maintenance.md)
 
 ## Implementation
@@ -62,6 +63,7 @@
 - [Mock Assignment / Verification — Phase 1 Gate 8](implementation/gate-8-mock-assignment-verification.md)
 - [Spend Gate — Phase 1 Gate 9](implementation/gate-9-spend-gate.md)
 - [Restart / Recovery / Command Center — Phase 1 Gate 10](implementation/gate-10-command-center-recovery.md)
+- [Phase 2 Autonomy Kernel](implementation/phase-2-autonomy-kernel.md)
 
 ## Providers
 
@@ -75,8 +77,10 @@
 - [Legacy Decision Disposition](decisions/legacy-foundation-decisions.md)
 - [PR #7 Adversarial Review](reviews/pr-7-adversarial-review.md)
 - [Phase 1 Completion Report](reviews/phase-1-completion-report.md)
+- [Phase 2 Implementation Report](reviews/phase-2-implementation-report.md)
 - [Roadmap](plans/roadmap.md)
 - [Phase 1 Core Control Plane](plans/phase-1-core-control-plane.md)
+- [Phase 2 Autonomy Kernel](plans/phase-2-autonomy-kernel.md)
 
 ## Templates / schemas
 
@@ -92,3 +96,7 @@ Templates are scaffolds used to generate case-specific records. They are not gen
 - `schemas/agent-assignment.schema.json`
 - `schemas/model-runtime-profile.schema.json`
 - `schemas/provider-connection.schema.json`
+- `schemas/execution-route.schema.json`
+- `schemas/route-decision.schema.json`
+- `schemas/skill-definition.schema.json`
+- `schemas/loop-run.schema.json`

@@ -11,6 +11,7 @@
     "start": "node src/server.js",
     "db:migrate": "node scripts/migrate.js",
     "db:backup": "node scripts/backup-db.js",
+    "phase2:live": "node scripts/phase2-live-smoke.js",
     "check": "node scripts/check-source.js",
     "test": "node --test",
     "verify": "npm run check && npm test"

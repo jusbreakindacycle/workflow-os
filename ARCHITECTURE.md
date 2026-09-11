@@ -42,6 +42,8 @@ Operator
 
 Workspace is the isolation boundary. Project is the top-level delivery/maintenance unit. Engagement is commercial context.
 
+ProviderConnections, ExecutionRoutes, Skills and execution-host configuration are Workspace/control-plane configuration. RouteDecisions, ExecutionAttempts and LoopRuns are execution evidence linked to Project/WorkItem/Assignment state; they do not redefine canonical Project meaning.
+
 ## Main layers
 
 ### 1. Operator interface
@@ -64,15 +66,19 @@ A material goal/scope change creates a new ProjectBrief/ProjectRevision version,
 
 Contains ready-work selection, loop/routine engine, dynamic role activation, bounded Assignments, Proposals, verification/escalation, and budgets/stop conditions.
 
+Phase 2 adds persisted RouteDecisions/ExecutionAttempts and a bounded worker -> verifier feedback loop. External execution still cannot directly complete WorkItems.
+
 ### 6. Model / Runtime / Connection Broker
 
 Separates model capability, runtime capability, and actual configured ProviderConnection/entitlement. Work declares capability/risk/data/cost/tool requirements. Broker routes only through eligible configured healthy connections.
 
 ProviderConnection may represent API key/OAuth, installed subscription CLI, local service, or self-hosted runtime. Cancellation/revocation changes route eligibility, not Project meaning.
 
+Phase 2 makes eligibility deterministic and records the candidate set, winner and rationale. Fallback reruns eligibility rather than silently switching to an otherwise-disallowed or paid route.
+
 ### 7. Project Bootstrapper + Instruction Compiler
 
-After accepted scope/architecture and repository approval, bootstrapper creates/connects workspace/repo and compiles case-specific provider projections. `AGENTS.md`, `CLAUDE.md`, Copilot/OpenCode config, Paperclip/API payloads are derived artifacts, not canonical truth.
+After accepted scope/architecture and applicable repository/external-resource approval, bootstrapper creates/connects the required delivery context and compiles case-specific provider projections. `AGENTS.md`, `CLAUDE.md`, Copilot/OpenCode config, Paperclip/API payloads are derived artifacts, not canonical truth.
 
 A provider receives a minimum-authorized **Context Slice** for the exact Assignment, not the whole Project/Engagement merely because the data exists.
 
@@ -80,9 +86,13 @@ A provider receives a minimum-authorized **Context Slice** for the exact Assignm
 
 Stores versioned evaluated capabilities with input/output, prerequisites, tools/permissions, failure modes, verification, and compatibility.
 
+Skills describe reusable execution behavior; they cannot grant authority beyond the Assignment, Approval, side-effect policy or SpendEnvelope.
+
 ### 9. Adapter plane
 
 Provider-neutral classes include Model, Runtime, Internal Workforce, Workflow Engine, Source Control, Deployment, Observability, and communication/notification adapters.
+
+Direct provider HTTP adapters are replaceable implementations behind normalized ExecutionRoutes. Their API schema is not canonical Project schema.
 
 ### 10. Execution plane
 
@@ -117,6 +127,8 @@ Project state
 
 Every loop has trigger, goal predicate, authorized scope, execution strategy, verification, iteration/time/tool/cost bounds, stop conditions, and escalation. A routine adds time/event scheduling. No unbounded autonomous loop is valid.
 
+A worker/verifier loop must preserve one canonical objective. Verifier feedback may cause another bounded execution attempt; it does not authorize material scope change.
+
 ## Local-first does not mean local-only or always-on
 
 Core Project/commercial state and operator functions remain locally usable. Intelligence may be local or remote by capability/policy.
@@ -127,9 +139,13 @@ If the coordinator host is asleep/offline, local autonomous work waits visibly. 
 
 No new metered/variable-cost external action begins without applicable operator-approved bounds. This includes AI/runtime and later metered APIs/cloud/workflow/deployment services. Already-paid fixed subscription usage may be zero-incremental when ProviderConnection evidence confirms no new per-use charge.
 
+Unknown actual provider cost is never assumed to be zero. A route must have an approved conservative estimate/bound before execution when authoritative per-call pricing cannot be reconciled immediately.
+
 ## Security / untrusted content
 
 Retrieved/uploaded/client/repository/provider content is untrusted data and cannot grant itself authority. Data classification, Context Slice minimization, prompt/tool poisoning defenses, approval binding, and provider fallback policy are enforced outside model reasoning.
+
+Provider credentials are external bindings/references. Raw secret values do not belong in Project Pack, Context Slice, instruction projections, tests, fixtures or canonical Project records.
 
 ## Completion semantics
 
@@ -137,7 +153,9 @@ Provider `done` means execution finished/evidence available. Canonical WorkItem 
 
 ## Provider-independence proof
 
-Adapters reduce lock-in but are not proof by themselves. Before claiming operational portability for a capability, execute representative work through a second independently configured eligible route/provider and confirm canonical Project/Assignment/evidence semantics survive replacement.
+Adapters reduce lock-in but are not proof by themselves. Before claiming operational portability for a capability, execute representative work through a second independently configured eligible non-fixture route/provider and confirm canonical Project/Assignment/evidence semantics survive replacement.
+
+Fixture-only portability drills prove implementation/rerouting semantics, not live operational portability.
 
 ## Architectural invariants
 
@@ -164,7 +182,12 @@ Adapters reduce lock-in but are not proof by themselves. Before claiming operati
 21. Scale infrastructure is evidence-driven.
 22. Core Project state remains understandable when any AI/provider is unavailable.
 23. Continuous background execution requires an available host; lack of one becomes visible waiting state.
+24. Route selection and fallback must remain explainable and replayable from persisted evidence.
+25. Independent verification cannot be inferred merely because worker and verifier prompts are different; route independence is explicit configuration/evidence.
+26. Fixture evidence cannot be promoted into a claim of real-provider execution or operational portability.
 
 ## Current phase
 
-Foundation v3 changes implementation order. First serious coding milestone is the local canonical control plane, not Activepieces/Paperclip integration. See `docs/plans/phase-1-core-control-plane.md`.
+Phase 1 local control-plane semantics are complete. Phase 2 implements the autonomy kernel, Broker, provider-adapter boundary, Skills, instruction compilation, bounded loops, independent verification, fallback/rerouting, and live-certification harness.
+
+Until a non-fixture route is intentionally configured and run, the accurate state is **autonomy kernel implemented; live provider certification pending operator configuration**. See `docs/plans/phase-2-autonomy-kernel.md`.

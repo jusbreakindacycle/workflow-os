@@ -1,6 +1,6 @@
 # Workflow OS (temporary name)
 
-> **Status:** Foundation v3 + Phase 1 local core control plane implemented. The product name `workflow-os` is temporary. Real provider execution begins only in Phase 2.
+> **Status:** Foundation v3 + Phase 1 local core control plane merged. Phase 2 autonomy kernel is implemented in the current PR; live provider certification remains an explicit operator-run evidence step. The product name `workflow-os` is temporary.
 
 Workflow OS is intended to become the **one operating interface a solo builder uses to run client and internal delivery work without depending on one AI platform, one coding agent, or one model vendor**.
 
@@ -98,9 +98,9 @@ The default surface is a local-first **Command Center**, not a collection of age
 
 Detailed worker/runtime logs remain drill-down diagnostics.
 
-## Phase 1 local control plane
+## Phase 1 local control plane — complete
 
-Phase 1 now proves the complete provider-independent local golden path:
+Phase 1 proves the provider-independent local golden path:
 
 ```text
 New Project
@@ -121,9 +121,46 @@ New Project
 
 Phase 1 requires **no** Paperclip, Activepieces, OpenAI, Anthropic, Codex, Claude Code, Copilot, Kimi, Supabase, paid model, real repository API, or production deployment.
 
-The implementation uses Node.js 24.15+, built-in HTTP, built-in SQLite, plain browser HTML/CSS/JS, ordered SQL migrations, `node:test`, and zero runtime npm dependencies.
+## Phase 2 autonomy kernel — implementation in current PR
 
-Run locally:
+Phase 2 turns the Phase 1 Assignment contract into a provider-neutral execution kernel:
+
+```text
+ready WorkItem
+  -> Project Pack + Context Slice
+  -> Project Bootstrap + versioned Skills
+  -> Broker eligibility/scoring
+  -> RouteDecision
+  -> bounded worker ExecutionAttempt
+  -> independent verifier ExecutionAttempt
+       -> pass: evidence -> canonical verification -> complete
+       -> fail: bounded feedback/retry
+       -> route failure: eligible fallback or stop
+```
+
+Implemented Phase 2 capabilities include:
+
+- normalized capability registry;
+- ProviderConnection/entitlement/health state;
+- model/runtime route registry;
+- capability/data/locality/health/spend-aware Broker;
+- deterministic Project Bootstrapper and instruction compiler;
+- versioned Skill Registry;
+- bounded Loop Engine;
+- independent verifier routing and fallback;
+- fixture + direct OpenAI Responses + direct Anthropic Messages adapter boundary;
+- persisted execution attempts and certification evidence;
+- explicit live certification harness.
+
+Normal CI **does not call a paid/live provider**. It proves orchestration with fixtures and fake HTTP provider responses.
+
+A real-provider claim requires an explicit local certification run. The accurate repository state until then is:
+
+> **Autonomy kernel implemented; live provider certification pending operator configuration.**
+
+Operational provider portability is not claimed until two independent non-fixture connections pass the representative portability drill.
+
+## Run locally
 
 ```bash
 npm run verify
@@ -132,13 +169,19 @@ npm run db:backup
 npm start
 ```
 
+The live provider harness is opt-in and fails closed unless the operator explicitly supplies credential environment variables, `WORKFLOW_OS_LIVE_APPROVE_SPEND=yes`, and a positive bounded maximum:
+
+```bash
+npm run phase2:live
+```
+
 See:
 
 - `docs/plans/phase-1-core-control-plane.md`
-- `docs/testing/acceptance-criteria.md`
 - `docs/reviews/phase-1-completion-report.md`
-
-After the completion PR is green and merged, the anti-PM-suite stop rule applies: proceed to **Phase 2 real execution** rather than adding generic project-management polish.
+- `docs/plans/phase-2-autonomy-kernel.md`
+- `docs/testing/phase-2-acceptance-criteria.md`
+- `docs/reviews/phase-2-implementation-report.md`
 
 ## Repository safety
 
@@ -152,8 +195,8 @@ This repository is public. Use synthetic data only. Never commit real client dat
 4. `docs/product/scope-mvp.md`
 5. `ARCHITECTURE.md`
 6. `docs/decisions/index.md`
-7. `docs/plans/phase-1-core-control-plane.md`
-8. `docs/reviews/phase-1-completion-report.md`
+7. `docs/plans/phase-2-autonomy-kernel.md`
+8. `docs/reviews/phase-2-implementation-report.md`
 
 ## One-line product test
 

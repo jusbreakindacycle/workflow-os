@@ -2,23 +2,31 @@
 
 The roadmap is capability-gated. Phase numbers do not promise dates, and a later Project's actual delivery strategy may justify moving one adapter evaluation earlier without changing canonical authority.
 
-## Foundation v3 — current documentation reset
+## Foundation v3 — complete
 
-Align the repository with the human-governed, local-first, provider-independent North Star and remove obsolete/duplicated speculative files.
+Aligned the repository with the human-governed, local-first, provider-independent North Star and removed obsolete/duplicated speculative files.
 
-## Phase 1 — Core Control Plane
+## Phase 1 — Core Control Plane — complete
 
-Build locally: Workspace/Client/Engagement/Project; New Project intake; discovery/unknowns/strategy/approval; goal revision/impact; WorkItems/dependencies/proposals; Decisions/Approvals; Project Pack + Context Slice; synthetic SpendEnvelope; Activity/Attention/Command Center; mock Assignment + evidence/verification.
+Implemented locally: Workspace/Client/Engagement/Project; New Project intake; discovery/unknowns/strategy/approval; goal revision/impact; WorkItems/dependencies/proposals; Decisions/Approvals; Project Pack + Context Slice; SpendEnvelope; Activity/Attention/Command Center; mock Assignment + evidence/verification.
 
-No real AI provider required. Exit once the semantics pass; do not turn Phase 1 into a PM suite.
+Phase 1 exited at the anti-PM-suite boundary.
 
-## Phase 2 — Autonomy Kernel / First Real Execution
+## Phase 2 — Autonomy Kernel / First Real Execution — implementation complete, live certification separate
 
-Add normalized capability registry, ProviderConnection/entitlement registry + health, Broker + Spend Gate enforcement, one real model/runtime route selected by evidence/availability, Project Bootstrapper, instruction compilation, Skill Registry, bounded Loop Engine, and independent verifier route.
+The Phase 2 PR implements normalized capabilities, ProviderConnection/entitlement/health state, Broker + Spend enforcement, deterministic Project Bootstrapper, Assignment instruction compiler, Skill Registry, bounded Loop Engine, independent verifier routing, fallback/rerouting, provider adapters, execution evidence, and live-certification records.
 
-Goal: one WorkItem can be routed/executed without operator prompt-copying.
+Normal CI proves provider-independent orchestration using fixture routes and fake provider HTTP responses. It does **not** claim a real provider call.
 
-Before claiming **operational provider portability**, configure a second eligible real route/provider for representative synthetic work and execute a replacement/rerouting drill. With only one real route, provider-neutral architecture may exist but portability remains unproven.
+Live evidence remains deliberately separate:
+
+1. first non-fixture real execution;
+2. independent non-fixture verifier;
+3. two independent non-fixture ProviderConnections passing a representative portability/rerouting drill.
+
+Until operator credentials/entitlements are configured and those checks pass, the accurate state is **autonomy kernel implemented; live provider certification pending operator configuration**.
+
+See `docs/plans/phase-2-autonomy-kernel.md` and `docs/testing/phase-2-acceptance-criteria.md`.
 
 ## Phase 3 — End-to-end Delivery Golden Path
 
