@@ -56,10 +56,11 @@
 - [Paperclip Candidate](providers/paperclip.md)
 - [Activepieces Candidate](providers/activepieces.md)
 
-## Decisions and plans
+## Decisions, reviews, and plans
 
 - [Decision Index](decisions/index.md)
 - [Legacy Decision Disposition](decisions/legacy-foundation-decisions.md)
+- [PR #7 Adversarial Review](reviews/pr-7-adversarial-review.md)
 - [Roadmap](plans/roadmap.md)
 - [Phase 1 Core Control Plane](plans/phase-1-core-control-plane.md)
 
