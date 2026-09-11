@@ -4,77 +4,45 @@ The roadmap is capability-gated. Phase numbers do not promise dates.
 
 ## Foundation v3 — current documentation reset
 
-Goal: align the repository with the clarified human-governed, local-first, provider-independent North Star and remove obsolete/duplicated speculative files.
+Align the repository with the human-governed, local-first, provider-independent North Star and remove obsolete/duplicated speculative files.
 
 ## Phase 1 — Core Control Plane
 
-Build locally:
-
-- Workspace / Client / Engagement / Project;
-- New Project intake;
-- basic discovery/unknowns/approval;
-- WorkItems/dependencies/proposals;
-- Decisions/Approvals;
-- Project Pack generation/versioning;
-- SpendEnvelope records/policy using synthetic cost;
-- Activity Feed / Needs My Attention / Command Center;
-- mock/manual Assignment + evidence/verification.
+Build locally: Workspace/Client/Engagement/Project; New Project intake; discovery/unknowns/approval; goal revision/impact; WorkItems/dependencies/proposals; Decisions/Approvals; Project Pack + Context Slice; synthetic SpendEnvelope policy; Activity/Attention/Command Center; mock Assignment + evidence/verification.
 
 No real AI provider required.
 
 ## Phase 2 — Autonomy Kernel
 
-Add:
+Add model/runtime capability registry, ProviderConnection/entitlement registry + health, Broker + Spend Gate enforcement, one real Model Adapter and one real Runtime Adapter selected by evidence/availability, Project Bootstrapper, instruction compilation to at least two target formats/fixtures, Skill Registry, bounded Loop Engine, and independent verifier route.
 
-- model/runtime capability registry;
-- Broker + Spend Gate enforcement;
-- one real Model Adapter and one real Runtime Adapter selected by evidence/availability, not architecture lock-in;
-- Project Bootstrapper;
-- instruction compilation to at least two target formats/fixtures;
-- Skill Registry;
-- bounded Loop Engine;
-- independent verifier route.
+Goal: one WorkItem can be routed/executed without the operator copying prompts.
 
-Goal: prove one WorkItem can be routed/executed/re-routed without the operator copying prompts.
+Before claiming **operational provider portability**, configure a second eligible real route/provider for representative synthetic work and execute a replacement/rerouting drill. If only one real route is available, provider-neutral architecture may exist but operational portability remains unproven.
 
 ## Phase 3 — End-to-end Project Delivery
 
-Add:
-
-- AI-assisted adaptive discovery/research/challenge;
-- dynamic internal role activation;
-- approved GitHub repository creation/bootstrap;
-- implementation/test/PR path;
-- deployment adapter in controlled environment;
-- human deployment approval;
-- production/maintenance records.
+Add AI-assisted discovery/research/challenge, dynamic internal role activation, approved repository creation/bootstrap, implementation/test/PR path, controlled deployment adapter, human deployment approval, and production/maintenance records.
 
 Goal: one controlled synthetic/internal MVP delivered from raw idea to deployed result.
 
+If unattended/background execution becomes valuable, define an `ExecutionHost` topology (local desktop, always-on self-hosted machine, or replaceable remote host). Canonical state must not depend on one hosting vendor.
+
 ## Phase 4 — Business Workflow Automation
 
-Add WIR execution and evaluate Activepieces (or alternative) against the Workflow Engine Adapter contract.
+Add WIR execution and evaluate Activepieces (or alternative) against Workflow Engine Adapter contract.
 
 ## Phase 5 — Commercial Operations
 
-Expand operator-side commercial workflows only when real work requires them:
-
-- quotation/change-request generation;
-- invoice/payment status integration;
-- maintenance agreement reminders;
-- client communication/portal integration.
-
-Do not become a full accounting ERP.
+Expand operator-side commercial workflows only when real work requires them: quotation/change-request generation, invoice/payment status integration, maintenance reminders, client communication/portal. Do not become an accounting ERP.
 
 ## Phase 6 — Internal Workforce Provider Evaluation
 
-If direct runtime orchestration becomes burdensome, run Paperclip core/advanced gates. Adopt only the proven subset behind ADR-013.
-
-This phase may move earlier if measured coordination cost justifies it, but cannot replace canonical control-plane authority.
+If direct runtime orchestration becomes burdensome, run Paperclip core/advanced gates. Adopt only the proven subset behind ADR-013. This may move earlier if measured coordination cost justifies it, but cannot replace canonical authority.
 
 ## Phase 7 — Future client-facing AI workers
 
-Re-research and define client-facing governed AI role packaging only after internal delivery/value is proven. Old detailed Phase 3 AI Employee specs were intentionally removed from the active Foundation v3 tree to avoid premature product scope.
+Re-research and define governed client-facing AI role packaging only after internal delivery/value is proven.
 
 ## Scale
 

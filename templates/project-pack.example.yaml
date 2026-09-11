@@ -1,8 +1,8 @@
-project_pack_version: "0"
+project_pack_version: "0.1"
 project:
   workspace_id: ws-synthetic
   project_id: proj-synthetic
-  project_version: 3
+  project_brief_version: 3
   kind: client_delivery
   problem: "Synthetic example problem"
   desired_outcome: "Synthetic measurable outcome"
@@ -10,22 +10,22 @@ project:
   requirements:
     - id: req-1
       statement: "Example requirement"
+      acceptance_ref: "artifact://acceptance/req-1"
   non_goals:
     - "Example excluded behavior"
   architecture_refs:
     - "artifact://architecture-v1"
-  work_items:
-    - id: wi-1
-      outcome: "Produce synthetic implementation candidate"
-      acceptance: "Required verification evidence passes"
-      dependencies: []
+  work_graph:
+    graph_version: 2
+    work_item_refs:
+      - "workitem://wi-1@v1"
   policy:
+    data_classification: Public
     paid_execution: ask
-    risk_tier: R1
     raw_secrets_allowed: false
   verification:
     minimum_level: L2
   escalation:
     - material_scope_change
-    - paid_execution_without_envelope
+    - metered_execution_without_envelope
     - credential_required

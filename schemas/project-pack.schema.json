@@ -1,31 +1,65 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.local/workflow-os/project-pack-v0.schema.json",
-  "title": "Project Pack v0",
+  "$id": "urn:autonomous-delivery:project-pack:0.1",
+  "title": "Project Pack v0.1",
   "type": "object",
   "required": ["project_pack_version", "project"],
   "properties": {
-    "project_pack_version": { "const": "0" },
+    "project_pack_version": { "const": "0.1" },
     "project": {
       "type": "object",
-      "required": ["workspace_id", "project_id", "project_version", "kind", "problem", "desired_outcome", "requirements", "non_goals", "work_items", "policy", "verification", "escalation"],
+      "required": ["workspace_id", "project_id", "project_brief_version", "kind", "problem", "desired_outcome", "requirements", "non_goals", "work_graph", "policy", "verification", "escalation"],
       "properties": {
         "workspace_id": { "type": "string", "minLength": 1 },
         "project_id": { "type": "string", "minLength": 1 },
-        "project_version": { "type": "integer", "minimum": 1 },
-        "kind": { "type": "string", "enum": ["client_delivery", "internal_product", "experiment"] },
-        "problem": { "type": "string" },
-        "desired_outcome": { "type": "string" },
+        "project_brief_version": { "type": "integer", "minimum": 1 },
+        "kind": { "enum": ["client_delivery", "internal_product", "experiment"] },
+        "problem": { "type": "string", "minLength": 1 },
+        "desired_outcome": { "type": "string", "minLength": 1 },
         "engagement_ref": { "type": ["string", "null"] },
-        "requirements": { "type": "array", "items": { "type": "object" } },
-        "non_goals": { "type": "array", "items": { "type": "string" } },
-        "architecture_refs": { "type": "array", "items": { "type": "string" } },
-        "work_items": { "type": "array", "items": { "type": "object" } },
-        "policy": { "type": "object" },
-        "verification": { "type": "object" },
-        "escalation": { "type": "array", "items": { "type": "string" } }
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "statement"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "statement": { "type": "string", "minLength": 1 },
+              "acceptance_ref": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "non_goals": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "architecture_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "work_graph": {
+          "type": "object",
+          "required": ["graph_version", "work_item_refs"],
+          "properties": {
+            "graph_version": { "type": "integer", "minimum": 1 },
+            "work_item_refs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+          },
+          "additionalProperties": false
+        },
+        "policy": {
+          "type": "object",
+          "required": ["data_classification", "paid_execution", "raw_secrets_allowed"],
+          "properties": {
+            "data_classification": { "enum": ["Public", "Internal", "Confidential", "Restricted"] },
+            "paid_execution": { "enum": ["ask", "preapproved_with_envelope", "forbidden"] },
+            "raw_secrets_allowed": { "const": false }
+          },
+          "additionalProperties": false
+        },
+        "verification": {
+          "type": "object",
+          "required": ["minimum_level"],
+          "properties": { "minimum_level": { "enum": ["L1", "L2", "L3", "L4", "L5"] } },
+          "additionalProperties": false
+        },
+        "escalation": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

@@ -4,211 +4,140 @@
 
 Workflow OS is a **local-first, provider-independent, human-governed autonomous delivery control plane** for a solo builder.
 
-It owns the meaning, state, policy, memory-of-work, approvals, evidence, and operator visibility required to take a raw client request or idea through delivery and maintenance.
+It owns the meaning, state, policy, memory-of-work, approvals, evidence, and operator visibility required to take a raw client request or idea through delivery and maintenance. Replaceable providers perform specialized execution.
 
-It does not need to implement every model, coding runtime, workflow engine, source-control system, deployment provider, or observability product itself.
-
-> Workflow OS decides what the work means, what is allowed, what is ready, what evidence is required, and whether the result is accepted. Replaceable providers perform specialized execution.
+> Workflow OS decides what the work means, what is allowed, what is ready, what evidence is required, and whether the result is accepted.
 
 ## Human contract
-
-The target operator interaction is intentionally small:
 
 ```text
 Give / revise goal
   -> answer important discovery questions
   -> approve / reject / revise consequential decisions
   -> provide credentials when required
-  -> approve paid execution and high-impact actions
+  -> approve new metered spend and high-impact actions
 ```
 
-The system coordinates everything else until it either reaches an accepted outcome or genuinely requires human authority.
+The system coordinates everything else until accepted outcome or genuine human authority is required.
 
 ## Canonical hierarchy
 
 ```text
 Operator
-  -> Workspace                         # security/isolation boundary
-      -> Client?                       # commercial party; optional for internal work
-      -> Engagement?                   # commercial agreement/scope
-          -> Project                   # delivery/operational unit
-              -> Project Brief
-              -> Project Pack
-              -> WorkItems + dependencies
-              -> WorkItem Proposals
+  -> Workspace
+      -> Client?
+      -> Engagement?
+          -> Project
+              -> Project Brief versions / Revisions
+              -> Project Pack versions
+              -> WorkItems + dependencies / Proposals
               -> Decisions / Approvals
-              -> Artifacts / Evidence
-              -> Events / Activity
+              -> Artifacts / Evidence / Events
+              -> AgentAssignments / Context Slices
               -> Repositories / environments / deployments
               -> Workflows / WIR versions
-              -> AgentAssignments
               -> Spend Envelopes / Cost Records
               -> Incidents / Maintenance
 ```
 
-For client work, the default safety posture is one client per Workspace. Internal product work may use an internal Workspace without a Client.
+Workspace is the isolation boundary. Project is the top-level delivery/maintenance unit. Engagement is commercial context.
 
 ## Main layers
 
 ### 1. Operator interface
 
-Local-first web Command Center initially; optional desktop packaging later.
-
-Primary surfaces:
-
-- New Project;
-- Projects/Clients/Engagements;
-- Needs My Attention;
-- Activity Feed;
-- Work graph;
-- approvals/decisions;
-- costs/spend;
-- repositories/deployments;
-- incidents/maintenance.
+Local-first web Command Center first; optional desktop shell later. Primary surfaces: New Project, Projects/Clients/Engagements, Needs My Attention, Activity Feed, work graph, approvals/decisions, costs/spend, repositories/deployments, incidents/maintenance.
 
 ### 2. Canonical delivery control plane
 
-Owns Workspace, Client, Engagement, Project, WorkItem, Decision, Approval, Artifact, Evidence, Event, Project Pack, cost authorization, deployment, incident, and maintenance semantics.
+Owns canonical identities, delivery/commercial state, revisions, WorkItems, decisions/approvals, Project Pack, evidence/events, cost authorization, deployments/incidents/maintenance.
 
-### 3. Discovery and planning layer
+### 3. Discovery and planning
 
-Converts raw input into explicit problem/outcome/scope/requirements/architecture/work graph.
+Converts incomplete intent into explicit accepted problem/outcome/scope/requirements/architecture/work graph. `I don't know` is valid. Client request is preserved even when challenged.
 
-The interview is adaptive and must support `I don't know`. The system may research and propose an assumption rather than forcing the operator to answer technical questions they cannot reasonably know.
+### 4. Revision / impact engine
 
-### 4. Autonomy kernel
+A material goal/scope change creates a new ProjectBrief/ProjectRevision version, computes affected requirements/work/approvals/Pack/Assignments/commercial commitments, stops unsafe stale work, and preserves history. Revision is selective, not a blind full reset.
 
-Contains:
+### 5. Autonomy kernel
 
-- ready-work selection;
-- loop/routine engine;
-- dynamic role activation;
-- bounded AgentAssignments;
-- WorkItem Proposal handling;
-- verification/escalation;
-- budget/stop conditions.
+Contains ready-work selection, loop/routine engine, dynamic role activation, bounded Assignments, Proposals, verification/escalation, and budgets/stop conditions.
 
-### 5. Model/Runtime Broker
+### 6. Model / Runtime / Connection Broker
 
-Separates **model choice** from **runtime choice**.
+Separates model capability, runtime capability, and actual configured ProviderConnection/entitlement. Work declares capability/risk/data/cost/tool requirements. Broker routes only through eligible configured healthy connections.
 
-A WorkItem declares capability/risk/privacy/cost/tool requirements. The broker chooses an eligible model/runtime combination based on hard constraints and dynamic scoring.
+ProviderConnection may represent API key/OAuth, installed subscription CLI, local service, or self-hosted runtime. Cancellation/revocation changes route eligibility, not Project meaning.
 
-Paid execution cannot begin without an operator-approved spend envelope.
+### 7. Project Bootstrapper + Instruction Compiler
 
-### 6. Project Bootstrapper + Instruction Compiler
+After accepted scope/architecture and repository approval, bootstrapper creates/connects workspace/repo and compiles case-specific provider projections. `AGENTS.md`, `CLAUDE.md`, Copilot/OpenCode config, Paperclip/API payloads are derived artifacts, not canonical truth.
 
-After accepted scope/architecture and an explicit repository-creation approval, the bootstrapper creates or connects the repository/workspace and compiles a case-specific Project Pack into provider-supported instruction/configuration projections.
+A provider receives a minimum-authorized **Context Slice** for the exact Assignment, not the whole Project/Engagement merely because the data exists.
 
-Examples may include:
+### 8. Skill Registry
 
-- `AGENTS.md`;
-- `CLAUDE.md`;
-- GitHub Copilot instructions;
-- OpenCode/runtime configuration;
-- API-based AgentAssignment payloads.
+Stores versioned evaluated capabilities with input/output, prerequisites, tools/permissions, failure modes, verification, and compatibility.
 
-These generated files are projections, not canonical Project truth.
+### 9. Adapter plane
 
-### 7. Skill Registry
+Provider-neutral classes include Model, Runtime, Internal Workforce, Workflow Engine, Source Control, Deployment, Observability, and communication/notification adapters.
 
-Stores versioned, evaluated capabilities that agents can invoke. A skill is more than prompt text: it declares purpose, inputs/outputs, prerequisites, tools/permissions, failure modes, verification, and compatibility.
+### 10. Execution plane
 
-### 8. Adapter plane
+Replaceable systems may include local/open models, hosted AI APIs, Codex, Claude Code, Copilot, OpenCode, Paperclip, Activepieces, Git/source providers, deployment platforms, databases, and monitoring tools.
 
-Provider-neutral adapter classes include:
+### 11. Evidence and production
 
-- Model Adapter;
-- Runtime Adapter;
-- Internal Workforce Adapter;
-- Workflow Engine Adapter;
-- Source Control Adapter;
-- Deployment Adapter;
-- Observability Adapter;
-- communication/notification adapters.
-
-### 9. Execution plane
-
-Replaceable systems may include local/open models, hosted AI APIs, Codex, Claude Code, GitHub Copilot, OpenCode, Paperclip, Activepieces, GitHub, deployment platforms, databases, and monitoring tools.
-
-### 10. Evidence and production layer
-
-Provider events/results are normalized into canonical evidence and activity. Deployment is not the end of a Project: incidents, maintenance, change, recovery, and improvement remain part of Project state.
+Provider results normalize into evidence/activity. Deployment is not the end: incidents, maintenance, change, recovery, and improvement remain Project state.
 
 ## Project Pack
 
-The Project Pack is the machine-oriented, case-specific execution contract for one Project/version. It contains references or normalized summaries for:
-
-- problem/outcome;
-- accepted client/commercial constraints;
-- requirements/non-goals;
-- architecture/ADRs;
-- WorkItems/dependencies;
-- acceptance criteria;
-- risk/data classification;
-- allowed tools/capabilities;
-- repository/environment references;
-- model/runtime policy;
-- spend policy;
-- verification policy;
-- escalation rules.
-
-It is generated from canonical state and is versioned. It does not contain reusable raw secrets.
+The Project Pack is the machine-oriented case-specific execution contract for one accepted Project version. It references stable accepted facts, requirements/non-goals, architecture, versioned work graph, policies, verification, and escalation. It is not a live mutable runtime-state dump and contains no reusable raw secrets.
 
 ## Internal workforce
 
-Every Project may expose a full logical roster, but workers are activated only when the work requires their separation.
-
-The preferred pattern is:
+Every Project may expose a full logical roster, but roles activate only when useful. Handoffs use durable state/artifacts rather than free-form agent chat.
 
 ```text
 Project state
-  -> derive ready WorkItem
-  -> choose role/capability
-  -> choose model/runtime
-  -> compile bounded Assignment
+  -> ready WorkItem
+  -> role/skills
+  -> Context Slice + bounded Assignment
+  -> eligible model/runtime/connection
   -> execute
-  -> capture artifacts/evidence
+  -> evidence/proposals
   -> verify/reconcile
   -> accept / repair / escalate
-  -> derive next-ready work
+  -> next ready work
 ```
-
-Do not coordinate through free-form agent-to-agent chat when durable state/artifacts can carry the handoff.
 
 ## Loops and routines
 
-A loop is a controlled execution structure with:
+Every loop has trigger, goal predicate, authorized scope, execution strategy, verification, iteration/time/tool/cost bounds, stop conditions, and escalation. A routine adds time/event scheduling. No unbounded autonomous loop is valid.
 
-- trigger;
-- goal/predicate;
-- authorized scope;
-- work strategy;
-- verification;
-- max iterations/time/cost/tool use;
-- stop conditions;
-- escalation.
+## Local-first does not mean local-only or always-on
 
-A routine adds a time/event schedule. No unbounded autonomous loop is permitted.
+Core Project/commercial state and operator functions remain locally usable. Intelligence may be local or remote by capability/policy.
 
-## Local-first does not mean local-only AI
+If the coordinator host is asleep/offline, local autonomous work waits visibly. A future optional always-on host may be self-hosted or replaceable remote infrastructure, but it does not become canonical truth.
 
-Core state and operator functions remain local-capable. Intelligence may be local or remote depending on WorkItem requirements and availability.
+## Spend
 
-Fallback is capability-based, for example:
+No new metered/variable-cost external action begins without applicable operator-approved bounds. This includes AI/runtime and later metered APIs/cloud/workflow/deployment services. Already-paid fixed subscription usage may be zero-incremental when ProviderConnection evidence confirms no new per-use charge.
 
-```text
-eligible local model
-  -> eligible free/approved remote model
-  -> paid model requiring Spend Gate
-  -> Needs My Attention if no acceptable route exists
-```
+## Security / untrusted content
+
+Retrieved/uploaded/client/repository/provider content is untrusted data and cannot grant itself authority. Data classification, Context Slice minimization, prompt/tool poisoning defenses, approval binding, and provider fallback policy are enforced outside model reasoning.
 
 ## Completion semantics
 
-Provider `done` means only execution finished/evidence available.
+Provider `done` means execution finished/evidence available. Canonical WorkItem completion requires applicable verification, reconciliation, policy, and human/client acceptance gates.
 
-Canonical WorkItem completion requires the applicable verification, reconciliation, policy, and human approval gates.
+## Provider-independence proof
+
+Adapters reduce lock-in but are not proof by themselves. Before claiming operational portability for a capability, execute representative work through a second independently configured eligible route/provider and confirm canonical Project/Assignment/evidence semantics survive replacement.
 
 ## Architectural invariants
 
@@ -216,23 +145,26 @@ Canonical WorkItem completion requires the applicable verification, reconciliati
 2. Project is the top-level operational delivery unit.
 3. Engagement is commercial context, not Project execution state.
 4. WIR is canonical only for business workflows inside a Project.
-5. Project Pack is the case-specific execution contract compiled from canonical state.
-6. External providers never own canonical Project/WorkItem meaning.
-7. Models and runtimes are replaceable and separately routed.
-8. Paid execution requires explicit prior approval.
-9. Human authority is required for consequential commercial/risk/production decisions.
-10. Full logical roster does not mean all agents run.
-11. Agent-created material scope becomes a proposal, not automatic canonical work.
-12. Activity Feed is derived from events/evidence, not chat narration.
-13. Deterministic mechanisms are preferred where reasoning is unnecessary.
-14. Every loop is bounded and verifiable.
-15. Raw reusable secrets are references/bindings, never embedded in Project Packs/prompts.
-16. Production ownership continues after deployment.
-17. Scale infrastructure is evidence-driven.
-18. Core Project state remains understandable when any AI provider is unavailable.
+5. Project Pack is a case-specific contract compiled from accepted canonical state.
+6. Context Slice is the minimum-authorized execution context for one Assignment.
+7. External providers never own canonical Project/WorkItem meaning.
+8. Models, runtimes, and ProviderConnections are separate replaceable concepts.
+9. New metered spend requires explicit prior authorization.
+10. Human authority is required for consequential commercial/risk/production decisions.
+11. Operator approval and external client acceptance are distinct facts.
+12. Full logical roster does not mean all agents run.
+13. Agent-created material scope becomes a proposal.
+14. Activity Feed derives from canonical events/evidence.
+15. Deterministic mechanisms are preferred where reasoning is unnecessary.
+16. Every loop is bounded and verifiable.
+17. Untrusted content cannot grant authority.
+18. Raw reusable secrets are references/bindings, not Pack/prompt data.
+19. Material goal revisions are versioned and impact-propagated.
+20. Production ownership continues after deployment.
+21. Scale infrastructure is evidence-driven.
+22. Core Project state remains understandable when any AI/provider is unavailable.
+23. Continuous background execution requires an available host; lack of one becomes visible waiting state.
 
 ## Current phase
 
-Foundation v3 changes the implementation order. The first serious coding milestone is the local canonical control plane, not an Activepieces or Paperclip integration.
-
-See `docs/plans/phase-1-core-control-plane.md`.
+Foundation v3 changes implementation order. First serious coding milestone is the local canonical control plane, not Activepieces/Paperclip integration. See `docs/plans/phase-1-core-control-plane.md`.

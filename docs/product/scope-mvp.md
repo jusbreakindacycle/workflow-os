@@ -4,136 +4,65 @@
 
 Prove the **local canonical control plane** before depending on any real AI/model/runtime/workflow provider.
 
-The MVP should demonstrate that a raw project request can become a structured, explainable Project with commercial context, work state, operator attention, Project Pack, and evidence while remaining useful offline/local.
+The MVP demonstrates that a raw request can become a structured, explainable Project with commercial context, versioned goal state, work state, operator attention, Project Pack/Context Slice, and evidence while remaining useful offline/local.
 
 ## Golden path
 
 ```text
 Open local web app
   -> New Project
-  -> choose internal or client work
-  -> capture raw request
-  -> create Workspace / Client? / Engagement? / Project Draft
-  -> answer a small adaptive/structured discovery set (`I don't know` allowed)
-  -> approve initial problem/outcome/scope summary
-  -> create initial WorkItems and dependencies
-  -> generate versioned Project Pack
-  -> record repository creation proposal + approval state
-  -> run one simulated/manual Assignment
-  -> attach evidence
-  -> derive Activity Feed / Needs My Attention / Command Center state
+  -> internal or client work
+  -> raw request
+  -> Workspace / Client? / Engagement? / Project Draft
+  -> small structured discovery (`I don't know` allowed)
+  -> approve initial problem/outcome/working-scope summary
+  -> initial WorkItems/dependencies
+  -> Project Pack + Context Slice
+  -> repository creation proposal + approval state
+  -> simulated/manual Assignment
+  -> evidence
+  -> Activity / Needs My Attention / Command Center
+  -> revise goal once and prove impact/version propagation
 ```
 
 ## In scope
 
 ### Local control plane
 
-- one local operator;
-- local-first web UI;
-- persistent local development database;
-- multiple Workspaces;
-- optional Client records;
-- Engagement records for client work;
-- Projects;
-- WorkItems/dependencies;
-- Decisions/Approvals;
-- WorkItem Proposals;
-- Artifacts/Evidence references;
-- Activity/Event ledger;
-- basic SpendEnvelope/CostRecord entities even if no paid execution occurs.
+One local operator; local-first web UI; persistent local development database; multiple Workspaces; optional Client records; Engagement records for client work; Projects/ProjectBrief versions/ProjectRevisions; WorkItems/dependencies; Decisions/Approvals; WorkItem Proposals; Artifact/Evidence refs; Activity/Event ledger; ContextSlice; basic SpendEnvelope/CostRecord; mock/manual Assignment.
 
-### New Project / intake
+### New Project / discovery
 
-- raw text input;
-- optional references to uploaded material (actual file ingestion may be minimal);
-- internal vs client project choice;
-- `I don't know` answer state;
-- question/answer records separate from final accepted facts;
-- explicit human approval before converting uncertain discovery into accepted scope.
-
-Phase 1 may use deterministic rules/fixtures for question selection. A real LLM-driven adaptive interviewer is not required yet.
+Raw text input; optional uploaded-material refs; internal vs client choice; `I don't know`; question/answer records separate from accepted facts; human approval before uncertain discovery becomes accepted working scope. Deterministic question rules are sufficient; real LLM interviewer is later.
 
 ### Commercial foundation
 
-For client Projects:
+Client Projects may record Client, Engagement, requested outcome, working/proposed/client-accepted scope state, quote/price records, deadline, maintenance placeholder, and scope-change proposal. Operator approval is not automatically client acceptance.
 
-- Client;
-- Engagement;
-- requested outcome;
-- agreed/working scope status;
-- quotation/price fields as records (no payment processor);
-- target/deadline fields;
-- maintenance agreement placeholder;
-- scope-change flag/proposal.
+### Goal revision
 
-### Project Pack
+A material accepted-goal change creates a new version/revision and explicit impact over derived work. Stale approvals/WorkItems/Pack versions cannot remain silently executable.
 
-- canonical versioned Project Pack generated from accepted Project state;
-- no raw secrets;
-- deterministic regeneration;
-- schema validation;
-- visible diff/version history sufficient to explain change.
+### Project Pack + Context Slice
+
+Versioned Project Pack generated from accepted canonical state; no raw secrets; deterministic regeneration; strict schema validation; visible provenance/diff. Assignment Context Slice exposes only authorized WorkItem-relevant context.
 
 ### Command Center
 
-Portfolio/project views showing:
-
-- phase/status/health;
-- active/next-ready work;
-- blockers;
-- Needs My Attention;
-- recent Activity;
-- commercial scope/deadline indicator;
-- Project Pack version;
-- repository/deployment placeholders.
+Portfolio/project views show phase/status/health, active/next-ready work, blockers, Needs My Attention, recent Activity, commercial deadline/scope indicator, Project Pack version, and repository/deployment placeholders.
 
 ### Provider-independent contracts
 
-Define, but do not yet require real execution for:
-
-- Model/Runtime Broker;
-- Spend Gate;
-- Runtime/Model capability manifests;
-- AgentAssignment;
-- Provider adapters;
-- loops/routines;
-- repository bootstrap/instruction compilation.
-
-A mock/manual adapter may be used to prove assignment/evidence/state transitions.
+Define but do not require real execution for Model/Runtime Broker, Spend Gate, capability manifests, ProviderConnection, AgentAssignment, adapters, loops/routines, and repository bootstrap/instruction compilation. A mock/manual adapter proves state transitions.
 
 ### Verification
 
-- schema validation;
-- state-transition tests;
-- dependency/readiness tests;
-- approval tests;
-- WorkItem Proposal tests;
-- Project Pack deterministic generation tests;
-- local restart/recovery tests;
-- derived Command Center/Activity consistency tests.
+Schema validation, state-transition/version tests, dependency/readiness tests, approval tests, Proposal tests, strict Project Pack/Assignment validation, goal-revision impact tests, Context Slice minimization tests, local restart/recovery tests, and derived Command Center/Activity consistency tests.
 
 ## Explicitly out of scope for Phase 1
 
-- required OpenAI/Anthropic/Google/other paid API;
-- automatic paid execution;
-- real multi-model routing;
-- persistent autonomous agent fleet;
-- Paperclip integration;
-- Activepieces integration;
-- real GitHub repository creation;
-- provider-specific instruction-file generation beyond fixtures;
-- autonomous coding of client products;
-- automatic deployment;
-- production incident remediation;
-- invoicing/payment collection integration;
-- email/Slack/Teams communication integration;
-- client portal;
-- client-facing AI Employees;
-- drag-and-drop workflow builder;
-- Kubernetes/multi-region infrastructure.
+Required paid AI APIs; automatic paid execution; real multi-model routing; real ProviderConnection execution; persistent autonomous agent fleet; Paperclip/Activepieces integration; real GitHub repository creation; real provider-specific instruction generation beyond fixtures; autonomous coding/deployment/incident remediation; payment collection; communication integrations; client portal; client-facing AI Employees; drag-and-drop workflow builder; Kubernetes/multi-region infrastructure.
 
 ## Exit criteria
 
-Phase 1 is complete when the operator can create and understand a Project locally, the Project Pack is reproducible from canonical state, WorkItem readiness/attention is explainable, and a simulated bounded Assignment can produce evidence that transitions canonical state without relying on agent chat/provider state.
-
-See `docs/testing/acceptance-criteria.md`.
+Phase 1 is complete when the operator can create/revise/understand a Project locally; Project Pack is reproducible from canonical state; WorkItem readiness/attention is explainable; a simulated bounded Assignment receives only authorized context and produces evidence; and no agent/provider narrative is required as the state store.

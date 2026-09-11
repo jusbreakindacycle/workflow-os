@@ -1,8 +1,8 @@
 # Data and Event Model
 
-This document defines semantics, not final SQL tables/classes.
+This document defines semantics, not final SQL tables/classes. The list is capability-gated; an entity appearing here does not make it Phase 1 implementation scope.
 
-## Core entities
+## Phase 1 canonical entities
 
 ### Identity / isolation
 
@@ -21,7 +21,8 @@ This document defines semantics, not final SQL tables/classes.
 ### Delivery
 
 - `Project`
-- `ProjectBrief`
+- `ProjectBrief` / accepted goal version
+- `ProjectRevision`
 - `ProjectPackVersion`
 - `WorkItem`
 - `WorkDependency`
@@ -32,26 +33,29 @@ This document defines semantics, not final SQL tables/classes.
 - `EvidenceReference`
 - `ProjectEvent`
 
-### Autonomy / execution
+### Phase 1 execution-policy foundation
 
-- `RoleDefinition`
-- `AgentAssignment`
-- `SkillVersion`
-- `LoopDefinition`
-- `LoopRun`
-- `ModelProfile`
-- `RuntimeProfile`
-- `RouteDecision`
+- `AgentAssignment` (mock/manual capable)
+- `ContextSlice` / `ExecutionContextSnapshot`
 - `SpendEnvelope`
 - `CostRecord`
+
+## Later capability entities
+
+These are introduced only when their roadmap gate activates:
+
+- `RoleDefinition`
+- `SkillVersion`
+- `LoopDefinition` / `LoopRun`
+- `ModelProfile`
+- `RuntimeProfile`
+- `ProviderConnection`
+- `ExecutionHost`
+- `RouteDecision`
 - `ProviderMapping`
-
-### Repositories / workflow / production
-
 - `RepositoryReference`
 - `EnvironmentReference`
-- `Workflow`
-- `WorkflowVersion`
+- `Workflow` / `WorkflowVersion`
 - `Deployment`
 - `ExecutionRun`
 - `Incident`
@@ -64,10 +68,13 @@ This document defines semantics, not final SQL tables/classes.
 - Engagement belongs to Workspace and normally one Client.
 - Project belongs to Workspace and may reference an Engagement.
 - WorkItem belongs to exactly one Project.
-- Cross-Project dependencies are deferred; use explicit coordination records later if proven necessary.
-- ProjectPackVersion belongs to a Project and references exact accepted inputs/decisions.
-- AgentAssignment belongs to one Project + WorkItem.
-- SpendEnvelope belongs to a bounded purpose (Assignment/WorkItem/Project) and records human approval.
+- Cross-Project dependencies are deferred unless later explicitly designed.
+- ProjectRevision references the before/after accepted ProjectBrief versions and affected records.
+- ProjectPackVersion belongs to a Project and references exact accepted canonical versions.
+- ContextSlice belongs to an Assignment purpose and contains/references only the minimum authorized context.
+- AgentAssignment belongs to one Project + exact WorkItem version.
+- SpendEnvelope belongs to a bounded purpose and records human approval.
+- ProviderConnection represents configured access/entitlement; it references secure credentials but never stores reusable secret values in ordinary canonical fields.
 - ProviderMapping links canonical IDs to replaceable provider-native IDs.
 - Workflow/WIR belongs to a Project.
 - Deployment/Incident/Maintenance belongs to a Project/environment and references exact versions.
@@ -76,70 +83,32 @@ This document defines semantics, not final SQL tables/classes.
 
 Keep separate:
 
-- phase — where in delivery lifecycle;
+- phase — where in the delivery lifecycle;
 - operational status — what can happen now;
 - health — explainable risk condition.
 
-Do not derive an arbitrary percentage from LLM judgment.
+Do not derive arbitrary percentage from LLM judgment.
 
 ## WorkItem state
 
-Recommended canonical states:
+Recommended canonical states: `draft`, `ready`, `running`, `waiting_external`, `needs_attention`, `blocked`, `failed`, `complete`, `canceled`, plus an explicit `stale`/`superseded` treatment when a Project revision invalidates the accepted basis for work.
 
-- `draft`
-- `ready`
-- `running`
-- `waiting_external`
-- `needs_attention`
-- `blocked`
-- `failed`
-- `complete`
-- `canceled`
-
-Execution provider state is separate. A provider-native `done` normally maps to assignment `execution_finished`, then verification/acceptance decides WorkItem completion.
+Execution provider state is separate. Provider-native `done` normally maps to Assignment `execution_finished`, then verification/acceptance decides WorkItem completion.
 
 ## Approval state
 
-Suggested:
+Suggested: `requested`, `approved`, `rejected`, `expired`, `superseded`.
 
-- `requested`
-- `approved`
-- `rejected`
-- `expired`
-- `superseded`
-
-Approval must reference exact subject/version and authority reason. A later change invalidates approval when the approved subject materially changes.
+Approval references exact subject/version and authority reason. A material change invalidates/supersedes stale approval. Approval is not external client acceptance evidence.
 
 ## Event envelope
 
-Material events should include equivalents of:
+Material events include equivalents of event id/type/time, Workspace/Project/WorkItem, actor type/id, Assignment/Loop/Run/provider refs, status from/to, correlation/idempotency keys, reason/error classification, artifact/evidence refs, cost/spend refs, sensitivity classification, and exact relevant versions.
 
-- event id/type/time;
-- Workspace/Project/WorkItem;
-- actor type/id;
-- Assignment/Loop/Run/provider refs;
-- status from/to;
-- correlation/idempotency keys;
-- reason/error classification;
-- artifact/evidence refs;
-- cost/spend refs;
-- sensitivity classification;
-- exact relevant version(s).
+## Activity Feed and Needs My Attention
 
-## Activity Feed
-
-Activity is a filtered read model over events. It should not create a second manually maintained state store.
-
-## Needs My Attention
-
-Attention items are derived from unresolved approvals, decisions, unknowns, failed/blocked work, credential requests, spend requests, scope changes, deployment gates, and incidents.
-
-## Provider mappings
-
-Store stable mappings with provider type/version and external IDs. Provider IDs never replace canonical Workflow OS IDs.
+Activity is a filtered read model over events, not a second state store. Attention items derive from unresolved approvals/decisions/unknowns, failed/blocked/stale work, credential/spend requests, scope changes, deployment gates, and incidents.
 
 ## Data minimization
 
-Prefer structured summaries, references, hashes, and evidence metadata over copying full external payloads/transcripts.
-
-Never persist private chain-of-thought as required business state.
+Prefer structured summaries, references, hashes, and evidence metadata over copying full external payloads/transcripts. Never persist private chain-of-thought as required business state.
