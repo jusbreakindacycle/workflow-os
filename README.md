@@ -1,16 +1,60 @@
 # Workflow OS
 
-Workflow OS is a **spec-first automation engineering control plane** for discovering, modeling, testing, deploying, observing, and reusing deterministic, AI-assisted, agentic, and human-in-the-loop work across clients and execution engines.
+Workflow OS is a **personal AI business delivery operating system** for a solo builder. It turns a raw user problem, client request, or product idea into governed work that can be researched, specified, built, verified, deployed, operated, maintained, improved, and reused.
 
-Future **AI Employees / AI Workers** are governed role abstractions inside Workflow OS, built from workflows, tools, bounded agent sessions, human escalation, and measurable outcomes.
+It combines:
+
+- a project/portfolio control plane;
+- deterministic workflows and WIR;
+- bounded internal AI specialist agents;
+- external execution and agent runtimes through adapters;
+- verification, security, reliability, and human approval;
+- production operations and maintenance state;
+- future client-facing AI Employees / AI Workers.
+
+The human operator remains the final authority for scope, commitments, high-impact production actions, and policy exceptions.
+
+## North-star promise
+
+> Give Workflow OS the problem, desired outcome, constraints, and approvals; let it organize the rest of the delivery lifecycle.
+
+The target lifecycle is:
+
+> Intake -> Research -> Challenge -> Define -> Scope -> Architect -> Plan -> Build -> Verify -> Review -> Deploy -> Observe -> Maintain -> Improve -> Reuse
+
+## Project is the top-level operational unit
+
+A Project represents one client delivery, internal product, or research/experiment stream. Workflows, repositories, deployments, tasks, evidence, incidents, AI-agent assignments, and maintenance records belong to a Project.
+
+WIR remains the canonical representation of a workflow **inside** a Project. AI Employee Spec remains the canonical future representation of a client-facing governed role. Neither replaces Project state.
+
+## Project Command Center
+
+Workflow OS must give the operator one place to see the portfolio:
+
+- every active Project;
+- current lifecycle phase and health;
+- what is running now;
+- next ready task;
+- blockers and approvals needed;
+- research/spec/build/test/deploy/maintenance state;
+- active agent or human assignee;
+- latest evidence and activity;
+- production environment, incidents, and maintenance needs.
+
+Status is derived from canonical project/task/event state, not from an agent merely claiming that work is done.
+
+## Internal AI workforce
+
+Internal agents are bounded workers, not the owner of project state. Typical roles include research, requirements, architecture, planning, implementation, verification, security/reliability review, deployment, incident investigation, maintenance, and documentation.
+
+Workflow OS owns the work graph, dependencies, budgets, approvals, evidence, and project state. Agents receive bounded assignments and return artifacts/evidence.
 
 ## Current status
 
-**Phase 0 is complete and merged. Phase 1 engine due diligence is in review; application/runtime coding has not started yet.**
+**The original Phase 0 specification is complete and merged. Foundation v2 is being added before serious application implementation to align the repository with the broader solo-AI-business vision.**
 
-The repository is intentionally contract-first so future VS Code + Codex implementation is constrained by explicit product scope, workflow/role models, architecture decisions, reliability/security policy, evaluations, and acceptance criteria.
-
-AI Employee specifications are being defined now as **future Phase 3 contracts** so Phase 1 does not create architectural dead ends. They do not expand the Phase 1 MVP.
+The Activepieces hands-on adapter spike can remain the first execution-engine coding experiment, but broad application implementation should follow the updated Project, Command Center, internal-agent, and maintenance contracts.
 
 ## Public-repository rule
 
@@ -25,17 +69,22 @@ Start with:
 1. `AGENTS.md`
 2. `docs/index.md`
 3. `docs/product/goal.md`
-4. `docs/product/scope-mvp.md`
-5. `ARCHITECTURE.md`
-6. `docs/decisions/index.md`
-7. the active phase plan and acceptance criteria
+4. `docs/product/project-operating-model.md`
+5. `docs/product/project-command-center.md`
+6. `docs/product/scope-mvp.md`
+7. `ARCHITECTURE.md`
+8. `docs/decisions/index.md`
+9. `docs/plans/foundation-v2.md`
+10. the active phase plan and acceptance criteria
 
-Future AI Employee architecture starts at `docs/ai-employees/overview.md`.
+Future client-facing AI Employee architecture starts at `docs/ai-employees/overview.md`.
 
-## Core principle
+## Core principles
+
+> Workflow OS owns the project state; agents perform bounded work.
 
 > Model once, execute through the right engine, govern everything from one place.
 
-For AI Employees:
+For client-facing AI Employees:
 
 > Give AI a role, not unrestricted authority.

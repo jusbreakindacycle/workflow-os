@@ -1,24 +1,39 @@
 # Documentation Index
 
 ## Start here
+
 - [Goal](product/goal.md)
+- [Project Operating Model](product/project-operating-model.md)
+- [Project Command Center](product/project-command-center.md)
 - [MVP Scope](product/scope-mvp.md)
 - [Product Brief](product/product-brief.md)
 - [Root Architecture](../ARCHITECTURE.md)
+- [Foundation v2](plans/foundation-v2.md)
 - [Phase 1 Acceptance Criteria](testing/acceptance-criteria.md)
 
-## Product and domain
+## Project / portfolio / delivery model
+
+- [Project Operating Model](product/project-operating-model.md)
+- [Project Command Center](product/project-command-center.md)
 - [Freelancer Funnel](product/freelancer-funnel.md)
+- [Internal AI Workforce](agents/internal-ai-workforce.md)
+- [Agent Operability and Verification](engineering/agent-operability-and-verification.md)
+- [Production and Maintenance Model](operations/production-maintenance-model.md)
+
+## Product and workflow domain
+
 - [Workflow Taxonomy](domain/workflow-taxonomy.md)
 - [Lifecycle and Execution Modes](domain/lifecycle-and-execution-modes.md)
 - [Human Approval Semantics](domain/human-approval-semantics.md)
 
 ## Workflow IR
+
 - [WIR v0 Specification](workflow-ir/wir-v0-spec.md)
 - [WIR v0 JSON Schema](workflow-ir/wir-v0.schema.json)
 - [Example](workflow-ir/examples/lead-qualification.yaml)
 
-## AI Employees — Future Phase 3
+## AI Employees — Future client-facing Phase 3
+
 - [Overview](ai-employees/overview.md)
 - [Terminology](ai-employees/terminology.md)
 - [Product Brief](ai-employees/product-brief.md)
@@ -43,6 +58,7 @@
 - [Service Packaging](ai-employees/service-packaging.md)
 
 ## Architecture and operating models
+
 - [System Context](architecture/system-context.md)
 - [Engine Routing Policy](architecture/engine-routing-policy.md)
 - [Engine Adapter Contract](architecture/engine-adapter-contract.md)
@@ -60,6 +76,7 @@
 - [Observability](observability/observability-model.md)
 
 ## Scale, research, decisions, plans
+
 - [Engineering Maturity](scale/engineering-maturity-model.md)
 - [Scale Trigger Matrix](scale/scale-trigger-matrix.md)
 - [Competitive Landscape](research/competitive-landscape.md)
@@ -68,6 +85,7 @@
 - [Sources](research/sources.md)
 - [ADR Index](decisions/index.md)
 - [Reviewer/Subagent Contracts](agents/reviewer-contracts.md)
+- [Foundation v2](plans/foundation-v2.md)
 - [Phase 0 Definition](plans/phase-0-definition.md)
 - [Phase 0 Adversarial Review](plans/phase-0-review.md)
 - [Phase 1 MVP Plan](plans/phase-1-mvp.md)
@@ -75,15 +93,18 @@
 - [AI Employee Spec Adversarial Review](plans/ai-employee-spec-review.md)
 - [Roadmap](plans/roadmap.md)
 
-## Codex prompts
+## Codex / implementation prompts
+
 ### Current implementation
+
 - [Master Build Prompt](../prompts/master-build-prompt.md)
 - [Phase 1 Activepieces Adapter Spike](../prompts/phase-1-activepieces-spike.md)
 - [Implementation Task](../prompts/implementation-task.md)
 - [Pre-Merge Review](../prompts/pre-merge-review.md)
 - [Adversarial Review](../prompts/adversarial-review.md)
 
-### Future AI Employee design/review
+### Future client-facing AI Employee design/review
+
 - [AI Employee Role Design](../prompts/ai-employee-role-design.md)
 - [AI Employee Adversarial Review](../prompts/ai-employee-adversarial-review.md)
 - [AI Employee Readiness Review](../prompts/ai-employee-readiness-review.md)
