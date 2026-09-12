@@ -72,30 +72,36 @@ function executeFixture(route, prompt) {
 }
 
 async function executeOpenAIResponses({ route, connection, prompt, env, fetchImpl, timeoutMs }) {
-  const apiKey = credentialValue(connection, env);
   const config = parseJson(route.config_json, {});
   const endpoint = connection.endpoint_url || 'https://api.openai.com/v1/responses';
+  const localBridge = connection.connection_type === 'local_service' && isLoopbackEndpoint(endpoint);
+  const apiKey = localBridge ? null : credentialValue(connection, env);
   const body = {
     model: requiredModel(route),
     input: prompt,
-    store: false,
     max_output_tokens: positiveInteger(config.max_output_tokens, 1200)
   };
+  // Groq's Responses compatibility currently rejects `store`; local bridges do
+  // not need it. Keep it only for the direct OpenAI route where it prevents
+  // response persistence without weakening compatibility for other providers.
+  if (connection.provider_key === 'openai') body.store = false;
+  const headers = { 'content-type': 'application/json' };
+  if (apiKey) headers.authorization = `Bearer ${apiKey}`;
+  if (connection.provider_key === 'openrouter') headers['x-openrouter-metadata'] = 'enabled';
   const response = await timedFetch(fetchImpl, endpoint, {
     method: 'POST',
-    headers: {
-      authorization: `Bearer ${apiKey}`,
-      'content-type': 'application/json'
-    },
+    headers,
     body: JSON.stringify(body)
   }, timeoutMs);
   const payload = await readResponseJson(response, 'openai_responses');
   const text = extractOpenAIText(payload);
   if (!text) throw new Error('provider_empty_output:openai_responses');
+  const usage = payload.usage && typeof payload.usage === 'object' ? payload.usage : {};
+  const rateLimits = extractRateLimitHeaders(response.headers);
   return {
     text,
     externalRef: typeof payload.id === 'string' ? payload.id : null,
-    usage: payload.usage && typeof payload.usage === 'object' ? payload.usage : {},
+    usage: Object.keys(rateLimits).length ? { ...usage, rate_limits: rateLimits } : usage,
     actualCostMinor: null
   };
 }
@@ -123,10 +129,12 @@ async function executeAnthropicMessages({ route, connection, prompt, env, fetchI
     ? payload.content.filter((part) => part && part.type === 'text' && typeof part.text === 'string').map((part) => part.text).join('\n').trim()
     : '';
   if (!text) throw new Error('provider_empty_output:anthropic_messages');
+  const usage = payload.usage && typeof payload.usage === 'object' ? payload.usage : {};
+  const rateLimits = extractRateLimitHeaders(response.headers);
   return {
     text,
     externalRef: typeof payload.id === 'string' ? payload.id : null,
-    usage: payload.usage && typeof payload.usage === 'object' ? payload.usage : {},
+    usage: Object.keys(rateLimits).length ? { ...usage, rate_limits: rateLimits } : usage,
     actualCostMinor: null
   };
 }
@@ -150,7 +158,9 @@ async function readResponseJson(response, adapter) {
   catch { throw new Error(`provider_invalid_json:${adapter}:${response.status}`); }
   if (!response.ok) {
     const message = payload?.error?.message ?? payload?.message ?? `http_${response.status}`;
-    throw new Error(`provider_http_error:${adapter}:${response.status}:${String(message).slice(0, 240)}`);
+    const retryAfter = response?.headers?.get?.('retry-after');
+    const suffix = retryAfter ? `:retry_after=${String(retryAfter).slice(0, 40)}` : '';
+    throw new Error(`provider_http_error:${adapter}:${response.status}:${String(message).slice(0, 220)}${suffix}`);
   }
   return payload;
 }
@@ -166,6 +176,25 @@ function extractOpenAIText(payload) {
     }
   }
   return parts.join('\n').trim();
+}
+
+function extractRateLimitHeaders(headers) {
+  if (!headers || typeof headers.get !== 'function') return {};
+  const mapping = {
+    limit_requests: 'x-ratelimit-limit-requests',
+    limit_tokens: 'x-ratelimit-limit-tokens',
+    remaining_requests: 'x-ratelimit-remaining-requests',
+    remaining_tokens: 'x-ratelimit-remaining-tokens',
+    reset_requests: 'x-ratelimit-reset-requests',
+    reset_tokens: 'x-ratelimit-reset-tokens',
+    retry_after: 'retry-after'
+  };
+  const value = {};
+  for (const [key, header] of Object.entries(mapping)) {
+    const raw = headers.get(header);
+    if (raw !== null && raw !== undefined && String(raw).trim() !== '') value[key] = String(raw).trim();
+  }
+  return value;
 }
 
 function credentialValue(connection, env) {
@@ -186,6 +215,13 @@ function positiveInteger(value, fallback) {
 
 function isSafeCredentialRef(value) {
   return typeof value === 'string' && /^[A-Z][A-Z0-9_]{2,127}$/.test(value);
+}
+
+function isLoopbackEndpoint(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' && ['127.0.0.1', 'localhost', '::1'].includes(url.hostname);
+  } catch { return false; }
 }
 
 function parseJson(text, fallback) {

@@ -1,6 +1,6 @@
 # Workflow OS (temporary name)
 
-> **Status:** Foundation v3 + Phase 1 local core control plane merged. Phase 2 autonomy kernel is implemented in the current PR; live provider certification remains an explicit operator-run evidence step. The product name `workflow-os` is temporary.
+> **Status:** Foundation v3, Phase 1 local control plane, and Phase 2 autonomy kernel are merged. Phase 2.1 Free-First Provider & Quota Broker is under implementation/offline verification in the current PR; full free live certification remains an explicit operator-run evidence step. The product name `workflow-os` is temporary.
 
 Workflow OS is intended to become the **one operating interface a solo builder uses to run client and internal delivery work without depending on one AI platform, one coding agent, or one model vendor**.
 
@@ -56,7 +56,8 @@ Workflow OS owns the **meaning and state of the work**. External systems perform
 ```text
 Workflow OS
   -> Model/Runtime Broker
-      -> OpenAI / Anthropic / Google / open models / local models
+      -> free / included / paid / local routes according to policy
+      -> OpenAI / Anthropic / Google / open models / future providers
       -> Codex / Claude Code / Copilot / OpenCode / future runtimes
   -> Internal Workforce Adapter
       -> Paperclip or another provider, if proven useful
@@ -108,7 +109,7 @@ New Project
   -> discovery + explicit unknowns
   -> delivery-strategy decision
   -> accepted Project Brief
-  -> synthetic Work graph + readiness
+  -> Work graph + readiness
   -> Needs My Attention + Activity Feed
   -> deterministic Project Pack + minimum Context Slice
   -> goal revision + selective impact propagation
@@ -119,9 +120,7 @@ New Project
   -> restart/recovery + Command Center
 ```
 
-Phase 1 requires **no** Paperclip, Activepieces, OpenAI, Anthropic, Codex, Claude Code, Copilot, Kimi, Supabase, paid model, real repository API, or production deployment.
-
-## Phase 2 autonomy kernel — implementation in current PR
+## Phase 2 autonomy kernel — merged
 
 Phase 2 turns the Phase 1 Assignment contract into a provider-neutral execution kernel:
 
@@ -138,27 +137,53 @@ ready WorkItem
        -> route failure: eligible fallback or stop
 ```
 
-Implemented Phase 2 capabilities include:
+Implemented Phase 2 capabilities include ProviderConnection/route registry, capability/data/locality/health/spend-aware Broker, deterministic bootstrap/instruction compilation, Skill Registry, bounded loops, independent verification, fallback, execution evidence, provider adapters, and live-certification records.
 
-- normalized capability registry;
-- ProviderConnection/entitlement/health state;
-- model/runtime route registry;
-- capability/data/locality/health/spend-aware Broker;
-- deterministic Project Bootstrapper and instruction compiler;
-- versioned Skill Registry;
-- bounded Loop Engine;
-- independent verifier routing and fallback;
-- fixture + direct OpenAI Responses + direct Anthropic Messages adapter boundary;
-- persisted execution attempts and certification evidence;
-- explicit live certification harness.
+Fixture/offline CI proves orchestration semantics. It does not prove a real provider account worked.
 
-Normal CI **does not call a paid/live provider**. It proves orchestration with fixtures and fake HTTP provider responses.
+## Phase 2.1 Free-First Provider & Quota Broker — current PR
 
-A real-provider claim requires an explicit local certification run. The accurate repository state until then is:
+Phase 2.1 adds a policy mode for operators who want the autonomy kernel to consume **free/zero-incremental capacity first and never silently pay**.
 
-> **Autonomy kernel implemented; live provider certification pending operator configuration.**
+```text
+ready WorkItem
+  -> zero-spend lock
+  -> refresh/sync quota state
+  -> classify task difficulty
+  -> rank eligible free routes
+       Antigravity discovered models
+       Groq Free Plan (operator-asserted)
+       OpenRouter openrouter/free
+  -> bounded worker
+  -> independent free verifier
+  -> update quota counters
+  -> fallback to another free route OR stop/wait
+```
 
-Operational provider portability is not claimed until two independent non-fixture connections pass the representative portability drill.
+Default quota reservation policy:
+
+```text
+>= 40% remaining    normal use
+15–40%              conserve
+10–15%              reserve scarce capacity
+< 10%               exhausted for ordinary routing
+```
+
+Routine tasks receive an economy-model preference. Stronger scarce models become more attractive for complex/high-risk work while sufficient quota remains. Provider/model quota is operational state and never rewrites Project meaning.
+
+Phase 2.1 does **not** auto-purchase credits and does not cross into metered/unknown billing when free capacity is unavailable. If no independent free verifier remains, work blocks visibly instead of self-certifying or paying.
+
+Initial replaceable routes are:
+
+- Google Antigravity through the official local `agy` CLI and a loopback bridge;
+- Groq when the operator explicitly confirms the configured key remains on a Free Plan account;
+- OpenRouter pinned to `openrouter/free`.
+
+Normal CI makes no live provider calls.
+
+Until operator-configured real accounts pass the local certification harness, the accurate claim is:
+
+> **Phase 2.1 Free-First Broker implemented/offline-verified; full free live certification pending operator account setup.**
 
 ## Run locally
 
@@ -169,7 +194,16 @@ npm run db:backup
 npm start
 ```
 
-The live provider harness is opt-in and fails closed unless the operator explicitly supplies credential environment variables, `WORKFLOW_OS_LIVE_APPROVE_SPEND=yes`, and a positive bounded maximum:
+Free-First operator commands:
+
+```bash
+npm run phase21:preflight
+npm run phase21:certify
+```
+
+`phase21:certify` is opt-in because even zero-cost execution consumes real provider quota. It refuses to start unless `WORKFLOW_OS_FREE_FIRST_RUN=yes` is explicitly set.
+
+The older paid/metered Phase 2 certification harness remains separate:
 
 ```bash
 npm run phase2:live
@@ -182,6 +216,10 @@ See:
 - `docs/plans/phase-2-autonomy-kernel.md`
 - `docs/testing/phase-2-acceptance-criteria.md`
 - `docs/reviews/phase-2-implementation-report.md`
+- `docs/plans/phase-2.1-free-first-quota-broker.md`
+- `docs/implementation/phase-2.1-free-first-quota-broker.md`
+- `docs/testing/phase-2.1-acceptance-criteria.md`
+- `docs/operations/free-first-provider-setup-windows.md`
 
 ## Repository safety
 
@@ -195,8 +233,8 @@ This repository is public. Use synthetic data only. Never commit real client dat
 4. `docs/product/scope-mvp.md`
 5. `ARCHITECTURE.md`
 6. `docs/decisions/index.md`
-7. `docs/plans/phase-2-autonomy-kernel.md`
-8. `docs/reviews/phase-2-implementation-report.md`
+7. `docs/plans/phase-2.1-free-first-quota-broker.md`
+8. `docs/operations/free-first-provider-setup-windows.md`
 
 ## One-line product test
 

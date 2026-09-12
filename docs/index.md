@@ -49,7 +49,9 @@
 - [Verification Ladder](testing/verification-ladder.md)
 - [Phase 1 Acceptance Criteria](testing/acceptance-criteria.md)
 - [Phase 2 Acceptance Criteria](testing/phase-2-acceptance-criteria.md)
+- [Phase 2.1 Free-First Acceptance Criteria](testing/phase-2.1-acceptance-criteria.md)
 - [Production and Maintenance](operations/production-maintenance.md)
+- [Windows Free-First Provider Setup](operations/free-first-provider-setup-windows.md)
 
 ## Implementation
 
@@ -64,6 +66,7 @@
 - [Spend Gate — Phase 1 Gate 9](implementation/gate-9-spend-gate.md)
 - [Restart / Recovery / Command Center — Phase 1 Gate 10](implementation/gate-10-command-center-recovery.md)
 - [Phase 2 Autonomy Kernel](implementation/phase-2-autonomy-kernel.md)
+- [Phase 2.1 Free-First Provider & Quota Broker](implementation/phase-2.1-free-first-quota-broker.md)
 
 ## Providers
 
@@ -81,6 +84,7 @@
 - [Roadmap](plans/roadmap.md)
 - [Phase 1 Core Control Plane](plans/phase-1-core-control-plane.md)
 - [Phase 2 Autonomy Kernel](plans/phase-2-autonomy-kernel.md)
+- [Phase 2.1 Free-First Provider & Quota Broker](plans/phase-2.1-free-first-quota-broker.md)
 
 ## Templates / schemas
 
