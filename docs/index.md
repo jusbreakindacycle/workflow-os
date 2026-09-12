@@ -83,6 +83,7 @@
 - [Phase 1 Completion Report](reviews/phase-1-completion-report.md)
 - [Phase 2 Implementation Report](reviews/phase-2-implementation-report.md)
 - [Phase 2.1 Live Certification Report](reviews/phase-2.1-live-certification-report.md)
+- [Phase 2.2 Implementation Report](reviews/phase-2.2-implementation-report.md)
 - [Roadmap](plans/roadmap.md)
 - [Phase 1 Core Control Plane](plans/phase-1-core-control-plane.md)
 - [Phase 2 Autonomy Kernel](plans/phase-2-autonomy-kernel.md)
