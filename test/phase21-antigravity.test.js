@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { parseAntigravityModels, parseAntigravityUsage, startAntigravityBridge } from '../src/runtime/antigravity-bridge.js';
+import { parseAntigravityModels, parseAntigravityUsage, runAntigravityPrompt, startAntigravityBridge } from '../src/runtime/antigravity-bridge.js';
 import { executeProviderRoute } from '../src/runtime/provider-adapters.js';
 
 test('Antigravity model discovery classifies economy, balanced, and frontier routes', () => {
@@ -26,6 +26,24 @@ test('Antigravity usage parser keeps quota percentages conservative', () => {
   assert.equal(quotas.length, 2);
   assert.equal(quotas[0].remainingFraction, 0.61);
   assert.equal(quotas[1].remainingFraction, 0.12);
+});
+
+test('Antigravity permission denial is reported distinctly from empty output', async () => {
+  const runCommand = async () => ({
+    stdout: JSON.stringify({
+      conversation_id: 'agy-denied-conversation',
+      status: 'SUCCESS',
+      response: '',
+      usage: { input_tokens: 100, output_tokens: 12, total_tokens: 112 },
+      denied_actions: [{ action: 'command', display_name: 'RunCommand' }]
+    }),
+    stderr: ''
+  });
+
+  await assert.rejects(
+    () => runAntigravityPrompt({ prompt: 'Return text only.', model: 'gemini-3.8-flash-medium', runCommand }),
+    /antigravity_permission_denied:command;status=SUCCESS;conversation_id=agy-denied-conversation;total_tokens=112/
+  );
 });
 
 test('loopback Antigravity bridge works through normalized OpenAI Responses adapter without a secret', async (t) => {

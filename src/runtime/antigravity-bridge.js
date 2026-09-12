@@ -35,7 +35,8 @@ export async function probeAntigravityUsage(options = {}) {
 
 /**
  * Run one bounded, sandboxed Antigravity prompt. No `--dangerously-skip-permissions`
- * flag is ever used here.
+ * flag is ever used here. Headless permission denials are surfaced explicitly
+ * instead of being collapsed into a generic empty-output failure.
  * @param {{prompt:string,model:string,maxOutputTokens?:number,timeoutMs?:number,runCommand?:typeof defaultRunCommand}} input
  */
 export async function runAntigravityPrompt({ prompt, model, maxOutputTokens = 800, timeoutMs = DEFAULT_TIMEOUT_MS, runCommand = defaultRunCommand }) {
@@ -54,9 +55,17 @@ export async function runAntigravityPrompt({ prompt, model, maxOutputTokens = 80
     let payload;
     try { payload = JSON.parse(result.stdout); }
     catch { throw new Error('antigravity_invalid_json'); }
-    if (payload?.status !== 'SUCCESS') throw new Error(`antigravity_error:${String(payload?.error ?? payload?.status ?? 'unknown').slice(0, 400)}`);
+
+    const deniedActions = antigravityDeniedActions(payload);
+    const context = antigravitySafeContext(payload);
+    if (deniedActions.length) {
+      throw new Error(`antigravity_permission_denied:${deniedActions.join(',')};${context}`);
+    }
+    if (payload?.status !== 'SUCCESS') {
+      throw new Error(`antigravity_error:${String(payload?.error ?? payload?.status ?? 'unknown').slice(0, 400)};${context}`);
+    }
     const text = typeof payload.response === 'string' ? payload.response.trim() : '';
-    if (!text) throw new Error('antigravity_empty_output');
+    if (!text) throw new Error(`antigravity_empty_output;${context}`);
     const usage = payload.usage && typeof payload.usage === 'object' ? payload.usage : {};
     return {
       text,
@@ -190,6 +199,24 @@ function sendJson(response, statusCode, value) {
   const body = Buffer.from(JSON.stringify(value));
   response.writeHead(statusCode, { 'content-type': 'application/json; charset=utf-8', 'content-length': body.length, 'cache-control': 'no-store' });
   response.end(body);
+}
+
+function antigravityDeniedActions(payload) {
+  if (!Array.isArray(payload?.denied_actions)) return [];
+  return [...new Set(payload.denied_actions.map((entry) => {
+    if (entry && typeof entry === 'object' && typeof entry.action === 'string') return entry.action.trim();
+    return '';
+  }).filter(Boolean))];
+}
+
+function antigravitySafeContext(payload) {
+  const parts = [`status=${String(payload?.status ?? 'unknown').slice(0, 40)}`];
+  if (typeof payload?.conversation_id === 'string' && payload.conversation_id.trim()) {
+    parts.push(`conversation_id=${payload.conversation_id.trim().slice(0, 120)}`);
+  }
+  const totalTokens = Number(payload?.usage?.total_tokens);
+  if (Number.isInteger(totalTokens) && totalTokens >= 0) parts.push(`total_tokens=${totalTokens}`);
+  return parts.join(';');
 }
 
 function dedupeBy(values, keyFn) {

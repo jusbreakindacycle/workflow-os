@@ -22,6 +22,25 @@ test('Project Bootstrap and instructions are deterministic projections of canoni
   } finally { db.close(); }
 });
 
+test('worker and verifier instruction bundles keep role-specific skills separate', () => {
+  const { db, store, phase1, phase2 } = createPhase2Fixture();
+  try {
+    const { workspace, snapshot, workItem } = acceptedReadyProject({ store, phase1 });
+    const worker = phase2.compileInstructions({ workspaceId: workspace.id, projectId: snapshot.project.id, workItemId: workItem.id });
+    const verifier = phase2.compileInstructions({
+      workspaceId: workspace.id,
+      projectId: snapshot.project.id,
+      workItemId: workItem.id,
+      skillKeys: ['core.verify_evidence']
+    });
+
+    assert.match(worker.instructions_text, /core\.execute_bounded_work@1/);
+    assert.doesNotMatch(worker.instructions_text, /core\.verify_evidence@1|Return JSON only/);
+    assert.match(verifier.instructions_text, /core\.verify_evidence@1/);
+    assert.doesNotMatch(verifier.instructions_text, /core\.execute_bounded_work@1/);
+  } finally { db.close(); }
+});
+
 test('Built-in skills are versioned and hashed', () => {
   const { db, store, phase2 } = createPhase2Fixture();
   try {
