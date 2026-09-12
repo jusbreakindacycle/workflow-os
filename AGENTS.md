@@ -22,7 +22,8 @@ This repository is **spec-first**. Documentation defines product and architectur
 14. `docs/plans/phase-1-core-control-plane.md`
 15. `docs/plans/phase-2-autonomy-kernel.md`
 16. `docs/plans/phase-2.1-free-first-quota-broker.md`
-17. task-specific contracts referenced by the active WorkItem.
+17. `docs/reviews/phase-2.1-live-certification-report.md`
+18. task-specific contracts referenced by the active WorkItem.
 
 ## Product invariant
 
@@ -104,7 +105,7 @@ ProviderConnection records store references/bindings such as an environment-vari
 
 `npm run phase2:live` is a consequential opt-in harness. Do not run it unless the operator explicitly configured credentials, set `WORKFLOW_OS_LIVE_APPROVE_SPEND=yes`, and selected a positive bounded maximum amount.
 
-`npm run phase21:certify` is separately consequential because it consumes real free quota. Do not run it unless the operator explicitly configured local free-provider access and set `WORKFLOW_OS_FREE_FIRST_RUN=yes`. That flag authorizes free quota consumption only; it does not authorize paid spend.
+`npm run phase21:certify` is separately consequential because it consumes real free quota. Do not run it unless the operator explicitly configured local free-provider access and set `WORKFLOW_OS_FREE_FIRST_RUN=yes`. That flag authorizes free quota consumption only; it does not authorize paid spend. Phase 2.1 is already live-certified; rerun only after material broker/provider/certification changes or when evidence needs renewal.
 
 ## Prompt/instruction rule
 
@@ -130,11 +131,18 @@ Never introduce a provider callback or model response that bypasses this chain.
 
 ## Current implementation discipline
 
-Phase 1 is complete. Phase 2 provider-neutral autonomy kernel is merged. Phase 2.1 adds Free-First quota-aware routing without replacing the Phase 2 contracts.
+Phase 1 is complete. Phase 2 provider-neutral autonomy kernel is merged. Phase 2.1 Free-First routing is merged and passed real zero-spend live certification with an independent verifier and cross-provider portability drill.
 
-Do not expand Phase 2.1 into AI-assisted discovery, production deployment, full coding-agent filesystem automation, Paperclip/Activepieces adoption, a generic provider marketplace/dashboard, or a PM/CRM/ERP suite.
+The next material engineering phase is **Phase 2.2 Canonical Authority Hardening**. Before granting consequential repository/deployment/external-system capabilities:
 
-After Phase 2.1 is green and live-certified, the next material work is controlled end-to-end delivery through a real Project and the appropriate adapter/runtime — not another control-plane rewrite.
+- restrict new WorkItems to valid creation states instead of trusting callers to avoid terminal/invalid initial status;
+- make approval requests validate that their subject exists and belongs to the same Workspace/Project;
+- add adversarial stale-version and approval TOCTOU coverage;
+- define the authority threshold for consequential actions.
+
+Do not expand Phase 2.2 into AI-assisted discovery, production deployment, Paperclip/Activepieces adoption, a generic provider marketplace/dashboard, or a PM/CRM/ERP suite.
+
+After the authority boundary is hardened, the next material product work is controlled end-to-end delivery through a real Project and the appropriate adapter/runtime — not another control-plane rewrite.
 
 ## Public repository
 

@@ -2,9 +2,9 @@
 
 ## Verdict
 
-**IMPLEMENTATION PASS pending final PR CI. LIVE CERTIFICATION PENDING OPERATOR CONFIGURATION.**
+**IMPLEMENTATION PASS. REPRESENTATIVE REAL-PROVIDER CERTIFICATION PASS THROUGH PHASE 2.1.**
 
-This report deliberately separates what repository tests can prove from what requires a real provider entitlement/credential and an intentional paid/live run.
+This report separates what normal repository tests prove from what required an intentional real-provider run.
 
 ## Implemented
 
@@ -41,48 +41,65 @@ Normal CI proves:
 - missing independent verifier blocks rather than self-certifies;
 - rejected verification stops after bounded retries;
 - two independently configured fixture routes can exercise the same projection without changing Project meaning;
-- OpenAI/Anthropic HTTP normalization is tested with fake responses and no network;
-- `phase2:live` fails closed in CI because explicit operator approval is absent.
+- OpenAI/Anthropic-compatible HTTP normalization is tested with fake responses and no network;
+- live harnesses fail closed in CI because explicit operator approval is absent.
 
-## What is not yet proven by CI
+## Real-provider evidence achieved through Phase 2.1
 
-The repository does **not** claim the following from fixture tests:
+On 2026-09-12, the zero-spend Phase 2.1 certification harness supplied real evidence for the same Phase 2 kernel contracts:
 
-- a real OpenAI/Anthropic/model call succeeded;
-- a real independent verifier succeeded;
-- two real provider connections are operationally portable;
-- a coding runtime can edit/test a repository;
-- an autonomous Project can deploy to production.
+- Google Antigravity completed the representative worker execution;
+- OpenRouter completed independent verification through a different independence group;
+- the verifier accepted the bounded deterministic artifact;
+- canonical verification persisted as L2 `pass`;
+- the WorkItem completed only after verification;
+- `first_real_execution` certification passed;
+- `independent_verifier` certification passed;
+- cross-provider `portability_drill` certification passed;
+- certification Workspace contained zero SpendEnvelope records and zero CostRecord records.
 
-Those require later evidence or the opt-in live harness.
+The operator then manually inspected the persisted SQLite evidence. See `docs/reviews/phase-2.1-live-certification-report.md`.
+
+## What remains unproven
+
+The real-provider certification does **not** prove:
+
+- every supported or future provider works;
+- paid OpenAI/Anthropic routes have been exercised with real paid credentials;
+- a coding runtime may safely mutate a repository;
+- production deployment is ready;
+- external-system writes, client communications, or other consequential side effects are ready;
+- the canonical approval boundary is sufficiently hardened for high-authority operation.
+
+Those require later authority hardening and adapter-specific evidence.
 
 ## Live evidence levels
 
-### Level A — first real execution
+### Level A — first real execution — passed
 
-Configure at least one non-fixture route plus explicit bounded spend and run `npm run phase2:live`. A passing `first_real_execution` certification proves the first real model route can consume Workflow OS's canonical Assignment projection.
+Satisfied through the Phase 2.1 zero-spend harness using Google Antigravity.
 
-### Level B — independent real verifier
+### Level B — independent real verifier — passed
 
-Configure a second non-fixture route in a different independence group and obtain a passing `independent_verifier` certification.
+Satisfied through the Phase 2.1 zero-spend harness using OpenRouter in a different independence group.
 
-### Level C — operational portability
+### Level C — operational portability — passed for the representative pair
 
-With two independently configured non-fixture ProviderConnections, run the portability drill and obtain a passing `portability_drill` certification. Only then may the product claim representative operational provider portability.
+Satisfied through the Phase 2.1 portability drill across independent Antigravity and OpenRouter ProviderConnections without changing Project meaning.
+
+This is representative operational portability evidence, not a claim that all providers are interchangeable under all capabilities.
 
 ## Security / authority conclusions
 
-- API key values are environment inputs only; database records store the environment-variable reference.
+- API key values are environment inputs only; database records store environment-variable references.
 - normal CI has no live-provider secret requirement and no live network execution path;
 - untrusted content is explicitly non-authoritative in compiled instructions;
-- provider success is execution evidence, never a direct WorkItem completion authority;
+- provider success is execution evidence, never direct WorkItem completion authority;
 - paid/unknown-billing routes require explicit prior SpendEnvelope bounds;
-- no route can silently expand scope, approve itself, or fabricate client acceptance.
+- worker output is not allowed to self-certify independent verification or external side effects.
 
 ## Exit recommendation
 
-When PR CI is green, merge the Phase 2 implementation even if live certifications remain unchecked, but describe the state accurately as:
+Phase 2 and Phase 2.1 now have both offline orchestration evidence and a representative real-provider certification chain.
 
-> **Autonomy kernel implemented; live provider certification pending operator configuration.**
-
-After at least one live certification, the next substantive product work is Phase 3 end-to-end delivery using a controlled Project and an appropriate real execution/runtime adapter — not more control-plane redesign.
+The next substantive work should **not** be another provider experiment. Before granting consequential capabilities, harden canonical authority boundaries in Phase 2.2, then proceed to controlled end-to-end delivery through the appropriate adapter/runtime.

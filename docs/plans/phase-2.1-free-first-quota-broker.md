@@ -46,7 +46,8 @@ Use the official `agy` CLI as a replaceable local-service ProviderConnection:
 - use a loopback bridge into the existing normalized Responses adapter;
 - force sandbox mode;
 - never use `--dangerously-skip-permissions`;
-- reject zero-spend certification when `useG1Credits=true`.
+- reject zero-spend certification when `useG1Credits=true`;
+- classify headless denied actions explicitly rather than collapsing them into generic empty-output failures.
 
 The model catalog is discovered at runtime rather than frozen into Workflow OS canonical state.
 
@@ -106,7 +107,17 @@ A full zero-spend certification requires:
 3. one representative WorkItem completed by real free routes with independent verification;
 4. one representative portability drill across two independent real ProviderConnections;
 5. zero SpendEnvelope and zero CostRecord for the certification Workspace;
-6. persisted certification/evidence records.
+6. persisted certification/evidence records;
+7. worker output treated as the bounded artifact only, with Workflow OS—not the worker—proving execution and verification facts.
+
+## Certification semantics hardening
+
+Two live attempts exposed useful failure modes before the final pass:
+
+- Antigravity can return `status: SUCCESS` with an empty response when a headless tool action is auto-denied. Workflow OS now surfaces the denied action and keeps sandbox/permission boundaries intact instead of weakening permissions.
+- A generic specification task encouraged the worker to describe or invent evidence that should have belonged to Workflow OS. The certification harness now uses a dedicated deterministic text-only artifact contract. The worker produces only the artifact; the independent verifier judges it; Workflow OS proves execution, verification, independence, zero spend, and portability from persisted canonical records.
+
+These changes preserve strict verification rather than weakening it to make certification pass.
 
 ## Exit states
 
@@ -120,17 +131,29 @@ A full zero-spend certification requires:
 - normal CI cannot start a live free-provider run;
 - documentation/operator procedures complete.
 
-### Full free live certification complete
+### Full free live certification complete — achieved 2026-09-12
 
-- real Antigravity execution succeeds;
-- a second independent real free provider participates in verification;
-- portability drill passes;
-- zero paid spend invariant is evidenced;
-- certification records are inspected before repository status is upgraded.
+The operator-run harness passed with:
 
-Until the operator configures those accounts locally, the honest status is:
+- Google Antigravity real worker execution;
+- OpenRouter real independent verification;
+- canonical WorkItem completion only after L2 verification;
+- cross-provider portability drill passed;
+- `first_real_execution`, `independent_verifier`, and `portability_drill` certification records all passed;
+- zero SpendEnvelope records;
+- zero CostRecord records;
+- Antigravity paid-credit fallback disabled;
+- persisted evidence manually inspected after the run.
 
-> **Phase 2.1 Free-First Broker implemented/offline-verified; full free live certification pending operator account setup.**
+The representative claim is now:
+
+> **Phase 2.1 Free-First Broker implemented, offline-verified, and live-certified for the representative Antigravity-worker + OpenRouter-verifier zero-spend path.**
+
+This does not certify production deployment, consequential repository mutation, or unrestricted autonomous side effects.
+
+## Recertification
+
+Do not rerun live certification as a routine smoke test. Recertify only when a material provider/broker/certification change, materially different environment, or evidence-renewal need justifies consuming real free quota again.
 
 ## Non-goals
 
