@@ -38,23 +38,31 @@ The live certification passed with Antigravity as worker and OpenRouter as indep
 
 Recertification is not a routine step. Run it again only after material provider/broker/certification changes, a materially different environment, or when evidence needs renewal.
 
-## Phase 2.2 — Canonical Authority Hardening — next
+## Phase 2.2 — Canonical Authority Hardening — complete
 
-Before Workflow OS receives consequential real capabilities, strengthen the authority boundary that decides what work and approvals are valid.
+Phase 2.2 strengthens the authority boundary that decides what work and approvals are valid before any consequential real adapter/runtime capability is enabled.
 
-Primary targets:
+Implemented controls include:
 
-- restrict `createWorkItem(...)` initial status to the intended creation states (`draft` or `ready`);
-- make `requestApproval(...)` validate that the referenced subject exists and belongs to the same Workspace/Project;
-- add adversarial stale-version and approval TOCTOU tests;
-- define an explicit authority threshold for repository writes, deployment, production mutation, external communication, and other consequential actions;
-- preserve the rule that provider/model success is evidence, not authority.
+- WorkItems may be born only as `draft` or `ready`, including at the SQLite boundary;
+- registered Approval subjects are exact Workspace/Project/version-bound canonical references;
+- unknown/cross-scope/stale approval subjects fail closed;
+- authority-bearing Approval identity/version/reason/bounds are immutable;
+- Approval status transitions are bounded and stale subjects are rechecked before approval;
+- repository authority is rechecked again at consequential use time;
+- SpendRequests capture current Project/WorkItem versions and SpendEnvelope/CostRecord paths revalidate that authority before use;
+- unresolved legacy spend requests without Phase 2.2 version evidence are superseded rather than silently upgraded;
+- the risk/approval policy defines explicit authority thresholds for shared/external writes, communication, repository mutation, production/destructive actions, spend, and credential/permission grants.
 
-Exit condition: the first consequential adapter/runtime capability can be granted without relying on caller discipline to preserve canonical authority.
+Adversarial tests cover direct-SQL WorkItem bypass, cross-Project/unknown/stale approval subjects, immutable approval bounds, repository resolve/use-time staleness, and spend version staleness. Final Phase 2.2 CI passed 69/69 tests with eight migrations.
 
-## Phase 3 — End-to-end Delivery Golden Path
+See `docs/plans/phase-2.2-canonical-authority-hardening.md` and `docs/reviews/phase-2.2-implementation-report.md`.
+
+## Phase 3 — End-to-end Delivery Golden Path — next
 
 Add AI-assisted discovery/research/challenge and dynamic internal role activation, then choose the first complete delivery path from an actual controlled Project's **delivery strategy**.
+
+The first consequential adapter/runtime capability must consume the Phase 2.2 authority contract: exact subject/version/bounds when approval is required, freshness at resolution, and revalidation immediately before a durable/external effect.
 
 Examples:
 

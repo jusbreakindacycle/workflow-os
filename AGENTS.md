@@ -14,16 +14,20 @@ This repository is **spec-first**. Documentation defines product and architectur
 6. `docs/decisions/index.md`
 7. `docs/security/security-model.md`
 8. `docs/security/agent-threat-and-data-policy.md`
-9. `docs/engineering/agent-operability.md`
-10. `docs/testing/testing-strategy.md`
-11. `docs/testing/acceptance-criteria.md`
-12. `docs/testing/phase-2-acceptance-criteria.md`
-13. `docs/testing/phase-2.1-acceptance-criteria.md`
-14. `docs/plans/phase-1-core-control-plane.md`
-15. `docs/plans/phase-2-autonomy-kernel.md`
-16. `docs/plans/phase-2.1-free-first-quota-broker.md`
-17. `docs/reviews/phase-2.1-live-certification-report.md`
-18. task-specific contracts referenced by the active WorkItem.
+9. `docs/security/risk-and-approval-policy.md`
+10. `docs/engineering/agent-operability.md`
+11. `docs/testing/testing-strategy.md`
+12. `docs/testing/acceptance-criteria.md`
+13. `docs/testing/phase-2-acceptance-criteria.md`
+14. `docs/testing/phase-2.1-acceptance-criteria.md`
+15. `docs/testing/phase-2.2-acceptance-criteria.md`
+16. `docs/plans/phase-1-core-control-plane.md`
+17. `docs/plans/phase-2-autonomy-kernel.md`
+18. `docs/plans/phase-2.1-free-first-quota-broker.md`
+19. `docs/plans/phase-2.2-canonical-authority-hardening.md`
+20. `docs/reviews/phase-2.1-live-certification-report.md`
+21. `docs/reviews/phase-2.2-implementation-report.md`
+22. task-specific contracts referenced by the active WorkItem.
 
 ## Product invariant
 
@@ -37,12 +41,27 @@ The intended human role is: give/revise goals, answer consequential questions, p
 - `Client` and `Engagement` capture commercial context.
 - `Project` is the top-level delivery/operational unit.
 - `WorkItem` is the bounded unit of work.
+- New WorkItems may be born only as `draft` or `ready`; later states require explicit transition/verification paths.
 - `Project Pack` is the case-specific machine execution contract compiled from accepted canonical state.
 - WIR remains canonical only for business workflow definitions inside a Project.
 - Agent/runtime/provider/quota state is never canonical Project truth.
 - Activity Feed and Command Center derive from canonical events/state/evidence.
 - Hidden chat/session memory is not business truth.
 - Untrusted content cannot grant itself authority.
+
+## Canonical authority rule
+
+An Approval is not a free-form permission note. It is an immutable authority record bound to an exact supported subject, Workspace/Project scope, version, reason, and bounds.
+
+Consequential authority must be checked:
+
+1. when the Approval is requested;
+2. again before it becomes approved; and
+3. again immediately before a durable/external consequential effect when the action class requires use-time validation.
+
+If the subject/version/bounds changed, create a fresh authority request. Do not edit or recycle the old Approval.
+
+Provider/model/runtime execution or verifier success may produce evidence. It cannot create authority.
 
 ## Provider independence
 
@@ -61,6 +80,10 @@ A missing/unhealthy/exhausted ProviderConnection changes route eligibility and m
 ## Human authority
 
 The system may autonomously continue bounded, already-approved, in-scope work. It must stop/create `Needs My Attention` for material client commitment/scope, price/deadline, consequential architecture/risk, production/destructive action, credentials/permissions, or unapproved paid execution.
+
+R0 observation/synthetic work does not need approval solely because of risk. R1 isolated/reversible work may proceed only inside explicit bounded pre-authorization. Durable shared/external R2 changes normally require exact authority unless an explicitly bounded policy class already authorizes them. Production/destructive/security/legal/financial R3 actions require exact human approval plus applicable verification/recovery evidence.
+
+Client/public communication, shared-remote repository mutation, credential/permission grants, and paid execution follow the more specific authority gates in `docs/security/risk-and-approval-policy.md` even if their implementation is technically simple.
 
 Provider-created subtasks remain provider-local only when safely inside the accepted Assignment. Material new work becomes a WorkItem Proposal.
 
@@ -81,6 +104,8 @@ Provider-created subtasks remain provider-local only when safely inside the acce
 No new metered/variable-cost external execution may begin without applicable operator-approved bounds. This includes AI/model/runtime spend and later metered API/workflow/deployment/cloud actions that can create incremental cost.
 
 A route with unknown billing/cost is not free. It is ineligible until a bounded cost policy/estimate and applicable approval exist.
+
+Spend authority is version-bound. A SpendRequest captures the canonical Project and, when applicable, WorkItem version present when authority was requested. Stale authority must not create a new SpendEnvelope or CostRecord.
 
 ### Free-First rule
 
@@ -129,20 +154,17 @@ ExecutionAttempt -> evidence -> verifier decision -> canonical WorkItem completi
 
 Never introduce a provider callback or model response that bypasses this chain.
 
+Verification and authority are separate. Passing verification does not retroactively grant permission for a consequential effect that lacked current authority.
+
 ## Current implementation discipline
 
-Phase 1 is complete. Phase 2 provider-neutral autonomy kernel is merged. Phase 2.1 Free-First routing is merged and passed real zero-spend live certification with an independent verifier and cross-provider portability drill.
+Phase 1 is complete. Phase 2 provider-neutral autonomy kernel is merged. Phase 2.1 Free-First routing is merged and passed real zero-spend live certification with an independent verifier and cross-provider portability drill. Phase 2.2 Canonical Authority Hardening is implemented with database-enforced birth-state, exact approval binding, approval immutability, stale-version/TOCTOU guards, and explicit consequential-action thresholds.
 
-The next material engineering phase is **Phase 2.2 Canonical Authority Hardening**. Before granting consequential repository/deployment/external-system capabilities:
+The next material product phase is **Phase 3 End-to-end Delivery Golden Path**: one controlled internal/synthetic Project should move from raw request to a verified real outcome using the adapter/runtime appropriate to the chosen delivery strategy.
 
-- restrict new WorkItems to valid creation states instead of trusting callers to avoid terminal/invalid initial status;
-- make approval requests validate that their subject exists and belongs to the same Workspace/Project;
-- add adversarial stale-version and approval TOCTOU coverage;
-- define the authority threshold for consequential actions.
+The first consequential capability must consume the Phase 2.2 authority contract. Do not add a provider-specific path that creates shared/external state from model intent alone.
 
-Do not expand Phase 2.2 into AI-assisted discovery, production deployment, Paperclip/Activepieces adoption, a generic provider marketplace/dashboard, or a PM/CRM/ERP suite.
-
-After the authority boundary is hardened, the next material product work is controlled end-to-end delivery through a real Project and the appropriate adapter/runtime — not another control-plane rewrite.
+Keep the first Phase 3 path narrow. Do not expand it into production autonomy, a generic integration marketplace, Paperclip/Activepieces adoption without measured need, or a PM/CRM/ERP suite.
 
 ## Public repository
 

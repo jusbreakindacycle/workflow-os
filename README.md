@@ -1,6 +1,6 @@
 # Workflow OS (temporary name)
 
-> **Status:** Foundation v3, Phase 1 local control plane, Phase 2 autonomy kernel, and Phase 2.1 Free-First Provider & Quota Broker are merged. Phase 2.1 passed real zero-spend live certification on 2026-09-12 using Google Antigravity for worker execution and OpenRouter for independent verification, including a successful cross-provider portability drill. The next engineering phase is Phase 2.2 Canonical Authority Hardening before consequential real-world execution is enabled. The product name `workflow-os` is temporary.
+> **Status:** Foundation v3, Phase 1 local control plane, Phase 2 autonomy kernel, Phase 2.1 Free-First Provider & Quota Broker, and Phase 2.2 Canonical Authority Hardening are implemented. Phase 2.1 passed real zero-spend live certification on 2026-09-12 using Google Antigravity for worker execution and OpenRouter for independent verification, including a successful cross-provider portability drill. Phase 2.2 adds database-enforced, version-bound, use-time-revalidated authority before consequential real-world capabilities are enabled. The next product phase is the controlled Phase 3 end-to-end delivery golden path. The product name `workflow-os` is temporary.
 
 Workflow OS is intended to become the **one operating interface a solo builder uses to run client and internal delivery work without depending on one AI platform, one coding agent, or one model vendor**.
 
@@ -51,10 +51,14 @@ A Project that can be solved by process change or existing software should not b
 
 ## Core architectural promise
 
-Workflow OS owns the **meaning and state of the work**. External systems perform specialized execution.
+Workflow OS owns the **meaning, authority, and state of the work**. External systems perform specialized execution.
 
 ```text
 Workflow OS
+  -> Canonical Authority Boundary
+      -> exact subject / Workspace / Project / version / bounds
+      -> human approval when policy requires it
+      -> resolve-time + use-time freshness checks
   -> Model/Runtime Broker
       -> free / included / paid / local routes according to policy
       -> OpenAI / Anthropic / Google / open models / future providers
@@ -67,7 +71,7 @@ Workflow OS
       -> Git/source providers / clouds / monitoring systems
 ```
 
-No provider is allowed to become the hidden source of truth for a Project.
+No provider is allowed to become the hidden source of truth or authority for a Project.
 
 ## Local-first, provider-independent
 
@@ -139,7 +143,7 @@ ready WorkItem
 
 Implemented Phase 2 capabilities include ProviderConnection/route registry, capability/data/locality/health/spend-aware Broker, deterministic bootstrap/instruction compilation, Skill Registry, bounded loops, independent verification, fallback, execution evidence, provider adapters, and certification records.
 
-Fixture/offline CI still proves orchestration semantics without requiring credentials. In addition, Phase 2.1's zero-spend live harness has now supplied real-provider evidence for first execution, independent verification, and representative provider portability.
+Fixture/offline CI still proves orchestration semantics without requiring credentials. In addition, Phase 2.1's zero-spend live harness has supplied real-provider evidence for first execution, independent verification, and representative provider portability.
 
 ## Phase 2.1 Free-First Provider & Quota Broker — live-certified
 
@@ -195,9 +199,36 @@ This proves the representative Free-First execution/verifier/portability path. I
 
 See `docs/reviews/phase-2.1-live-certification-report.md` for the sanitized evidence summary.
 
-## Next engineering phase — Phase 2.2 Canonical Authority Hardening
+## Phase 2.2 Canonical Authority Hardening — implemented
 
-Before granting real repository/deployment/external-system authority, harden the canonical permission boundary itself. Immediate targets include restricting initial WorkItem status, validating approval subjects against Workspace/Project ownership, adversarial stale-version/TOCTOU coverage, and an explicit authority threshold for consequential actions.
+Phase 2.2 makes consequential authority fail closed at the canonical persistence boundary rather than depending only on a caller choosing the right API path.
+
+Key protections include:
+
+- new WorkItems may be born only as `draft` or `ready`;
+- registered Approval subjects are bound to the exact Workspace/Project/subject/version;
+- unknown, cross-scope, and stale authority subjects fail closed;
+- authority-bearing Approval identity/version/reason/bounds are immutable after request creation;
+- stale subjects are rechecked before an Approval becomes approved;
+- repository authority is rechecked again at use time;
+- SpendRequests capture Project/WorkItem versions and SpendEnvelope/CostRecord paths re-check that authority before use;
+- unresolved pre-Phase-2.2 spend requests without the required version evidence are superseded rather than silently upgraded.
+
+The policy now explicitly separates read-only/synthetic work, isolated reversible changes, shared/external mutation, communication, repository mutation, production/destructive actions, paid spend, and credential/permission grants.
+
+Final Phase 2.2 CI passed 69/69 tests with eight migrations, migration/backup checks, and live-provider opt-in guards green.
+
+See:
+
+- `docs/plans/phase-2.2-canonical-authority-hardening.md`
+- `docs/testing/phase-2.2-acceptance-criteria.md`
+- `docs/reviews/phase-2.2-implementation-report.md`
+
+## Next engineering phase — Phase 3 End-to-end Delivery Golden Path
+
+Use the hardened authority boundary to run one controlled internal/synthetic Project from raw request through an actual verified outcome with the adapter/runtime appropriate to its chosen delivery strategy.
+
+The first consequential capability should be narrow and reversible where possible. Real repository writes, deployment, external communication, or similar effects must consume the Phase 2.2 exact-version authority contract rather than introducing a provider-specific shortcut.
 
 ## Run locally
 
@@ -234,6 +265,9 @@ See:
 - `docs/implementation/phase-2.1-free-first-quota-broker.md`
 - `docs/testing/phase-2.1-acceptance-criteria.md`
 - `docs/reviews/phase-2.1-live-certification-report.md`
+- `docs/plans/phase-2.2-canonical-authority-hardening.md`
+- `docs/testing/phase-2.2-acceptance-criteria.md`
+- `docs/reviews/phase-2.2-implementation-report.md`
 - `docs/operations/free-first-provider-setup-windows.md`
 
 ## Repository safety
@@ -248,8 +282,9 @@ This repository is public. Use synthetic data only. Never commit real client dat
 4. `docs/product/scope-mvp.md`
 5. `ARCHITECTURE.md`
 6. `docs/decisions/index.md`
-7. `docs/reviews/phase-2.1-live-certification-report.md`
-8. `docs/plans/roadmap.md`
+7. `docs/plans/phase-2.2-canonical-authority-hardening.md`
+8. `docs/security/risk-and-approval-policy.md`
+9. `docs/plans/roadmap.md`
 
 ## One-line product test
 
