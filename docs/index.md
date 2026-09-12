@@ -51,6 +51,7 @@
 - [Phase 2 Acceptance Criteria](testing/phase-2-acceptance-criteria.md)
 - [Phase 2.1 Free-First Acceptance Criteria](testing/phase-2.1-acceptance-criteria.md)
 - [Phase 2.2 Canonical Authority Hardening Acceptance Criteria](testing/phase-2.2-acceptance-criteria.md)
+- [Phase 3.0 Golden Path Contract Acceptance Criteria](testing/phase-3.0-acceptance-criteria.md)
 - [Production and Maintenance](operations/production-maintenance.md)
 - [Windows Free-First Provider Setup](operations/free-first-provider-setup-windows.md)
 
@@ -89,6 +90,7 @@
 - [Phase 2 Autonomy Kernel](plans/phase-2-autonomy-kernel.md)
 - [Phase 2.1 Free-First Provider & Quota Broker](plans/phase-2.1-free-first-quota-broker.md)
 - [Phase 2.2 Canonical Authority Hardening](plans/phase-2.2-canonical-authority-hardening.md)
+- [Phase 3.0 Golden Path and Governed Execution Contract](plans/phase-3.0-golden-path-contract.md)
 
 ## Templates / schemas
 
