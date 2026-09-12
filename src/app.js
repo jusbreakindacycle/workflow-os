@@ -30,8 +30,8 @@ export function createApp(options) {
 
   const status = {
     service: 'workflow-os',
-    phase: 'phase-2.1',
-    gate: 'free-first-quota-broker-implemented-live-certification-pending',
+    phase: 'phase-2.2',
+    gate: 'canonical-authority-hardening-implemented',
     database: { status: 'ready', migrations }
   };
   assertFoundationStatus(status);
