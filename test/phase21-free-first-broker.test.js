@@ -115,6 +115,57 @@ test('free-first execution can complete through two independent zero-cost routes
     assert.equal(result.result.status, 'passed');
     assert.equal(db.prepare('SELECT COUNT(*) AS n FROM spend_envelopes WHERE project_id = ?').get(snapshot.project.id).n, 0);
     assert.equal(db.prepare('SELECT COUNT(*) AS n FROM cost_records WHERE project_id = ?').get(snapshot.project.id).n, 0);
+
+    const countersBefore = db.prepare('SELECT route_id, request_count, input_tokens, output_tokens, total_tokens FROM provider_usage_counters WHERE workspace_id = ? ORDER BY route_id').all(workspace.id);
+    assert.equal(result.usage.attemptsAccounted, 2);
+    const repeatedSync = broker.syncUsageFromAttempts({ workspaceId: workspace.id });
+    const countersAfter = db.prepare('SELECT route_id, request_count, input_tokens, output_tokens, total_tokens FROM provider_usage_counters WHERE workspace_id = ? ORDER BY route_id').all(workspace.id);
+    assert.equal(repeatedSync.attemptsAccounted, 0, 'successful attempts are accounted exactly once');
+    assert.deepEqual(countersAfter, countersBefore, 'repeated synchronization must not double-increment usage counters');
+  } finally {
+    db.close();
+  }
+});
+
+test('stale Antigravity routes stay disabled after rediscovery and policy reapplication', () => {
+  const { db, store } = createPhase2Fixture('workflow-os-free-stale-');
+  try {
+    const workspace = store.createWorkspace({ name: 'Free-first stale-route test' });
+    const broker = new FreeFirstBroker(db);
+    const endpointUrl = 'http://127.0.0.1:9999/v1/responses';
+
+    broker.provisionFreeRoutes({
+      workspaceId: workspace.id,
+      antigravity: {
+        endpointUrl,
+        models: [
+          { slug: 'gemini-3.8-flash-low', label: 'Gemini 3.8 Flash Low', tier: 'economy' },
+          { slug: 'gemini-3.7-flash-low', label: 'Gemini 3.7 Flash Low', tier: 'economy' }
+        ]
+      }
+    });
+
+    broker.provisionFreeRoutes({
+      workspaceId: workspace.id,
+      antigravity: {
+        endpointUrl,
+        models: [
+          { slug: 'gemini-3.8-flash-low', label: 'Gemini 3.8 Flash Low', tier: 'economy' }
+        ]
+      }
+    });
+
+    const staleBeforePolicy = broker.listFreeRoutes({ workspaceId: workspace.id })
+      .filter((route) => route.route_name.startsWith('free-antigravity-gemini-3.7-flash-low'));
+    assert.equal(staleBeforePolicy.length, 2);
+    assert.ok(staleBeforePolicy.every((route) => route.enabled === 0));
+    assert.ok(staleBeforePolicy.every((route) => JSON.parse(route.config_json).discovered_active === false));
+
+    broker.applyPolicy({ workspaceId: workspace.id, taskClass: 'routine' });
+    const staleAfterPolicy = broker.listFreeRoutes({ workspaceId: workspace.id })
+      .filter((route) => route.route_name.startsWith('free-antigravity-gemini-3.7-flash-low'));
+    assert.ok(staleAfterPolicy.every((route) => route.enabled === 0), 'policy must not resurrect routes removed from the discovered catalog');
+    assert.ok(staleAfterPolicy.every((route) => JSON.parse(route.config_json).discovered_active === false));
   } finally {
     db.close();
   }

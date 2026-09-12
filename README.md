@@ -1,6 +1,6 @@
 # Workflow OS (temporary name)
 
-> **Status:** Foundation v3, Phase 1 local control plane, and Phase 2 autonomy kernel are merged. Phase 2.1 Free-First Provider & Quota Broker is under implementation/offline verification in the current PR; full free live certification remains an explicit operator-run evidence step. The product name `workflow-os` is temporary.
+> **Status:** Foundation v3, Phase 1 local control plane, Phase 2 autonomy kernel, and Phase 2.1 Free-First Provider & Quota Broker are merged. Phase 2.1 passed real zero-spend live certification on 2026-09-12 using Google Antigravity for worker execution and OpenRouter for independent verification, including a successful cross-provider portability drill. The next engineering phase is Phase 2.2 Canonical Authority Hardening before consequential real-world execution is enabled. The product name `workflow-os` is temporary.
 
 Workflow OS is intended to become the **one operating interface a solo builder uses to run client and internal delivery work without depending on one AI platform, one coding agent, or one model vendor**.
 
@@ -120,7 +120,7 @@ New Project
   -> restart/recovery + Command Center
 ```
 
-## Phase 2 autonomy kernel — merged
+## Phase 2 autonomy kernel — merged and real-provider certified through Phase 2.1
 
 Phase 2 turns the Phase 1 Assignment contract into a provider-neutral execution kernel:
 
@@ -137,11 +137,11 @@ ready WorkItem
        -> route failure: eligible fallback or stop
 ```
 
-Implemented Phase 2 capabilities include ProviderConnection/route registry, capability/data/locality/health/spend-aware Broker, deterministic bootstrap/instruction compilation, Skill Registry, bounded loops, independent verification, fallback, execution evidence, provider adapters, and live-certification records.
+Implemented Phase 2 capabilities include ProviderConnection/route registry, capability/data/locality/health/spend-aware Broker, deterministic bootstrap/instruction compilation, Skill Registry, bounded loops, independent verification, fallback, execution evidence, provider adapters, and certification records.
 
-Fixture/offline CI proves orchestration semantics. It does not prove a real provider account worked.
+Fixture/offline CI still proves orchestration semantics without requiring credentials. In addition, Phase 2.1's zero-spend live harness has now supplied real-provider evidence for first execution, independent verification, and representative provider portability.
 
-## Phase 2.1 Free-First Provider & Quota Broker — current PR
+## Phase 2.1 Free-First Provider & Quota Broker — live-certified
 
 Phase 2.1 adds a policy mode for operators who want the autonomy kernel to consume **free/zero-incremental capacity first and never silently pay**.
 
@@ -181,9 +181,23 @@ Initial replaceable routes are:
 
 Normal CI makes no live provider calls.
 
-Until operator-configured real accounts pass the local certification harness, the accurate claim is:
+On 2026-09-12, the operator-run certification harness passed with:
 
-> **Phase 2.1 Free-First Broker implemented/offline-verified; full free live certification pending operator account setup.**
+- Google Antigravity as the real worker route;
+- OpenRouter as the independent real verifier route;
+- canonical L2 verification outcome `pass`;
+- successful cross-provider portability drill;
+- zero SpendEnvelope records;
+- zero CostRecord records;
+- Antigravity paid-credit fallback disabled.
+
+This proves the representative Free-First execution/verifier/portability path. It does **not** prove production deployment, high-authority repository mutation, or autonomous consequential side effects are ready.
+
+See `docs/reviews/phase-2.1-live-certification-report.md` for the sanitized evidence summary.
+
+## Next engineering phase — Phase 2.2 Canonical Authority Hardening
+
+Before granting real repository/deployment/external-system authority, harden the canonical permission boundary itself. Immediate targets include restricting initial WorkItem status, validating approval subjects against Workspace/Project ownership, adversarial stale-version/TOCTOU coverage, and an explicit authority threshold for consequential actions.
 
 ## Run locally
 
@@ -201,7 +215,7 @@ npm run phase21:preflight
 npm run phase21:certify
 ```
 
-`phase21:certify` is opt-in because even zero-cost execution consumes real provider quota. It refuses to start unless `WORKFLOW_OS_FREE_FIRST_RUN=yes` is explicitly set.
+`phase21:certify` is opt-in because even zero-cost execution consumes real provider quota. It refuses to start unless `WORKFLOW_OS_FREE_FIRST_RUN=yes` is explicitly set. Do not rerun certification routinely; recertify only after material provider/broker/certification changes or when evidence needs renewal.
 
 The older paid/metered Phase 2 certification harness remains separate:
 
@@ -219,6 +233,7 @@ See:
 - `docs/plans/phase-2.1-free-first-quota-broker.md`
 - `docs/implementation/phase-2.1-free-first-quota-broker.md`
 - `docs/testing/phase-2.1-acceptance-criteria.md`
+- `docs/reviews/phase-2.1-live-certification-report.md`
 - `docs/operations/free-first-provider-setup-windows.md`
 
 ## Repository safety
@@ -233,8 +248,8 @@ This repository is public. Use synthetic data only. Never commit real client dat
 4. `docs/product/scope-mvp.md`
 5. `ARCHITECTURE.md`
 6. `docs/decisions/index.md`
-7. `docs/plans/phase-2.1-free-first-quota-broker.md`
-8. `docs/operations/free-first-provider-setup-windows.md`
+7. `docs/reviews/phase-2.1-live-certification-report.md`
+8. `docs/plans/roadmap.md`
 
 ## One-line product test
 

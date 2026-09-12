@@ -12,21 +12,45 @@ Implemented locally: Workspace/Client/Engagement/Project; New Project intake; di
 
 Phase 1 exited at the anti-PM-suite boundary.
 
-## Phase 2 — Autonomy Kernel / First Real Execution — implementation complete, live certification separate
+## Phase 2 — Autonomy Kernel / First Real Execution — complete for the representative provider path
 
-The Phase 2 PR implements normalized capabilities, ProviderConnection/entitlement/health state, Broker + Spend enforcement, deterministic Project Bootstrapper, Assignment instruction compiler, Skill Registry, bounded Loop Engine, independent verifier routing, fallback/rerouting, provider adapters, execution evidence, and live-certification records.
+Phase 2 implements normalized capabilities, ProviderConnection/entitlement/health state, Broker + Spend enforcement, deterministic Project Bootstrapper, Assignment instruction compiler, Skill Registry, bounded Loop Engine, independent verifier routing, fallback/rerouting, provider adapters, execution evidence, and certification records.
 
-Normal CI proves provider-independent orchestration using fixture routes and fake provider HTTP responses. It does **not** claim a real provider call.
+Normal CI proves provider-independent orchestration using fixture routes and fake provider HTTP responses. Real-provider evidence is supplied separately by the Phase 2.1 zero-spend certification harness.
 
-Live evidence remains deliberately separate:
+On 2026-09-12, the representative real-provider evidence chain passed:
 
-1. first non-fixture real execution;
-2. independent non-fixture verifier;
-3. two independent non-fixture ProviderConnections passing a representative portability/rerouting drill.
+1. non-fixture real worker execution through Google Antigravity;
+2. independent non-fixture verification through OpenRouter;
+3. canonical L2 verification outcome `pass`;
+4. cross-provider portability drill through independent ProviderConnections;
+5. zero SpendEnvelope and zero CostRecord in the certification Workspace.
 
-Until operator credentials/entitlements are configured and those checks pass, the accurate state is **autonomy kernel implemented; live provider certification pending operator configuration**.
+This certifies the representative model execution/verifier/portability path. It does not certify production deployment or high-authority external actions.
 
-See `docs/plans/phase-2-autonomy-kernel.md` and `docs/testing/phase-2-acceptance-criteria.md`.
+See `docs/reviews/phase-2.1-live-certification-report.md`.
+
+## Phase 2.1 — Free-First Provider & Quota Broker — complete and live-certified
+
+Phase 2.1 adds quota-aware zero-spend routing over real free/zero-incremental capacity while preserving independent verification and refusing silent paid fallback.
+
+The live certification passed with Antigravity as worker and OpenRouter as independent verifier, with the portability drill passed and zero paid-spend records. Normal CI remains credential-free and live execution remains explicit opt-in.
+
+Recertification is not a routine step. Run it again only after material provider/broker/certification changes, a materially different environment, or when evidence needs renewal.
+
+## Phase 2.2 — Canonical Authority Hardening — next
+
+Before Workflow OS receives consequential real capabilities, strengthen the authority boundary that decides what work and approvals are valid.
+
+Primary targets:
+
+- restrict `createWorkItem(...)` initial status to the intended creation states (`draft` or `ready`);
+- make `requestApproval(...)` validate that the referenced subject exists and belongs to the same Workspace/Project;
+- add adversarial stale-version and approval TOCTOU tests;
+- define an explicit authority threshold for repository writes, deployment, production mutation, external communication, and other consequential actions;
+- preserve the rule that provider/model success is evidence, not authority.
+
+Exit condition: the first consequential adapter/runtime capability can be granted without relying on caller discipline to preserve canonical authority.
 
 ## Phase 3 — End-to-end Delivery Golden Path
 
