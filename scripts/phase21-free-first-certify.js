@@ -10,11 +10,6 @@ import { FreeFirstBroker } from '../src/domain/free-first-broker.js';
 import { discoverAntigravityModels, probeAntigravityUsage, startAntigravityBridge } from '../src/runtime/antigravity-bridge.js';
 import { CERTIFICATION_TOOL_FREE_CONSTRAINT, selectBestWorkerRoute } from '../src/runtime/phase21-certification.js';
 
-await main().catch((error) => {
-  console.error(error instanceof Error ? error.message : String(error));
-  process.exitCode = 1;
-});
-
 async function main() {
   if (process.env.WORKFLOW_OS_FREE_FIRST_RUN !== 'yes') {
     fail('Free-First live execution is disabled. Set WORKFLOW_OS_FREE_FIRST_RUN=yes only when you intentionally want to consume free provider quota.');
@@ -170,3 +165,8 @@ class CertificationFailure extends Error {
 function fail(message) {
   throw new CertificationFailure(message);
 }
+
+await main().catch((error) => {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exitCode = 1;
+});
