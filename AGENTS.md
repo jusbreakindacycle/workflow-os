@@ -21,13 +21,15 @@ This repository is **spec-first**. Documentation defines product and architectur
 13. `docs/testing/phase-2-acceptance-criteria.md`
 14. `docs/testing/phase-2.1-acceptance-criteria.md`
 15. `docs/testing/phase-2.2-acceptance-criteria.md`
-16. `docs/plans/phase-1-core-control-plane.md`
-17. `docs/plans/phase-2-autonomy-kernel.md`
-18. `docs/plans/phase-2.1-free-first-quota-broker.md`
-19. `docs/plans/phase-2.2-canonical-authority-hardening.md`
-20. `docs/reviews/phase-2.1-live-certification-report.md`
-21. `docs/reviews/phase-2.2-implementation-report.md`
-22. task-specific contracts referenced by the active WorkItem.
+16. `docs/testing/phase-3.0-acceptance-criteria.md`
+17. `docs/plans/phase-1-core-control-plane.md`
+18. `docs/plans/phase-2-autonomy-kernel.md`
+19. `docs/plans/phase-2.1-free-first-quota-broker.md`
+20. `docs/plans/phase-2.2-canonical-authority-hardening.md`
+21. `docs/plans/phase-3.0-golden-path-contract.md`
+22. `docs/reviews/phase-2.1-live-certification-report.md`
+23. `docs/reviews/phase-2.2-implementation-report.md`
+24. task-specific contracts referenced by the active WorkItem.
 
 ## Product invariant
 
@@ -86,6 +88,26 @@ R0 observation/synthetic work does not need approval solely because of risk. R1 
 Client/public communication, shared-remote repository mutation, credential/permission grants, and paid execution follow the more specific authority gates in `docs/security/risk-and-approval-policy.md` even if their implementation is technically simple.
 
 Provider-created subtasks remain provider-local only when safely inside the accepted Assignment. Material new work becomes a WorkItem Proposal.
+
+## Governed local execution workspace rule
+
+Phase 3 introduces a separate execution-authority boundary for real local implementation work.
+
+A bounded local execution workspace is **not** authority to mutate the Workflow OS repository, a shared GitHub remote, a deployment target, production state, or an external communication channel.
+
+For the first Phase 3 golden path:
+
+- the execution workspace is a dedicated synthetic Project directory under an operator/Workflow-OS configured root;
+- file access must fail closed on path traversal, absolute-path escape, symlink/junction/realpath escape, and unrelated host paths;
+- command execution is deny-by-default and granted by explicit command/tool capability classes;
+- local loopback traffic may be authorized for exercising the generated application;
+- external network access is separately governed and network-minimal;
+- spawned processes must be attributable, bounded, observable, and cleaned up;
+- ordinary R1 local file edits/test commands may be covered by an explicit bounded Project/Assignment policy rather than separate approval for every edit;
+- git push/shared-remote mutation remains a separate R2 action requiring exact Phase 2.2 authority;
+- production deployment, privilege elevation, credential-store access, package publishing, external messaging, and destructive host mutation remain outside the first golden path.
+
+Never widen workspace/tool authority because a model asks for it or because a previous command failed. Missing capability/authority is a blocker or proposal, not an implicit permission grant.
 
 ## AI/workforce rules
 
@@ -160,11 +182,11 @@ Verification and authority are separate. Passing verification does not retroacti
 
 Phase 1 is complete. Phase 2 provider-neutral autonomy kernel is merged. Phase 2.1 Free-First routing is merged and passed real zero-spend live certification with an independent verifier and cross-provider portability drill. Phase 2.2 Canonical Authority Hardening is implemented with database-enforced birth-state, exact approval binding, approval immutability, stale-version/TOCTOU guards, and explicit consequential-action thresholds.
 
-The next material product phase is **Phase 3 End-to-end Delivery Golden Path**: one controlled internal/synthetic Project should move from raw request to a verified real outcome using the adapter/runtime appropriate to the chosen delivery strategy.
+The current material product phase is **Phase 3 End-to-end Delivery Golden Path**. Phase 3.0 defines the complete golden-path and governed local execution-workspace contract before implementation workers receive real filesystem/command authority.
 
-The first consequential capability must consume the Phase 2.2 authority contract. Do not add a provider-specific path that creates shared/external state from model intent alone.
+The first consequential implementation capability must consume the Phase 2.2 authority contract and the additional local execution-workspace boundary in `docs/plans/phase-3.0-golden-path-contract.md`. Do not add a provider-specific path that creates shared/external state from model intent alone.
 
-Keep the first Phase 3 path narrow. Do not expand it into production autonomy, a generic integration marketplace, Paperclip/Activepieces adoption without measured need, or a PM/CRM/ERP suite.
+Keep the first Phase 3 path narrow. Do not expand it into production autonomy, remote GitHub mutation, a generic integration marketplace, Paperclip/Activepieces adoption without measured need, or a PM/CRM/ERP suite.
 
 ## Public repository
 
