@@ -49,6 +49,10 @@ export class Phase31Discovery {
       const result = await this.executeRoute({ route: selected.route, connection: selected.connection, prompt });
       const analysis = validatePhase31Analysis(parsePhase31Json(result.text), input);
       const output = JSON.stringify(analysis);
+      // Account actual route usage before promoting the reasoning result to a
+      // successful canonical analysis. If accounting itself fails, the run
+      // remains failed and no proposed analysis artifacts are persisted.
+      this.routes.account({ workspaceId, route: selected.route, result });
       this.#tx(() => {
         this.db.prepare("UPDATE phase31_discovery_runs SET status='succeeded',output_sha256=?,output_json=?,usage_json=?,external_ref=?,finished_at=? WHERE id=? AND workspace_id=?")
           .run(hash(output), output, JSON.stringify(result.usage ?? {}), result.externalRef ?? null, now(), id, workspaceId);
@@ -57,7 +61,6 @@ export class Phase31Discovery {
         this.db.prepare('UPDATE project_intakes SET status=?,updated_at=? WHERE id=? AND workspace_id=?').run(analysis.questions.length ? 'discovery' : 'review', now(), intakeId, workspaceId);
         this.#event(current.project.id, workspaceId, 'phase31.discovery.analysis_succeeded', 'phase31_discovery_run', id, round, { questionCount: analysis.questions.length, researchRequired: analysis.research.required, strategy: analysis.strategy.strategy });
       });
-      this.routes.account({ workspaceId, route: selected.route, result });
       return this.getSnapshot({ workspaceId, intakeId });
     } catch (error) {
       this.db.prepare("UPDATE phase31_discovery_runs SET status='failed',error_text=?,finished_at=? WHERE id=? AND workspace_id=?").run(limit(message(error), 1000), now(), id, workspaceId);
@@ -114,7 +117,7 @@ export class Phase31Discovery {
     const rationale = changed ? requiredText(overrides.strategyRationale, 'strategyRationale') : (text(overrides.strategyRationale) ?? recommendation.rationale);
     this.store.saveDiscoveryResponses({ workspaceId, intakeId, responses: [answered('problem', brief.problem), answered('desired_outcome', brief.desiredOutcome), legacy('primary_users', brief.primaryUsers), legacy('constraints', brief.constraints), answered('success', brief.success)] });
     this.store.setWorkingDeliveryStrategy({ workspaceId, intakeId, strategy: chosen, rationale });
-    let accepted = this.store.acceptProjectIntake({ workspaceId, intakeId, expectedProjectVersion });
+    const accepted = this.store.acceptProjectIntake({ workspaceId, intakeId, expectedProjectVersion });
     this.#tx(() => {
       const time = now();
       this.db.prepare("UPDATE phase31_strategy_recommendations SET status=?,resolved_at=? WHERE id=? AND workspace_id=?").run(changed ? 'rejected' : 'accepted', time, recommendation.id, workspaceId);
