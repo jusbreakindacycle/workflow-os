@@ -87,6 +87,7 @@
 - [Phase 2.1 Live Certification Report](reviews/phase-2.1-live-certification-report.md)
 - [Phase 2.2 Implementation Report](reviews/phase-2.2-implementation-report.md)
 - [Phase 3.1 Implementation Report](reviews/phase-3.1-implementation-report.md)
+- [Phase 3.5 End-to-End Local Delivery Certification Report](reviews/phase-3.5-end-to-end-certification-report.md)
 - [Roadmap](plans/roadmap.md)
 - [Phase 1 Core Control Plane](plans/phase-1-core-control-plane.md)
 - [Phase 2 Autonomy Kernel](plans/phase-2-autonomy-kernel.md)
@@ -94,6 +95,9 @@
 - [Phase 2.2 Canonical Authority Hardening](plans/phase-2.2-canonical-authority-hardening.md)
 - [Phase 3.0 Golden Path and Governed Execution Contract](plans/phase-3.0-golden-path-contract.md)
 - [Phase 3.1 Adaptive Discovery / Challenge / Strategy](plans/phase-3.1-adaptive-discovery-strategy.md)
+- [Phase 3.2 Dynamic Workforce / Work Graph](plans/phase-3.2-dynamic-workforce-work-graph.md)
+- [Phase 3.3 Governed Local Execution Workspace](plans/phase-3.3-governed-local-execution-workspace.md)
+- [Phase 3.4 Verification / Repair / Delivery](plans/phase-3.4-verification-repair-delivery.md)
 
 ## Templates / schemas
 
