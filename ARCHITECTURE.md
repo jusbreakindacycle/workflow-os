@@ -58,6 +58,8 @@ Owns canonical identities, delivery/commercial state, revisions, WorkItems, deci
 
 Converts incomplete intent into explicit accepted problem/outcome/scope/requirements/architecture/work graph. `I don't know` is valid. Client request is preserved even when challenged.
 
+Phase 3.1 makes the pre-brief portion operational: raw request/requested solution remain source records; Free-First R0 reasoning may propose findings, material questions, research requirements and a delivery strategy; operator answers/unknowns remain distinct evidence; and only operator acceptance/revision creates the canonical Project Brief. Model recommendations cannot directly become Project truth.
+
 ### 4. Revision / impact engine
 
 A material goal/scope change creates a new ProjectBrief/ProjectRevision version, computes affected requirements/work/approvals/Pack/Assignments/commercial commitments, stops unsafe stale work, and preserves history. Revision is selective, not a blind full reset.
@@ -75,6 +77,8 @@ Separates model capability, runtime capability, and actual configured ProviderCo
 ProviderConnection may represent API key/OAuth, installed subscription CLI, local service, or self-hosted runtime. Cancellation/revocation changes route eligibility, not Project meaning.
 
 Phase 2 makes eligibility deterministic and records the candidate set, winner and rationale. Fallback reruns eligibility rather than silently switching to an otherwise-disallowed or paid route.
+
+Phase 3.1 reuses the Free-First broker state for zero-incremental discovery reasoning. Quota/route state remains operational evidence and never changes accepted Project meaning.
 
 ### 7. Project Bootstrapper + Instruction Compiler
 
@@ -188,6 +192,7 @@ Fixture-only portability drills prove implementation/rerouting semantics, not li
 25. Independent verification cannot be inferred merely because worker and verifier prompts are different; route independence is explicit configuration/evidence.
 26. Fixture evidence cannot be promoted into a claim of real-provider execution or operational portability.
 27. Bounded local execution-workspace authority is distinct from authority to mutate shared remote repositories, deployments, production systems, or communication channels.
+28. Pre-brief model analysis is proposed evidence; only accepted canonical state may drive later delivery work.
 
 ## Current phase
 
@@ -197,4 +202,6 @@ Phase 2.1 Free-First routing passed representative real zero-spend live certific
 
 Phase 2.2 Canonical Authority Hardening is complete and establishes exact subject/version/bounds authority, resolve-time freshness, use-time revalidation, and database-level fail-closed guards before consequential effects.
 
-The current product phase is **Phase 3 — End-to-end Delivery Golden Path**. Phase 3.0 defines the first synthetic Project's golden-path and governed local execution-workspace contract before implementation workers receive real filesystem/command authority. See `docs/plans/phase-3.0-golden-path-contract.md`.
+Phase 3.0 defines the first synthetic Project's golden-path and governed local execution-workspace contract. Phase 3.1 Adaptive Discovery / Challenge / Strategy is implemented and CI-verified with 75/75 tests and nine migrations; model analysis remains proposed until operator acceptance/revision.
+
+The next implementation subphase is **Phase 3.2 — Dynamic Workforce / Work Graph**: derive strategy-specific WorkItems, dependencies, capability/evidence/authority requirements, and logical role activation from the accepted Phase 3.1 Project Brief. Real filesystem/command execution remains Phase 3.3. See `docs/plans/phase-3.1-adaptive-discovery-strategy.md` and `docs/reviews/phase-3.1-implementation-report.md`.

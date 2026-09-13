@@ -1,6 +1,6 @@
 # Workflow OS (temporary name)
 
-> **Status:** Foundation v3, Phase 1 local control plane, Phase 2 autonomy kernel, Phase 2.1 Free-First Provider & Quota Broker, and Phase 2.2 Canonical Authority Hardening are implemented. Phase 2.1 passed real zero-spend live certification on 2026-09-12 using Google Antigravity for worker execution and OpenRouter for independent verification, including a successful cross-provider portability drill. Phase 2.2 adds database-enforced, version-bound, use-time-revalidated authority before consequential real-world capabilities are enabled. The next product phase is the controlled Phase 3 end-to-end delivery golden path. The product name `workflow-os` is temporary.
+> **Status:** Foundation v3, Phase 1 local control plane, Phase 2 autonomy kernel, Phase 2.1 Free-First Provider & Quota Broker, Phase 2.2 Canonical Authority Hardening, Phase 3.0 Golden Path Contract, and Phase 3.1 Adaptive Discovery / Challenge / Strategy are implemented. Phase 2.1 passed real zero-spend live certification on 2026-09-12 using Google Antigravity for worker execution and OpenRouter for independent verification, including a successful cross-provider portability drill. Phase 3.1 is CI-verified with 75/75 tests and nine migrations. The next implementation subphase is Phase 3.2 — Dynamic Workforce / Work Graph. The product name `workflow-os` is temporary.
 
 Workflow OS is intended to become the **one operating interface a solo builder uses to run client and internal delivery work without depending on one AI platform, one coding agent, or one model vendor**.
 
@@ -224,11 +224,36 @@ See:
 - `docs/testing/phase-2.2-acceptance-criteria.md`
 - `docs/reviews/phase-2.2-implementation-report.md`
 
-## Next engineering phase — Phase 3 End-to-end Delivery Golden Path
+## Phase 3 End-to-end Delivery Golden Path — in progress
 
-Use the hardened authority boundary to run one controlled internal/synthetic Project from raw request through an actual verified outcome with the adapter/runtime appropriate to its chosen delivery strategy.
+### Phase 3.0 — contract complete
 
-The first consequential capability should be narrow and reversible where possible. Real repository writes, deployment, external communication, or similar effects must consume the Phase 2.2 exact-version authority contract rather than introducing a provider-specific shortcut.
+Phase 3.0 defines the canonical synthetic lead-generation test case and the governed local execution-workspace boundary. It separates ordinary bounded local R1 implementation work from R2 shared-remote GitHub mutation and keeps deployment/production outside the first path.
+
+### Phase 3.1 — adaptive discovery/challenge/strategy implemented
+
+Phase 3.1 replaces the fixed-question/manual-strategy default flow with bounded AI-assisted pre-brief reasoning:
+
+```text
+raw request + separately preserved requested solution
+  -> zero-incremental Free-First reasoning
+  -> material questions only
+  -> answer / I don't know / skip
+  -> required re-analysis
+  -> explicit research-required / research-not-required decision
+  -> challenge requested solution + compare alternatives
+  -> source-backed delivery-strategy recommendation
+  -> operator accepts or revises Brief/strategy
+  -> canonical Project Brief
+```
+
+Model analysis is proposed evidence, not truth. Material external research blocks acceptance rather than being fabricated. `custom_build` is not hard-coded merely because the client requested software. The operator can reject the recommended strategy; the rejected recommendation remains historical evidence rather than being silently rewritten.
+
+Phase 3.1 CI passed **75/75 tests** with nine migrations, migration/backup checks, and live-provider opt-in guards green. See `docs/plans/phase-3.1-adaptive-discovery-strategy.md` and `docs/reviews/phase-3.1-implementation-report.md`.
+
+### Next — Phase 3.2 Dynamic Workforce / Work Graph
+
+Generate strategy-specific WorkItems, dependencies, required capabilities, evidence contracts, authority requirements, verification requirements, and logical role activation from the accepted Phase 3.1 Project Brief. Phase 3.2 must not grant real filesystem/shell authority; that remains Phase 3.3.
 
 ## Run locally
 
@@ -268,6 +293,11 @@ See:
 - `docs/plans/phase-2.2-canonical-authority-hardening.md`
 - `docs/testing/phase-2.2-acceptance-criteria.md`
 - `docs/reviews/phase-2.2-implementation-report.md`
+- `docs/plans/phase-3.0-golden-path-contract.md`
+- `docs/testing/phase-3.0-acceptance-criteria.md`
+- `docs/plans/phase-3.1-adaptive-discovery-strategy.md`
+- `docs/testing/phase-3.1-acceptance-criteria.md`
+- `docs/reviews/phase-3.1-implementation-report.md`
 - `docs/operations/free-first-provider-setup-windows.md`
 
 ## Repository safety
@@ -281,10 +311,9 @@ This repository is public. Use synthetic data only. Never commit real client dat
 3. `docs/product/goal.md`
 4. `docs/product/scope-mvp.md`
 5. `ARCHITECTURE.md`
-6. `docs/decisions/index.md`
-7. `docs/plans/phase-2.2-canonical-authority-hardening.md`
-8. `docs/security/risk-and-approval-policy.md`
-9. `docs/plans/roadmap.md`
+6. `docs/plans/phase-3.1-adaptive-discovery-strategy.md`
+7. `docs/security/risk-and-approval-policy.md`
+8. `docs/plans/roadmap.md`
 
 ## One-line product test
 

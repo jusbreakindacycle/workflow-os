@@ -8,7 +8,7 @@ import { createApp } from '../src/app.js';
 const migrationsDir = path.resolve('migrations');
 const publicDir = path.resolve('public');
 
-test('local app serves control-plane UI and Phase 2.2 database-backed health endpoint', async (t) => {
+test('local app serves control-plane UI and Phase 3.1 database-backed health endpoint', async (t) => {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'workflow-os-server-'));
   const app = createApp({ databasePath: path.join(dataDir, 'test.sqlite'), dataDir, migrationsDir, publicDir });
 
@@ -25,15 +25,16 @@ test('local app serves control-plane UI and Phase 2.2 database-backed health end
   const healthResponse = await fetch(`${origin}/api/health`);
   assert.equal(healthResponse.status, 200);
   const health = await healthResponse.json();
-  assert.equal(health.phase, 'phase-2.2');
-  assert.equal(health.gate, 'canonical-authority-hardening-implemented');
+  assert.equal(health.phase, 'phase-3.1');
+  assert.equal(health.gate, 'adaptive-discovery-challenge-strategy-implemented');
   assert.equal(health.database.status, 'ready');
-  assert.equal(health.database.migrations, 8);
+  assert.equal(health.database.migrations, 9);
 
   const uiResponse = await fetch(`${origin}/`);
   assert.equal(uiResponse.status, 200);
   const ui = await uiResponse.text();
-  assert.match(ui, /Local Control Plane/);
+  assert.match(ui, /Workflow OS/);
   assert.match(ui, /Command Center/);
   assert.match(ui, /Start from the real request/);
+  assert.match(ui, /Adaptive Discovery/);
 });

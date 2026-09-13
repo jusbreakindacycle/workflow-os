@@ -3,106 +3,86 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Workflow OS — Phase 1 Control Plane</title>
+  <title>Workflow OS — Phase 3.1 Adaptive Discovery</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <main class="shell">
     <header class="page-header">
       <div>
-        <p class="eyebrow">Phase 1 · Gates 1–10</p>
-        <h1>Local Control Plane</h1>
-        <p class="lede">Create a project, preserve uncertainty, turn accepted intent into bounded work, then inspect what is ready, blocked, awaiting approval, or already verified.</p>
+        <p class="eyebrow">Phase 3.1 · Adaptive Discovery / Challenge / Strategy</p>
+        <h1>Workflow OS</h1>
+        <p class="muted">Local Control Plane</p>
+        <p class="lede">Start from the real request. Workflow OS preserves what was asked for, identifies only material unknowns, challenges the requested solution, and proposes a delivery strategy for you to accept or revise.</p>
       </div>
       <p class="status-pill" id="system-status">Checking local system…</p>
     </header>
 
     <section class="panel" id="command-center-panel">
       <div class="section-heading">
-        <div>
-          <p class="eyebrow">Command Center</p>
-          <h2>Portfolio</h2>
-        </div>
+        <div><p class="eyebrow">Command Center</p><h2>Portfolio</h2></div>
         <button type="button" class="secondary compact" id="refresh-command-center">Refresh</button>
       </div>
       <div class="grid two">
-        <label>Workspace
-          <select id="dashboard-workspace"></select>
-        </label>
+        <label>Workspace<select id="dashboard-workspace"></select></label>
         <div class="summary-box"><span>Needs My Attention</span><strong id="attention-count">0</strong></div>
       </div>
       <div id="portfolio" class="stack muted">Create a workspace/project below to populate the portfolio.</div>
-      <details>
-        <summary>Needs My Attention</summary>
-        <div id="attention-list" class="stack compact-list"></div>
-      </details>
-      <details>
-        <summary>Recent Activity</summary>
-        <div id="activity-list" class="stack compact-list"></div>
-      </details>
+      <details><summary>Needs My Attention</summary><div id="attention-list" class="stack compact-list"></div></details>
+      <details><summary>Recent Activity</summary><div id="activity-list" class="stack compact-list"></div></details>
     </section>
 
     <section class="panel" id="start-panel">
       <h2>1. Start from the real request</h2>
       <form id="start-form">
         <div class="grid two">
-          <label>Workspace
-            <select id="workspace-select" name="workspaceId"></select>
-          </label>
-          <label id="workspace-name-wrap">New workspace name
-            <input name="workspaceName" value="My Workspace" autocomplete="off">
-          </label>
+          <label>Workspace<select id="workspace-select" name="workspaceId"></select></label>
+          <label id="workspace-name-wrap">New workspace name<input name="workspaceName" value="My Workspace" autocomplete="off"></label>
         </div>
         <div class="grid two">
-          <label>Project type
-            <select name="mode" id="project-mode">
-              <option value="client">Client project</option>
-              <option value="internal">Internal project</option>
-            </select>
-          </label>
-          <label>Project title
-            <input name="title" required autocomplete="off" placeholder="Coffee shop booking website">
-          </label>
+          <label>Project type<select name="mode" id="project-mode"><option value="client">Client project</option><option value="internal">Internal project</option></select></label>
+          <label>Project title<input name="title" required autocomplete="off" placeholder="Lead-generation campaign"></label>
         </div>
-        <label id="client-name-wrap">Client name
-          <input name="clientName" autocomplete="off" placeholder="Sample Client">
-        </label>
-        <label>Raw request / idea
-          <textarea name="rawRequest" required rows="5" placeholder="Paste what the client said, or describe the problem in your own words."></textarea>
-        </label>
-        <label>Requested solution <span class="muted">(optional, preserved separately from our strategy)</span>
-          <input name="requestedSolution" autocomplete="off" placeholder="e.g. native Android app">
-        </label>
-        <button type="submit">Start discovery</button>
+        <label id="client-name-wrap">Client name<input name="clientName" autocomplete="off" placeholder="Synthetic Client"></label>
+        <label>Raw request / idea<textarea name="rawRequest" required rows="5" placeholder="Paste what the client said, or describe the problem in your own words."></textarea></label>
+        <label>Requested solution <span class="muted">(optional; preserved separately from the strategy)</span><input name="requestedSolution" autocomplete="off" placeholder="e.g. simple website with a contact form"></label>
+        <button type="submit">Start adaptive discovery</button>
       </form>
     </section>
 
     <section class="panel hidden" id="discovery-panel">
       <div class="section-heading">
-        <div>
-          <p class="eyebrow">Draft project</p>
-          <h2 id="project-title">Discovery</h2>
-        </div>
+        <div><p class="eyebrow">Adaptive discovery</p><h2 id="project-title">Discovery</h2></div>
         <span class="badge" id="intake-status">draft</span>
       </div>
       <p class="muted" id="raw-request-summary"></p>
-      <form id="discovery-form">
+      <pre id="analysis-summary">Preparing analysis…</pre>
+      <form id="question-form" class="hidden">
+        <h3>Material questions</h3>
+        <p class="muted">Only questions that can materially change the outcome, strategy, scope, acceptance, risk, integration, spend, deadline, or verification belong here. “I don't know” is valid.</p>
         <div id="questions"></div>
-        <label>Working delivery strategy
-          <select id="strategy-select" required></select>
-        </label>
-        <label>Why this strategy? <span class="muted">(optional)</span>
-          <textarea id="strategy-rationale" rows="3" placeholder="Short reasoning or trade-off note"></textarea>
-        </label>
-        <button type="submit">Save discovery & review</button>
+        <button type="submit">Save answers & re-analyze</button>
       </form>
+      <div id="research-block" class="mini-panel hidden"></div>
     </section>
 
     <section class="panel hidden" id="review-panel">
-      <h2>3. Review before accepting</h2>
-      <p>This makes the problem, outcome, scope summary, and working strategy canonical. It does not mean a client accepted commercial terms.</p>
-      <pre id="review-summary"></pre>
-      <button id="accept-button" type="button">Accept Project Brief</button>
+      <h2>3. Review the proposed Project Brief</h2>
+      <p>The AI result is still a proposal. Edit any field below, accept the recommendation, or choose another strategy with your own rationale.</p>
+      <form id="review-form">
+        <label>Problem<textarea id="review-problem" rows="3" required></textarea></label>
+        <label>Desired outcome<textarea id="review-outcome" rows="3" required></textarea></label>
+        <div class="grid two">
+          <label>Primary users <span class="muted">(optional/unknown allowed)</span><input id="review-users"></label>
+          <label>Constraints <span class="muted">(optional/unknown allowed)</span><input id="review-constraints"></label>
+        </div>
+        <label>Success / acceptance<textarea id="review-success" rows="3" required></textarea></label>
+        <label>Non-goals <span class="muted">(one per line)</span><textarea id="review-non-goals" rows="4"></textarea></label>
+        <label>Delivery strategy<select id="review-strategy" required></select></label>
+        <label>Operator strategy rationale <span class="muted">(required only when changing the recommendation)</span><textarea id="review-strategy-rationale" rows="3"></textarea></label>
+        <pre id="review-summary"></pre>
+        <button type="submit">Accept Project Brief</button>
+      </form>
     </section>
 
     <section class="panel success hidden" id="accepted-panel">
@@ -110,11 +90,7 @@
       <h2>Project Brief is canonical</h2>
       <p id="accepted-summary"></p>
       <p class="muted" id="bootstrap-summary"></p>
-      <div class="button-row">
-        <button id="repository-proposal-button" type="button" class="secondary hidden">Propose repository (mock)</button>
-        <button id="new-project-button" type="button" class="secondary">Start another project</button>
-      </div>
-      <div id="repository-approval-box" class="mini-panel hidden"></div>
+      <button id="new-project-button" type="button" class="secondary">Start another project</button>
     </section>
 
     <p class="error" id="error" role="alert"></p>
