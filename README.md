@@ -1,259 +1,231 @@
 # Workflow OS (temporary name)
 
-> **Status:** Foundation v3, Phase 1 local control plane, Phase 2 autonomy kernel, Phase 2.1 Free-First Provider & Quota Broker, Phase 2.2 Canonical Authority Hardening, Phase 3.0 Golden Path Contract, and Phase 3.1 Adaptive Discovery / Challenge / Strategy are implemented. Phase 2.1 passed real zero-spend live certification on 2026-09-12 using Google Antigravity for worker execution and OpenRouter for independent verification, including a successful cross-provider portability drill. Phase 3.1 is CI-verified with 75/75 tests and nine migrations. The next implementation subphase is Phase 3.2 — Dynamic Workforce / Work Graph. The product name `workflow-os` is temporary.
+> **Status:** Foundation v3, Phase 1, Phase 2, Phase 2.1, Phase 2.2 and the complete Phase 3 synthetic/local delivery golden path are implemented. Phase 2.1 passed representative real zero-spend provider certification on 2026-09-12. Phase 3 now proves one raw synthetic client request can reach a strategy-specific Work Graph, governed real local artifact execution, L2/L3 verification, independent reconciliation and a final delivery record. **This is not production/shared-remote autonomy.** Phase 4 is the next evidence-driven direction. The product name `workflow-os` is temporary.
 
 Workflow OS is intended to become the **one operating interface a solo builder uses to run client and internal delivery work without depending on one AI platform, one coding agent, or one model vendor**.
 
-The operator should be able to say, in plain language:
+The operator should be able to say:
 
 > “I have a new client/project. This is the problem. This is what they asked for.”
 
-The system should then organize the work from discovery through delivery/operation while asking the operator only for decisions that genuinely require human authority.
+Workflow OS should then coordinate the work as far as evidence, policy, available capability and approved authority allow, asking the operator only for decisions that genuinely require human authority.
 
 ## North-star interaction
 
-The operator primarily does four things:
+The operator primarily:
 
-1. give or revise the goal;
-2. answer important discovery questions, including `I don't know`;
-3. provide credentials only when required;
-4. approve, reject, or revise consequential decisions and paid execution.
+1. gives or revises the goal;
+2. supplies known context/files/messages;
+3. answers important discovery questions, including `I don't know`;
+4. provides credentials only when required;
+5. approves/rejects/revises consequential decisions;
+6. approves new metered spend before it occurs.
 
-Everything else should be coordinated by the system as far as evidence, policy, available compute, and approved authority allow.
-
-A goal revision is not a silent text edit. The system versions it, assesses impact, invalidates stale derived work/approvals when required, and regenerates affected Project Pack/plan state before continuing.
+The system coordinates the rest without reconstructing Project truth from provider chats.
 
 ## Target lifecycle
 
-The lifecycle is **conditional**, not a rule that every problem becomes custom software or a repository.
+The lifecycle is **conditional**. Not every problem should become custom software or a repository.
 
 ```text
-Raw request / user problem / project idea
+Raw request / problem / idea
   -> Intake
   -> Adaptive discovery
-  -> Research and challenge
-  -> Problem / outcome definition
-  -> Choose delivery strategy
+  -> Conditional research + challenge
+  -> Accepted problem / outcome / constraints / success
+  -> Delivery strategy
        process change / adopt / configure / integrate /
        automate / custom build / hybrid / pilot / defer
-  -> Commercial scope when applicable
-  -> Architecture / plan appropriate to that strategy
-  -> Repository or external-system approval when required
-  -> Execute / build / configure / automate
-  -> Verify / review
-  -> Deliver / deploy / apply change when applicable
-  -> Observe outcome / production when applicable
-  -> Maintain / repair / improve
-  -> Reuse lessons and skills
+  -> Strategy-specific Work Graph
+  -> Work-driven capability / logical role activation
+  -> Project Pack + minimum Context Slices
+  -> Governed execution appropriate to strategy
+  -> Verification / adversarial review
+  -> Bounded repair or escalation
+  -> Delivery / deployment / apply change when authorized
+  -> Observation / maintenance / improvement when applicable
 ```
 
-A Project that can be solved by process change or existing software should not be forced through a fake coding/deployment lifecycle.
+A Project that can be solved by process change or existing software must not be forced through a fake coding/deployment lifecycle.
 
 ## Core architectural promise
 
-Workflow OS owns the **meaning, authority, and state of the work**. External systems perform specialized execution.
+Workflow OS owns the **meaning, authority and state of the work**. External systems perform replaceable execution.
 
 ```text
 Workflow OS
-  -> Canonical Authority Boundary
-      -> exact subject / Workspace / Project / version / bounds
-      -> human approval when policy requires it
-      -> resolve-time + use-time freshness checks
-  -> Model/Runtime Broker
-      -> free / included / paid / local routes according to policy
-      -> OpenAI / Anthropic / Google / open models / future providers
-      -> Codex / Claude Code / Copilot / OpenCode / future runtimes
-  -> Internal Workforce Adapter
-      -> Paperclip or another provider, if proven useful
-  -> Workflow Engine Adapter
-      -> Activepieces or another engine
-  -> Source / Deployment / Observability adapters
-      -> Git/source providers / clouds / monitoring systems
+  -> Canonical Project state
+  -> exact authority / approvals / spend bounds
+  -> strategy-specific Work Graph
+  -> Project Pack / Context Slice / Assignment
+  -> Model / Runtime Broker
+  -> governed local or external adapters
+  -> observable evidence
+  -> verification / reconciliation
 ```
 
-No provider is allowed to become the hidden source of truth or authority for a Project.
+Provider/model/runtime output is evidence, not canonical authority.
 
-## Local-first, provider-independent
+## Provider independence
 
-The control plane, Project state, commercial records, approvals, activity history, Project Pack, and operator interface are designed to work locally first.
+Models, runtimes and configured ProviderConnections are separate concepts. A Project must remain understandable if Codex, Claude Code, Copilot, OpenCode, Google, OpenAI, Anthropic, Groq, OpenRouter or another provider changes or disappears.
 
-Local-first does **not** mean every high-capability AI model must run on the operator's laptop. The system may route suitable work to local models and may use remote/free/paid models when available and approved.
+Provider-specific instruction files are projections from canonical state, not the Project source of truth.
 
-Continuous autonomous work requires an available execution/coordinator host. If the local host is shut down/asleep and no approved always-on host exists, work waits; the product must not pretend it continued running.
+## Local-first, not local-only
 
-Any new metered/variable-cost external execution requires an applicable operator-approved spend envelope before incremental cost is incurred.
+Core Project/commercial state, approvals, evidence, Activity Feed and Command Center are local-first.
 
-## Not a generic template generator
+High-capability intelligence may still use remote/free/paid providers when policy and authority allow. If no approved execution host is online, work waits visibly rather than pretending it continued.
 
-Every active delivery Project gets a **case-specific Project Pack** compiled from its actual problem, chosen delivery strategy, client commitments, requirements, architecture/plan, risks, decisions, acceptance criteria, work graph, and tool permissions.
+## Human governance
 
-Provider-specific files such as `AGENTS.md`, `CLAUDE.md`, Copilot instructions, or OpenCode/runtime configuration are generated projections. They are not canonical Project state.
+Autonomy is bounded by explicit authority.
 
-Workers receive a minimum-authorized Assignment Context/Context Slice, not blanket permission to transmit the full Project Pack or commercial record to every provider.
+- R0 read-only/synthetic reasoning may proceed without repeated approval.
+- R1 isolated/reversible local work requires a bounded policy/Assignment.
+- shared/external R2 mutation requires applicable exact authority.
+- production/destructive/credential/legal/financial R3 work requires exact human authority and applicable verification/recovery.
+- unknown or metered cost is never silently treated as free.
 
-## Internal workforce
+Local workspace permission never grants GitHub push, deployment, production, client messaging or credential authority.
 
-A complete logical delivery roster may exist for every Project, but roles are activated dynamically. The system should not run many agents merely because many role names exist.
+## Phase 1 — Core Control Plane — complete
 
-Typical capabilities include intake, research, product/requirements, UX/product design, architecture, planning, implementation, QA/verification, security/reliability, adversarial review, deployment/operations when applicable, maintenance, and documentation.
+Phase 1 established canonical Workspace/Client/Engagement/Project state, intake, explicit unknowns, strategy decision, Project Brief, WorkItems/dependencies, Project Pack/Context Slice, revisions, approvals, spend, mock Assignment/evidence/verification, recovery and Command Center semantics.
 
-## Operator experience
+The legacy Phase 1 initial graph remains as a regression/compatibility path.
 
-The default surface is a local-first **Command Center**, not a collection of agent chats. It includes New Project / Revise Goal, Projects/clients/engagements, Needs My Attention, Activity Feed, active work/assignments, costs/spend, repositories/deployments when applicable, and incidents/maintenance.
+## Phase 2 — Provider-neutral Autonomy Kernel — complete
 
-Detailed worker/runtime logs remain drill-down diagnostics.
+Phase 2 added ProviderConnection/ExecutionRoute state, capability/data/locality/health/spend-aware routing, deterministic bootstrap/instruction compilation, Skills, bounded worker/verifier loops, evidence normalization, fallback/rerouting and certification records.
 
-## Phase 1 local control plane — complete
+External execution still cannot complete canonical work merely by saying `done`.
 
-Phase 1 proves the provider-independent local golden path:
+## Phase 2.1 — Free-First Provider & Quota Broker — complete and live-certified
+
+Phase 2.1 routes through governed zero-incremental capacity first and refuses silent paid fallback.
+
+Representative live certification passed on 2026-09-12 with:
+
+- Google Antigravity worker execution;
+- OpenRouter independent verification;
+- canonical L2 verification `pass`;
+- cross-provider portability drill;
+- zero SpendEnvelope/CostRecord evidence for that certification Workspace.
+
+Normal CI does not consume real provider quota.
+
+## Phase 2.2 — Canonical Authority Hardening — complete
+
+Phase 2.2 added database-enforced WorkItem birth states, exact/version-bound Approval subjects, immutable authority identity/bounds, stale-subject checks at approval resolution, use-time revalidation, and version-bound spend authority.
+
+Consequential model/provider intent cannot bypass the canonical authority boundary.
+
+## Phase 3.0 — Golden Path Contract — complete
+
+Phase 3.0 defined the first synthetic delivery proof and, before any real local mutation, separated bounded local R1 execution authority from shared-remote/deployment/production authority.
+
+Canonical certification request:
+
+> “I'm running Facebook/Instagram ads for my business. I need somewhere prospects can see the offer, enter their details, and let us follow up. I was thinking of a simple website with a contact form.”
+
+The requested website is preserved, but `custom_build` is never pre-authorized merely because the client mentioned a website.
+
+## Phase 3.1 — Adaptive Discovery / Challenge / Strategy — complete
+
+Phase 3.1:
+
+- preserves the raw request/requested solution separately;
+- asks only materially consequential questions;
+- keeps `I don't know` explicit;
+- re-analyzes after answers;
+- records `research_required` instead of inventing external facts;
+- challenges the requested solution and compares alternatives;
+- recommends strategy from source-backed evidence;
+- lets the operator override the recommendation without rewriting history;
+- compiles accepted direction into the canonical Project Brief.
+
+## Phase 3.2 — Dynamic Workforce / Work Graph — complete
+
+Phase 3.2 converts the accepted Brief/strategy into case-specific WorkItems, dependencies, capabilities, evidence, risk/action class, authority, verification and stop/escalation requirements.
+
+Roles are logical capabilities activated by work, not permanent AI employees.
+
+The planner has materially different graph families for process change, adopt/configure, integrate, automate, custom build, hybrid, research/pilot and defer. Tests explicitly prove that non-build strategies do not receive fake software-development work.
+
+## Phase 3.3 — Governed Local Execution Workspace — complete for synthetic R1 work
+
+Phase 3.3 implements a real per-Project local workspace under a configured root with:
+
+- traversal/absolute/symlink escape rejection;
+- workspace-only file operations;
+- hashed artifact manifests;
+- deny-by-default command classes;
+- minimal process environment;
+- loopback-only server execution;
+- owned-process lifecycle tracking/cleanup.
+
+It does **not** grant arbitrary shell, shared GitHub, production, credential-store, messaging or package-publishing authority.
+
+## Phase 3.4 — Verification / Repair / Delivery — complete for the local golden path
+
+Phase 3.4 projects Work Specs into Phase 3 Project Packs, Context Slices and bounded Assignments, then requires observable evidence:
+
+- real syntax checks;
+- real Node behavior tests;
+- actual loopback application flow;
+- separate deterministic independent reconciliation;
+- bounded repair records (max two attempts in the first implementation);
+- independent L3 evidence before final delivery can be recorded.
+
+## Phase 3.5 — Full synthetic/local certification — complete
+
+The full certification now proves:
 
 ```text
-New Project
-  -> Workspace / Client? / Engagement? / Project
-  -> discovery + explicit unknowns
-  -> delivery-strategy decision
-  -> accepted Project Brief
-  -> Work graph + readiness
-  -> Needs My Attention + Activity Feed
-  -> deterministic Project Pack + minimum Context Slice
-  -> goal revision + selective impact propagation
-  -> optional repository proposal/approval + mock result
-  -> bounded mock Assignment
-  -> execution_finished + evidence + verification
-  -> bounded synthetic Spend Gate
-  -> restart/recovery + Command Center
+raw request
+-> challenge / strategy / accepted Brief
+-> strategy-specific Work Graph
+-> bounded roles/capabilities
+-> governed local workspace
+-> real generated local app
+-> real tests
+-> actual invalid + valid synthetic lead requests
+-> local receiver/store effect
+-> independent reconciliation
+-> final evidence bundle
+-> Project complete / closed / healthy
 ```
 
-## Phase 2 autonomy kernel — merged and real-provider certified through Phase 2.1
+The generated certification artifact contains a synthetic offer, lead form, validation and local in-memory receiver. It uses no real customer/client data and no external business endpoint.
 
-Phase 2 turns the Phase 1 Assignment contract into a provider-neutral execution kernel:
+Executable implementation CI passed **81/81 tests with 10 migrations**. The merge-candidate workflow also runs `npm run phase3:certify` as a separate local certification gate.
 
-```text
-ready WorkItem
-  -> Project Pack + Context Slice
-  -> Project Bootstrap + versioned Skills
-  -> Broker eligibility/scoring
-  -> RouteDecision
-  -> bounded worker ExecutionAttempt
-  -> independent verifier ExecutionAttempt
-       -> pass: evidence -> canonical verification -> complete
-       -> fail: bounded feedback/retry
-       -> route failure: eligible fallback or stop
-```
+See `docs/reviews/phase-3.5-end-to-end-certification-report.md`.
 
-Implemented Phase 2 capabilities include ProviderConnection/route registry, capability/data/locality/health/spend-aware Broker, deterministic bootstrap/instruction compilation, Skill Registry, bounded loops, independent verification, fallback, execution evidence, provider adapters, and certification records.
+### What Phase 3 does not prove
 
-Fixture/offline CI still proves orchestration semantics without requiring credentials. In addition, Phase 2.1's zero-spend live harness has supplied real-provider evidence for first execution, independent verification, and representative provider portability.
+Phase 3 does not certify:
 
-## Phase 2.1 Free-First Provider & Quota Broker — live-certified
+- production deployment;
+- GitHub/shared-remote mutation;
+- real client/customer data handling;
+- Meta/Facebook/Instagram API access;
+- real ad spend/performance;
+- CRM/email/SMS/public/client messaging;
+- arbitrary real external integrations;
+- credential/permission grants;
+- unattended always-on hosting;
+- every strategy end to end.
 
-Phase 2.1 adds a policy mode for operators who want the autonomy kernel to consume **free/zero-incremental capacity first and never silently pay**.
+Those remain future adapter/authority/certification problems.
 
-```text
-ready WorkItem
-  -> zero-spend lock
-  -> refresh/sync quota state
-  -> classify task difficulty
-  -> rank eligible free routes
-       Antigravity discovered models
-       Groq Free Plan (operator-asserted)
-       OpenRouter openrouter/free
-  -> bounded worker
-  -> independent free verifier
-  -> update quota counters
-  -> fallback to another free route OR stop/wait
-```
+## Next engineering direction — Phase 4, evidence-driven
 
-Default quota reservation policy:
+Broaden delivery adapters only from measured Project needs. Likely candidates are workflow/WIR execution, governed source-control/shared-remote actions, deployment/hosting with rollback, and real configure/integrate execution paths.
 
-```text
->= 40% remaining    normal use
-15–40%              conserve
-10–15%              reserve scarce capacity
-< 10%               exhausted for ordinary routing
-```
-
-Routine tasks receive an economy-model preference. Stronger scarce models become more attractive for complex/high-risk work while sufficient quota remains. Provider/model quota is operational state and never rewrites Project meaning.
-
-Phase 2.1 does **not** auto-purchase credits and does not cross into metered/unknown billing when free capacity is unavailable. If no independent free verifier remains, work blocks visibly instead of self-certifying or paying.
-
-Initial replaceable routes are:
-
-- Google Antigravity through the official local `agy` CLI and a loopback bridge;
-- Groq when the operator explicitly confirms the configured key remains on a Free Plan account;
-- OpenRouter pinned to `openrouter/free`.
-
-Normal CI makes no live provider calls.
-
-On 2026-09-12, the operator-run certification harness passed with:
-
-- Google Antigravity as the real worker route;
-- OpenRouter as the independent real verifier route;
-- canonical L2 verification outcome `pass`;
-- successful cross-provider portability drill;
-- zero SpendEnvelope records;
-- zero CostRecord records;
-- Antigravity paid-credit fallback disabled.
-
-This proves the representative Free-First execution/verifier/portability path. It does **not** prove production deployment, high-authority repository mutation, or autonomous consequential side effects are ready.
-
-See `docs/reviews/phase-2.1-live-certification-report.md` for the sanitized evidence summary.
-
-## Phase 2.2 Canonical Authority Hardening — implemented
-
-Phase 2.2 makes consequential authority fail closed at the canonical persistence boundary rather than depending only on a caller choosing the right API path.
-
-Key protections include:
-
-- new WorkItems may be born only as `draft` or `ready`;
-- registered Approval subjects are bound to the exact Workspace/Project/subject/version;
-- unknown, cross-scope, and stale authority subjects fail closed;
-- authority-bearing Approval identity/version/reason/bounds are immutable after request creation;
-- stale subjects are rechecked before an Approval becomes approved;
-- repository authority is rechecked again at use time;
-- SpendRequests capture Project/WorkItem versions and SpendEnvelope/CostRecord paths re-check that authority before use;
-- unresolved pre-Phase-2.2 spend requests without the required version evidence are superseded rather than silently upgraded.
-
-The policy now explicitly separates read-only/synthetic work, isolated reversible changes, shared/external mutation, communication, repository mutation, production/destructive actions, paid spend, and credential/permission grants.
-
-Final Phase 2.2 CI passed 69/69 tests with eight migrations, migration/backup checks, and live-provider opt-in guards green.
-
-See:
-
-- `docs/plans/phase-2.2-canonical-authority-hardening.md`
-- `docs/testing/phase-2.2-acceptance-criteria.md`
-- `docs/reviews/phase-2.2-implementation-report.md`
-
-## Phase 3 End-to-end Delivery Golden Path — in progress
-
-### Phase 3.0 — contract complete
-
-Phase 3.0 defines the canonical synthetic lead-generation test case and the governed local execution-workspace boundary. It separates ordinary bounded local R1 implementation work from R2 shared-remote GitHub mutation and keeps deployment/production outside the first path.
-
-### Phase 3.1 — adaptive discovery/challenge/strategy implemented
-
-Phase 3.1 replaces the fixed-question/manual-strategy default flow with bounded AI-assisted pre-brief reasoning:
-
-```text
-raw request + separately preserved requested solution
-  -> zero-incremental Free-First reasoning
-  -> material questions only
-  -> answer / I don't know / skip
-  -> required re-analysis
-  -> explicit research-required / research-not-required decision
-  -> challenge requested solution + compare alternatives
-  -> source-backed delivery-strategy recommendation
-  -> operator accepts or revises Brief/strategy
-  -> canonical Project Brief
-```
-
-Model analysis is proposed evidence, not truth. Material external research blocks acceptance rather than being fabricated. `custom_build` is not hard-coded merely because the client requested software. The operator can reject the recommended strategy; the rejected recommendation remains historical evidence rather than being silently rewritten.
-
-Phase 3.1 CI passed **75/75 tests** with nine migrations, migration/backup checks, and live-provider opt-in guards green. See `docs/plans/phase-3.1-adaptive-discovery-strategy.md` and `docs/reviews/phase-3.1-implementation-report.md`.
-
-### Next — Phase 3.2 Dynamic Workforce / Work Graph
-
-Generate strategy-specific WorkItems, dependencies, required capabilities, evidence contracts, authority requirements, verification requirements, and logical role activation from the accepted Phase 3.1 Project Brief. Phase 3.2 must not grant real filesystem/shell authority; that remains Phase 3.3.
+Do not add every possible provider or enterprise-scale subsystem speculatively.
 
 ## Run locally
 
@@ -261,44 +233,22 @@ Generate strategy-specific WorkItems, dependencies, required capabilities, evide
 npm run verify
 npm run db:migrate
 npm run db:backup
+npm run phase3:certify
 npm start
 ```
 
-Free-First operator commands:
+Free-First operator commands remain separate:
 
 ```bash
 npm run phase21:preflight
 npm run phase21:certify
 ```
 
-`phase21:certify` is opt-in because even zero-cost execution consumes real provider quota. It refuses to start unless `WORKFLOW_OS_FREE_FIRST_RUN=yes` is explicitly set. Do not rerun certification routinely; recertify only after material provider/broker/certification changes or when evidence needs renewal.
-
-The older paid/metered Phase 2 certification harness remains separate:
+`phase21:certify` consumes real free provider quota and remains explicit opt-in. The older metered/live Phase 2 harness also remains explicit opt-in:
 
 ```bash
 npm run phase2:live
 ```
-
-See:
-
-- `docs/plans/phase-1-core-control-plane.md`
-- `docs/reviews/phase-1-completion-report.md`
-- `docs/plans/phase-2-autonomy-kernel.md`
-- `docs/testing/phase-2-acceptance-criteria.md`
-- `docs/reviews/phase-2-implementation-report.md`
-- `docs/plans/phase-2.1-free-first-quota-broker.md`
-- `docs/implementation/phase-2.1-free-first-quota-broker.md`
-- `docs/testing/phase-2.1-acceptance-criteria.md`
-- `docs/reviews/phase-2.1-live-certification-report.md`
-- `docs/plans/phase-2.2-canonical-authority-hardening.md`
-- `docs/testing/phase-2.2-acceptance-criteria.md`
-- `docs/reviews/phase-2.2-implementation-report.md`
-- `docs/plans/phase-3.0-golden-path-contract.md`
-- `docs/testing/phase-3.0-acceptance-criteria.md`
-- `docs/plans/phase-3.1-adaptive-discovery-strategy.md`
-- `docs/testing/phase-3.1-acceptance-criteria.md`
-- `docs/reviews/phase-3.1-implementation-report.md`
-- `docs/operations/free-first-provider-setup-windows.md`
 
 ## Repository safety
 
@@ -311,9 +261,10 @@ This repository is public. Use synthetic data only. Never commit real client dat
 3. `docs/product/goal.md`
 4. `docs/product/scope-mvp.md`
 5. `ARCHITECTURE.md`
-6. `docs/plans/phase-3.1-adaptive-discovery-strategy.md`
-7. `docs/security/risk-and-approval-policy.md`
-8. `docs/plans/roadmap.md`
+6. `docs/security/risk-and-approval-policy.md`
+7. `docs/plans/roadmap.md`
+8. `docs/plans/phase-3.0-golden-path-contract.md`
+9. `docs/reviews/phase-3.5-end-to-end-certification-report.md`
 
 ## One-line product test
 
