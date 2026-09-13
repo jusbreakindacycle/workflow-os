@@ -2,7 +2,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 
 const DEFAULT_POLICY = Object.freeze({
   authorityClass: 'R1',
@@ -85,14 +85,18 @@ export class GovernedWorkspace {
     const spec = commandSpec(commandClass, target);
     const id = crypto.randomUUID();
     const started = now();
-    const result = spawnSyncSafe(spec.command, spec.args, { cwd: ws.root_path, env: minimalEnv() });
+    const result = spawnSync(spec.command, spec.args, { cwd: ws.root_path, env: minimalEnv(), encoding: 'utf8', timeout: 10000, shell: false });
+    if (result.error) throw result.error;
+    const exitCode = result.status ?? 1;
+    const stdout = result.stdout ?? '';
+    const stderr = result.stderr ?? '';
     this.db.prepare(`INSERT INTO execution_processes
       (id,workspace_id,project_id,execution_workspace_id,work_item_id,command_class,cwd_relative,status,pid,exit_code,stdout_text,stderr_text,started_at,finished_at)
       VALUES (?,?,?,?,?,?,'.','exited',NULL,?,?,?,?,?)`).run(
-        id, workspaceId, projectId, ws.id, workItemId, commandClass, result.status,
-        trim(result.stdout, 12000), trim(result.stderr, 12000), started, now()
+        id, workspaceId, projectId, ws.id, workItemId, commandClass, exitCode,
+        trim(stdout, 12000), trim(stderr, 12000), started, now()
       );
-    return { id, commandClass, exitCode: result.status, stdout: result.stdout, stderr: result.stderr, passed: result.status === 0 };
+    return { id, commandClass, exitCode, stdout, stderr, passed: exitCode === 0 };
   }
 
   async startLocalServer({ workspaceId, projectId, workItemId = null, relativePath, readinessTimeoutMs = 4000 }) {
@@ -122,10 +126,13 @@ export class GovernedWorkspace {
     const record = this.processes.get(processId);
     if (!record || record.workspaceId !== workspaceId || record.projectId !== projectId) throw new Error(`execution_process_not_owned:${processId}`);
     const { child } = record;
-    if (child.exitCode === null && !child.killed) {
+    if (child.exitCode === null) {
       child.kill('SIGTERM');
       await Promise.race([onceExit(child), delay(1200)]);
-      if (child.exitCode === null && !child.killed) child.kill('SIGKILL');
+      if (child.exitCode === null) {
+        child.kill('SIGKILL');
+        await Promise.race([onceExit(child), delay(500)]);
+      }
     }
     this.db.prepare(`UPDATE execution_processes SET status=?,exit_code=?,stdout_text=?,stderr_text=?,finished_at=? WHERE id=? AND workspace_id=? AND project_id=?`)
       .run(failed ? 'failed' : 'stopped', child.exitCode, trim(record.stdout(),12000), trim(record.stderr(),12000), now(), processId, workspaceId, projectId);
@@ -191,17 +198,6 @@ function commandSpec(commandClass, target) {
   if (commandClass === 'test') return { command: process.execPath, args: ['--test', target] };
   throw new Error(`workspace_command_class_forbidden:${commandClass}`);
 }
-function spawnSyncSafe(command, args, options) {
-  const { spawnSync } = requireChildProcess();
-  const result = spawnSync(command, args, { ...options, encoding: 'utf8', timeout: 10000, shell: false });
-  if (result.error) throw result.error;
-  return { status: result.status ?? 1, stdout: result.stdout ?? '', stderr: result.stderr ?? '' };
-}
-function requireChildProcess() { return { spawnSync: (command, args, options) => {
-  // Dynamic import is unnecessary here; this wrapper keeps all command execution centralized.
-  const cp = process.getBuiltinModule('node:child_process');
-  return cp.spawnSync(command, args, options);
-} }; }
 function minimalEnv() { return { PORT: '0', HOST: '127.0.0.1', NODE_ENV: 'test', TZ: 'UTC' }; }
 function normalizeRelative(value) {
   if (typeof value !== 'string' || !value.trim()) throw new TypeError('workspace_relative_path_required');
