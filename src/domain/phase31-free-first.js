@@ -43,7 +43,7 @@ export class Phase31FreeFirst {
     const headerRemaining = rate ? asInt(rate.remaining_requests) : null;
     const count = Number(this.db.prepare("SELECT COALESCE(SUM(request_count),0) AS n FROM provider_usage_counters WHERE workspace_id=? AND provider_connection_id=? AND period_kind='day' AND period_key=?").get(workspaceId, route.provider_connection_id, day).n);
     const remaining = headerRemaining ?? Math.max(0, limit - count);
-    this.broker.recordQuotaSnapshot({ workspaceId, providerConnectionId: route.provider_connection_id, routeId: route.id, providerKey: route.provider_key, bucketKey: cfg.quota_bucket_key ?? `${route.provider_key}:daily`, source: headerRemaining === null ? 'phase31_local_counter' : 'provider_headers', remainingFraction: remaining / limit, remainingRequests: remaining, detail: { requestLimit: limit, phase: '3.1' } });
+    this.broker.recordQuotaSnapshot({ workspaceId, providerConnectionId: route.provider_connection_id, routeId: route.id, providerKey: route.provider_key, bucketKey: cfg.quota_bucket_key ?? `${route.provider_key}:daily`, source: headerRemaining === null ? 'local_counter' : 'provider_headers', remainingFraction: remaining / limit, remainingRequests: remaining, detail: { requestLimit: limit, phase: '3.1' } });
   }
 }
 
