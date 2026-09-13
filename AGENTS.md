@@ -22,14 +22,17 @@ This repository is **spec-first**. Documentation defines product and architectur
 14. `docs/testing/phase-2.1-acceptance-criteria.md`
 15. `docs/testing/phase-2.2-acceptance-criteria.md`
 16. `docs/testing/phase-3.0-acceptance-criteria.md`
-17. `docs/plans/phase-1-core-control-plane.md`
-18. `docs/plans/phase-2-autonomy-kernel.md`
-19. `docs/plans/phase-2.1-free-first-quota-broker.md`
-20. `docs/plans/phase-2.2-canonical-authority-hardening.md`
-21. `docs/plans/phase-3.0-golden-path-contract.md`
-22. `docs/reviews/phase-2.1-live-certification-report.md`
-23. `docs/reviews/phase-2.2-implementation-report.md`
-24. task-specific contracts referenced by the active WorkItem.
+17. `docs/testing/phase-3.1-acceptance-criteria.md`
+18. `docs/plans/phase-1-core-control-plane.md`
+19. `docs/plans/phase-2-autonomy-kernel.md`
+20. `docs/plans/phase-2.1-free-first-quota-broker.md`
+21. `docs/plans/phase-2.2-canonical-authority-hardening.md`
+22. `docs/plans/phase-3.0-golden-path-contract.md`
+23. `docs/plans/phase-3.1-adaptive-discovery-strategy.md`
+24. `docs/reviews/phase-2.1-live-certification-report.md`
+25. `docs/reviews/phase-2.2-implementation-report.md`
+26. `docs/reviews/phase-3.1-implementation-report.md`
+27. task-specific contracts referenced by the active WorkItem.
 
 ## Product invariant
 
@@ -88,6 +91,23 @@ R0 observation/synthetic work does not need approval solely because of risk. R1 
 Client/public communication, shared-remote repository mutation, credential/permission grants, and paid execution follow the more specific authority gates in `docs/security/risk-and-approval-policy.md` even if their implementation is technically simple.
 
 Provider-created subtasks remain provider-local only when safely inside the accepted Assignment. Material new work becomes a WorkItem Proposal.
+
+## Adaptive discovery rule
+
+Phase 3.1 model analysis is **proposed reasoning, not Project truth**.
+
+- preserve raw request and requested solution separately;
+- ask only questions that state a materiality reason and one or more approved impact areas;
+- keep `I don't know` and skipped answers explicit;
+- after any question-bearing round, re-analyze before acceptance;
+- require an explicit conditional-research decision;
+- if material external research is required and no governed research adapter exists, stop instead of inventing facts;
+- challenge the requested solution and record at least one distinct delivery-strategy alternative;
+- require source-backed evidence for strategy recommendations;
+- never assume `custom_build` merely because the intake asks for software;
+- use only eligible zero-incremental Free-First reasoning routes for Phase 3.1 autonomous analysis;
+- never treat a model recommendation as authority to accept the Project Brief;
+- preserve a rejected recommendation when the operator accepts another strategy instead of rewriting history.
 
 ## Governed local execution workspace rule
 
@@ -182,7 +202,9 @@ Verification and authority are separate. Passing verification does not retroacti
 
 Phase 1 is complete. Phase 2 provider-neutral autonomy kernel is merged. Phase 2.1 Free-First routing is merged and passed real zero-spend live certification with an independent verifier and cross-provider portability drill. Phase 2.2 Canonical Authority Hardening is implemented with database-enforced birth-state, exact approval binding, approval immutability, stale-version/TOCTOU guards, and explicit consequential-action thresholds.
 
-The current material product phase is **Phase 3 End-to-end Delivery Golden Path**. Phase 3.0 defines the complete golden-path and governed local execution-workspace contract before implementation workers receive real filesystem/command authority.
+Phase 3.0 defines the complete golden-path and governed local execution-workspace contract. Phase 3.1 Adaptive Discovery / Challenge / Strategy is implemented and CI-verified with **75/75 tests** and nine migrations. It keeps model analysis proposed until operator acceptance and reuses the existing Free-First zero-incremental routing boundary.
+
+The next material subphase is **Phase 3.2 — Dynamic Workforce / Work Graph**. Generate strategy-specific work and capability/evidence/authority requirements from the accepted Phase 3.1 Project Brief. Do not grant filesystem/command authority yet; that remains Phase 3.3.
 
 The first consequential implementation capability must consume the Phase 2.2 authority contract and the additional local execution-workspace boundary in `docs/plans/phase-3.0-golden-path-contract.md`. Do not add a provider-specific path that creates shared/external state from model intent alone.
 
