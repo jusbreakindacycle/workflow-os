@@ -58,60 +58,71 @@ Adversarial tests cover direct-SQL WorkItem bypass, cross-Project/unknown/stale 
 
 See `docs/plans/phase-2.2-canonical-authority-hardening.md` and `docs/reviews/phase-2.2-implementation-report.md`.
 
-## Phase 3 — End-to-end Delivery Golden Path — in progress
+## Phase 3 — End-to-end Delivery Golden Path — complete for the synthetic/local certification path
 
-Phase 3 proves one controlled internal/synthetic Project can move from raw request to a verified real outcome with minimal operator coordination and with every consequential effect governed by the Phase 2.2 authority contract.
+Phase 3 proves one controlled synthetic Project can move from raw request to a verified real local outcome with minimal operator coordination while preserving the Phase 2.2 authority boundary.
 
 ### Phase 3.0 — Golden Path and Governed Execution Contract — complete
 
-Defines the first synthetic certification case, adaptive discovery/research/challenge boundaries, capability-driven workforce direction, strategy-dependent work graph, Project Pack/Context Slice expectations, and the governed local execution-workspace authority boundary before workers receive real filesystem/command permissions.
+Defines the canonical synthetic certification case, adaptive discovery/research/challenge boundaries, capability-driven workforce direction, strategy-dependent work graph, Project Pack/Context Slice expectations, and the governed local execution-workspace boundary before workers receive real filesystem/command permissions.
 
-### Phase 3.1 — Adaptive Discovery / Challenge / Strategy — implemented and CI-verified
+### Phase 3.1 — Adaptive Discovery / Challenge / Strategy — complete
 
-Implements bounded AI-assisted pre-brief reasoning that:
+Implements bounded AI-assisted pre-brief reasoning that preserves the request/requested solution, asks only material questions, keeps unknowns explicit, challenges the requested solution, records conditional research requirements, recommends strategy from evidence, reuses Free-First zero-incremental routing, and waits for operator acceptance/revision before creating canonical Project truth.
 
-- preserves raw request and requested solution separately;
-- asks only structured material questions with explicit impact areas;
-- keeps `I don't know`/skipped answers explicit;
-- requires re-analysis after answers;
-- records conditional research requirements rather than inventing external facts;
-- challenges the requested solution and compares alternatives;
-- recommends delivery strategy from source-backed evidence;
-- reuses zero-incremental Free-First routing without silent paid fallback;
-- waits for operator acceptance/revision before creating the canonical Project Brief;
-- preserves a rejected model recommendation when the operator chooses another strategy.
+Phase 3.1 CI passed 75/75 tests with nine migrations. See `docs/plans/phase-3.1-adaptive-discovery-strategy.md` and `docs/reviews/phase-3.1-implementation-report.md`.
 
-Phase 3.1 CI passed **75/75 tests** with nine migrations plus migration/backup and live-harness opt-in checks. See `docs/plans/phase-3.1-adaptive-discovery-strategy.md` and `docs/reviews/phase-3.1-implementation-report.md`.
+### Phase 3.2 — Dynamic Workforce / Work Graph — complete
 
-### Phase 3.2 — Dynamic Workforce / Work Graph — next
+Consumes the accepted Brief/strategy and creates strategy-specific WorkItems, dependencies, capability activations, evidence contracts, risk/action class, authority requirements, verification requirements, mutable-resource declarations, and stop/escalation conditions.
 
-Consume the accepted Phase 3.1 Project Brief and selected delivery strategy to generate strategy-specific WorkItems, dependencies, capability requirements, evidence contracts, authority requirements, verification requirements, and logical role activation. Replace the universal Phase 1 initial graph as the Phase 3 default without breaking its regression path.
+The planner has distinct graph families for process change, adopt/configure, integrate, automate, custom build, hybrid, research/pilot and defer. Tests explicitly prove a configuration job does not fabricate software-development roles and a deferred Project creates no implementation work.
 
-### Phase 3.3 — Governed Local Execution Workspace — later
+See `docs/plans/phase-3.2-dynamic-workforce-work-graph.md`.
 
-Implement the dedicated per-Project local execution workspace with bounded filesystem, command, network and process authority. Local isolated execution remains distinct from GitHub/shared-remote mutation.
+### Phase 3.3 — Governed Local Execution Workspace — complete for bounded synthetic R1 local work
 
-### Phase 3.4 — Verification / Repair / Delivery — later
+Implements a dedicated per-Project workspace under a Workflow-OS-configured root with path/symlink/absolute escape rejection, hashed artifact manifests, deny-by-default command classes, minimal process environment, loopback-only local server execution, owned-process lifecycle records and bounded cleanup.
 
-Implement deterministic checks, actual local user/business flow verification, independent review, bounded repair, evidence reconciliation, and delivery semantics.
+Local workspace authority remains distinct from shared GitHub, deployment, production, credential, communication, or paid-execution authority.
 
-### Phase 3.5 — Full End-to-end Certification — later
+See `docs/plans/phase-3.3-governed-local-execution-workspace.md`.
 
-Run the canonical synthetic Project from raw client request through the complete governed local delivery outcome and certify the Command Center evidence chain.
+### Phase 3.4 — Verification / Repair / Delivery — complete for the local golden path
 
-The first consequential adapter/runtime capability must consume exact subject/version/bounds authority when approval is required, freshness at resolution, and revalidation immediately before a durable/external effect.
+Implements Phase 3 Project Pack/Context Slice projections, bounded Assignments, real syntax/behavior checks, actual local lead-flow verification, deterministic independent reconciliation, a two-attempt repair budget, and delivery records that require independent L3 evidence before they can be marked delivered.
 
-Examples remain strategy-dependent:
+See `docs/plans/phase-3.4-verification-repair-delivery.md`.
 
-- `custom_build` / hybrid software: governed local workspace -> implementation -> test/review -> controlled later delivery/deploy;
-- `automate` / integrate: evaluate/activate Workflow Engine Adapter when the accepted strategy requires it;
-- `configure` / adopt existing: use appropriate tool/provider adapters and evidence without inventing source-code/repository/deployment steps.
+### Phase 3.5 — Full End-to-end Certification — complete for the canonical synthetic case
+
+The certification runs the canonical request through Phase 3.1 acceptance, strategy-specific planning, governed workspace preparation, real local artifact creation, real tests, actual loopback invalid/valid lead submissions, local receiver/store reconciliation, independent verification, and final delivery evidence.
+
+Workflow OS Verify passed 81/81 tests and 10 migrations on the executable implementation head. The merge-candidate CI also runs `npm run phase3:certify` as a separate local certification gate.
+
+See `docs/reviews/phase-3.5-end-to-end-certification-report.md`.
+
+### Phase 3 boundary after certification
+
+Phase 3 does **not** certify production deployment, shared GitHub mutation, real client/customer data, real Meta/CRM/email/SMS integrations, ad spend/performance, arbitrary external integrations, credential/permission grants, or unattended always-on hosting.
+
+Do not expand those authorities implicitly from the passing local certification.
+
+## Phase 4 — Broaden Delivery Adapters — next, evidence-driven
+
+Broaden beyond the first local custom-build proof only from measured Project needs.
+
+Likely candidates include:
+
+- business workflow/WIR execution and evaluation of Activepieces or another workflow engine;
+- governed source-control/shared-remote adapter work when real client delivery requires it;
+- deployment/hosting adapters with exact R2/R3 authority and rollback evidence;
+- configure/adopt/integrate execution adapters for real external systems;
+- observation/production evidence paths.
+
+Do not implement every adapter merely because it is imaginable. Prefer the next real/synthetic Project that exposes a concrete delivery gap.
 
 If unattended/background execution becomes valuable, define an `ExecutionHost` topology (local desktop, always-on self-hosted machine, or replaceable remote host). Canonical state must not depend on one hosting vendor.
-
-## Phase 4 — Broaden Delivery Adapters
-
-Expand beyond the first golden path. If business workflow automation was not already the Phase 3 path, add WIR execution and evaluate Activepieces (or alternative). Add additional source/deployment/tool adapters only from measured Project needs.
 
 ## Phase 5 — Commercial Operations
 
