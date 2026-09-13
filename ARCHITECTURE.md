@@ -98,6 +98,8 @@ Direct provider HTTP adapters are replaceable implementations behind normalized 
 
 Replaceable systems may include local/open models, hosted AI APIs, Codex, Claude Code, Copilot, OpenCode, Paperclip, Activepieces, Git/source providers, deployment platforms, databases, and monitoring tools.
 
+For implementation work, execution authority is not equivalent to model access. A worker may receive a separately governed local execution workspace with bounded filesystem, command, network and process capabilities. Local isolated workspace authority does not imply authority to mutate a shared remote repository, deployment target, production system, or external communication channel.
+
 ### 11. Evidence and production
 
 Provider results normalize into evidence/activity. Deployment is not the end: incidents, maintenance, change, recovery, and improvement remain Project state.
@@ -185,9 +187,14 @@ Fixture-only portability drills prove implementation/rerouting semantics, not li
 24. Route selection and fallback must remain explainable and replayable from persisted evidence.
 25. Independent verification cannot be inferred merely because worker and verifier prompts are different; route independence is explicit configuration/evidence.
 26. Fixture evidence cannot be promoted into a claim of real-provider execution or operational portability.
+27. Bounded local execution-workspace authority is distinct from authority to mutate shared remote repositories, deployments, production systems, or communication channels.
 
 ## Current phase
 
-Phase 1 local control-plane semantics are complete. Phase 2 implements the autonomy kernel, Broker, provider-adapter boundary, Skills, instruction compilation, bounded loops, independent verification, fallback/rerouting, and live-certification harness.
+Foundation v3 and Phase 1 are complete. Phase 2 implements the autonomy kernel, Broker, provider-adapter boundary, Skills, instruction compilation, bounded loops, independent verification, fallback/rerouting, and certification records.
 
-Until a non-fixture route is intentionally configured and run, the accurate state is **autonomy kernel implemented; live provider certification pending operator configuration**. See `docs/plans/phase-2-autonomy-kernel.md`.
+Phase 2.1 Free-First routing passed representative real zero-spend live certification on 2026-09-12 using a real worker route, an independently configured verifier route, canonical L2 verification, a cross-provider portability drill, and zero SpendEnvelope/CostRecord evidence for that certification Workspace.
+
+Phase 2.2 Canonical Authority Hardening is complete and establishes exact subject/version/bounds authority, resolve-time freshness, use-time revalidation, and database-level fail-closed guards before consequential effects.
+
+The current product phase is **Phase 3 — End-to-end Delivery Golden Path**. Phase 3.0 defines the first synthetic Project's golden-path and governed local execution-workspace contract before implementation workers receive real filesystem/command authority. See `docs/plans/phase-3.0-golden-path-contract.md`.
