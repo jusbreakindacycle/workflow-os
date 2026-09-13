@@ -7,19 +7,16 @@ const projectMode = document.querySelector('#project-mode');
 const clientNameWrap = document.querySelector('#client-name-wrap');
 const startForm = document.querySelector('#start-form');
 const discoveryPanel = document.querySelector('#discovery-panel');
-const discoveryForm = document.querySelector('#discovery-form');
+const questionForm = document.querySelector('#question-form');
 const questionsEl = document.querySelector('#questions');
-const strategySelect = document.querySelector('#strategy-select');
+const analysisSummary = document.querySelector('#analysis-summary');
+const researchBlock = document.querySelector('#research-block');
 const reviewPanel = document.querySelector('#review-panel');
-const acceptButton = document.querySelector('#accept-button');
+const reviewForm = document.querySelector('#review-form');
 const acceptedPanel = document.querySelector('#accepted-panel');
-const repositoryProposalButton = document.querySelector('#repository-proposal-button');
-const repositoryApprovalBox = document.querySelector('#repository-approval-box');
 
 let bootstrap = null;
 let snapshot = null;
-let repositoryProposal = null;
-let repositoryApproval = null;
 
 await initialize();
 
@@ -29,8 +26,7 @@ async function initialize() {
     bootstrap = data;
     statusEl.textContent = `${health.phase} / ${health.gate} · ${health.database.migrations} migrations`;
     renderWorkspaceOptions();
-    renderStrategies();
-    renderQuestions();
+    renderStrategyOptions();
     syncModeFields();
     await refreshCommandCenter();
   } catch (error) {
@@ -55,51 +51,23 @@ function renderWorkspaceOptions() {
   syncWorkspaceFields();
 }
 
-function renderStrategies() {
-  strategySelect.replaceChildren(new Option('Choose a working strategy…', ''));
-  for (const strategy of bootstrap.deliveryStrategies) strategySelect.add(new Option(strategyLabel(strategy), strategy));
-}
-
-function renderQuestions() {
-  questionsEl.replaceChildren();
-  for (const question of bootstrap.discoveryQuestions) {
-    const wrapper = document.createElement('fieldset');
-    wrapper.className = 'question';
-    wrapper.dataset.questionKey = question.key;
-    wrapper.innerHTML = `
-      <legend>${escapeHtml(question.prompt)}</legend>
-      <div class="question-controls">
-        <select class="response-state" aria-label="Answer state for ${escapeHtml(question.prompt)}">
-          <option value="answered">I can answer</option>
-          <option value="unknown">I don't know</option>
-          <option value="skipped">Skip for now</option>
-        </select>
-        <textarea class="response-answer" rows="3" placeholder="Plain-language answer"></textarea>
-      </div>`;
-    const state = wrapper.querySelector('.response-state');
-    const answer = wrapper.querySelector('.response-answer');
-    state.addEventListener('change', () => {
-      answer.disabled = state.value !== 'answered';
-      if (answer.disabled) answer.value = '';
-    });
-    questionsEl.append(wrapper);
-  }
+function renderStrategyOptions() {
+  const target = document.querySelector('#review-strategy');
+  target.replaceChildren();
+  for (const strategy of bootstrap.deliveryStrategies) target.add(new Option(strategyLabel(strategy), strategy));
 }
 
 workspaceSelect.addEventListener('change', syncWorkspaceFields);
 projectMode.addEventListener('change', syncModeFields);
 dashboardWorkspace.addEventListener('change', refreshCommandCenter);
 document.querySelector('#refresh-command-center').addEventListener('click', refreshCommandCenter);
+document.querySelector('#new-project-button').addEventListener('click', () => window.location.reload());
 
-function syncWorkspaceFields() {
-  workspaceNameWrap.classList.toggle('hidden', workspaceSelect.value !== '__new__');
-}
-
+function syncWorkspaceFields() { workspaceNameWrap.classList.toggle('hidden', workspaceSelect.value !== '__new__'); }
 function syncModeFields() {
   const isClient = projectMode.value === 'client';
   clientNameWrap.classList.toggle('hidden', !isClient);
-  const input = clientNameWrap.querySelector('input');
-  input.required = isClient;
+  clientNameWrap.querySelector('input').required = isClient;
 }
 
 startForm.addEventListener('submit', async (event) => {
@@ -120,120 +88,165 @@ startForm.addEventListener('submit', async (event) => {
     snapshot = await api('/api/intakes', { method: 'POST', body });
     document.querySelector('#project-title').textContent = snapshot.project.title;
     document.querySelector('#intake-status').textContent = snapshot.intake.status;
-    document.querySelector('#raw-request-summary').textContent = `Raw request: ${snapshot.intake.raw_request}`;
+    document.querySelector('#raw-request-summary').textContent = `Raw request: ${snapshot.intake.raw_request}\nRequested solution: ${snapshot.intake.requested_solution ?? 'none recorded'}`;
     discoveryPanel.classList.remove('hidden');
     reviewPanel.classList.add('hidden');
     acceptedPanel.classList.add('hidden');
     discoveryPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } catch (error) {
-    showError(error);
-  }
+    await analyzeCurrentIntake();
+  } catch (error) { showError(error); }
 });
 
-discoveryForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  clearError();
+async function analyzeCurrentIntake() {
   if (!snapshot) return;
+  clearError();
+  analysisSummary.textContent = 'Analyzing material unknowns and challenging the requested solution…';
+  questionForm.classList.add('hidden');
+  reviewPanel.classList.add('hidden');
+  researchBlock.classList.add('hidden');
+  try {
+    snapshot = await api(`/api/phase31/intakes/${encodeURIComponent(snapshot.intake.id)}/analyze`, {
+      method: 'POST', body: { workspaceId: snapshot.intake.workspace_id }
+    });
+    renderPhase31(snapshot);
+  } catch (error) {
+    analysisSummary.textContent = 'Adaptive analysis is blocked.';
+    showError(error);
+  }
+}
+
+questionForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!snapshot) return;
+  clearError();
   const responses = [...document.querySelectorAll('.question')].map((question) => ({
     questionKey: question.dataset.questionKey,
     responseState: question.querySelector('.response-state').value,
     answerText: question.querySelector('.response-answer').value
   }));
-
   try {
-    snapshot = await api(`/api/intakes/${encodeURIComponent(snapshot.intake.id)}/discovery`, {
-      method: 'PUT',
-      body: { workspaceId: snapshot.intake.workspace_id, responses }
+    snapshot = await api(`/api/phase31/intakes/${encodeURIComponent(snapshot.intake.id)}/questions`, {
+      method: 'PUT', body: { workspaceId: snapshot.intake.workspace_id, responses }
     });
-    snapshot = await api(`/api/intakes/${encodeURIComponent(snapshot.intake.id)}/strategy`, {
-      method: 'PUT',
-      body: {
-        workspaceId: snapshot.intake.workspace_id,
-        strategy: strategySelect.value,
-        rationale: document.querySelector('#strategy-rationale').value
-      }
-    });
-    document.querySelector('#intake-status').textContent = snapshot.intake.status;
-    renderReview(snapshot);
-    reviewPanel.classList.remove('hidden');
-    reviewPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } catch (error) {
-    showError(error);
-  }
+    await analyzeCurrentIntake();
+  } catch (error) { showError(error); }
 });
 
-acceptButton.addEventListener('click', async () => {
-  clearError();
+reviewForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
   if (!snapshot) return;
+  clearError();
+  const recommendation = snapshot.phase31.strategyRecommendation;
+  const chosenStrategy = document.querySelector('#review-strategy').value;
+  const overrides = {
+    problem: document.querySelector('#review-problem').value,
+    desiredOutcome: document.querySelector('#review-outcome').value,
+    primaryUsers: nullableValue(document.querySelector('#review-users').value),
+    constraints: nullableValue(document.querySelector('#review-constraints').value),
+    success: document.querySelector('#review-success').value,
+    nonGoals: document.querySelector('#review-non-goals').value.split(/\r?\n/).map((value) => value.trim()).filter(Boolean),
+    strategy: chosenStrategy
+  };
+  if (chosenStrategy !== recommendation.strategy) overrides.strategyRationale = document.querySelector('#review-strategy-rationale').value;
   try {
-    snapshot = await api(`/api/intakes/${encodeURIComponent(snapshot.intake.id)}/accept`, {
+    snapshot = await api(`/api/phase31/intakes/${encodeURIComponent(snapshot.intake.id)}/accept`, {
       method: 'POST',
-      body: {
-        workspaceId: snapshot.intake.workspace_id,
-        expectedProjectVersion: snapshot.project.version
-      }
+      body: { workspaceId: snapshot.intake.workspace_id, expectedProjectVersion: snapshot.project.version, overrides }
     });
     const workspaceId = snapshot.intake.workspace_id;
     const projectId = snapshot.project.id;
     const graph = await api(`/api/projects/${encodeURIComponent(projectId)}/work-graph/initialize`, { method: 'POST', body: { workspaceId } });
     const pack = await api(`/api/projects/${encodeURIComponent(projectId)}/project-pack`, { method: 'POST', body: { workspaceId } });
-
+    discoveryPanel.classList.add('hidden');
     reviewPanel.classList.add('hidden');
     acceptedPanel.classList.remove('hidden');
     const clientNote = snapshot.engagement ? ` Engagement remains ${snapshot.engagement.status}; internal acceptance did not fabricate client acceptance.` : '';
-    document.querySelector('#accepted-summary').textContent = `${snapshot.project.title} is now ${snapshot.project.operational_status} in ${snapshot.project.lifecycle_phase}. Working strategy: ${strategyLabel(snapshot.acceptedBrief.delivery_strategy)}.${clientNote}`;
-    document.querySelector('#bootstrap-summary').textContent = `${graph.nodes.length} initial WorkItems created. Project Pack v${pack.version} generated deterministically.`;
-    repositoryProposalButton.classList.toggle('hidden', !['custom_build', 'hybrid'].includes(snapshot.acceptedBrief.delivery_strategy));
-    repositoryApprovalBox.classList.add('hidden');
-    repositoryProposal = null;
-    repositoryApproval = null;
-
+    document.querySelector('#accepted-summary').textContent = `${snapshot.project.title} is now ${snapshot.project.operational_status} in ${snapshot.project.lifecycle_phase}. Accepted strategy: ${strategyLabel(snapshot.acceptedBrief.delivery_strategy)}.${clientNote}`;
+    document.querySelector('#bootstrap-summary').textContent = `${graph.nodes.length} initial Phase 1 WorkItems are still present for compatibility. Project Pack v${pack.version} generated. Phase 3.2 will replace universal graph generation with case-specific workforce/work-graph generation.`;
     bootstrap = await api('/api/workspaces');
     renderWorkspaceOptions();
     dashboardWorkspace.value = workspaceId;
     await refreshCommandCenter();
     acceptedPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } catch (error) {
-    showError(error);
+  } catch (error) { showError(error); }
+});
+
+function renderPhase31(current) {
+  document.querySelector('#intake-status').textContent = current.intake.status;
+  const run = current.phase31.latestRun;
+  const strategy = current.phase31.strategyRecommendation;
+  const research = current.phase31.researchDecision;
+  const challenge = current.phase31.findings.filter((item) => item.finding_type === 'challenge').map((item) => item.statement);
+  analysisSummary.textContent = [
+    `Analysis round: ${run?.round_number ?? '—'}`,
+    `Requested solution preserved: ${current.intake.requested_solution ?? 'none recorded'}`,
+    `Challenge: ${challenge.join(' | ') || 'none recorded'}`,
+    `Research: ${research ? (research.research_required ? `required — ${research.rationale}` : `not required — ${research.rationale}`) : 'not evaluated'}`,
+    `Recommended strategy: ${strategy ? strategyLabel(strategy.strategy) : 'none'}`,
+    `Why: ${strategy?.rationale ?? '—'}`,
+    `Alternatives: ${(strategy?.alternatives ?? []).map((item) => `${strategyLabel(item.strategy)} — ${item.reason}`).join(' | ') || 'none'}`
+  ].join('\n');
+
+  if (current.phase31.questions.length > 0) {
+    renderQuestions(current.phase31.questions);
+    questionForm.classList.remove('hidden');
+    reviewPanel.classList.add('hidden');
+    return;
   }
-});
+  questionForm.classList.add('hidden');
 
-repositoryProposalButton.addEventListener('click', async () => {
-  if (!snapshot) return;
-  clearError();
-  try {
-    const workspaceId = snapshot.intake.workspace_id;
-    const projectId = snapshot.project.id;
-    repositoryProposal = await api(`/api/projects/${encodeURIComponent(projectId)}/repository-proposals`, {
-      method: 'POST', body: { workspaceId, reason: 'The accepted delivery strategy requires a source repository.', desiredVisibility: 'private' }
-    });
-    repositoryApproval = await api(`/api/repository-proposals/${encodeURIComponent(repositoryProposal.id)}/request-approval`, {
-      method: 'POST', body: { workspaceId, projectId }
-    });
-    repositoryApprovalBox.classList.remove('hidden');
-    repositoryApprovalBox.innerHTML = `<p><strong>Repository approval required.</strong> This Phase 1 action creates only a mock repository reference.</p><button type="button" id="approve-repository">Approve mock repository</button>`;
-    document.querySelector('#approve-repository').addEventListener('click', approveMockRepository);
-    await refreshCommandCenter();
-  } catch (error) { showError(error); }
-});
-
-async function approveMockRepository() {
-  if (!snapshot || !repositoryProposal || !repositoryApproval) return;
-  try {
-    const workspaceId = snapshot.intake.workspace_id;
-    const projectId = snapshot.project.id;
-    await api(`/api/approvals/${encodeURIComponent(repositoryApproval.id)}/resolve`, {
-      method: 'POST', body: { workspaceId, projectId, decision: 'approved', evidence: ['operator-ui-approval'] }
-    });
-    const result = await api(`/api/repository-proposals/${encodeURIComponent(repositoryProposal.id)}/mock-execute`, {
-      method: 'POST', body: { workspaceId, projectId }
-    });
-    repositoryApprovalBox.innerHTML = `<p><strong>Mock repository approved.</strong><br><code>${escapeHtml(result.repository_ref)}</code></p>`;
-    await refreshCommandCenter();
-  } catch (error) { showError(error); }
+  if (research?.research_required === 1) {
+    researchBlock.classList.remove('hidden');
+    researchBlock.textContent = `Acceptance blocked: material external research is required before this Project Brief can be accepted. Topics: ${(research.topics ?? []).join(', ')}`;
+    reviewPanel.classList.add('hidden');
+    return;
+  }
+  researchBlock.classList.add('hidden');
+  populateReview(current);
+  reviewPanel.classList.remove('hidden');
+  reviewPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-document.querySelector('#new-project-button').addEventListener('click', () => window.location.reload());
+function renderQuestions(questions) {
+  questionsEl.replaceChildren();
+  for (const question of questions) {
+    const wrapper = document.createElement('fieldset');
+    wrapper.className = 'question';
+    wrapper.dataset.questionKey = question.question_key;
+    wrapper.innerHTML = `
+      <legend>${escapeHtml(question.prompt)}</legend>
+      <p class="muted"><strong>Why this matters:</strong> ${escapeHtml(question.materiality_reason)}<br><strong>May change:</strong> ${escapeHtml(question.impactAreas.join(', '))}</p>
+      <div class="question-controls">
+        <select class="response-state" aria-label="Answer state for ${escapeHtml(question.prompt)}">
+          <option value="answered">I can answer</option>
+          <option value="unknown">I don't know</option>
+          <option value="skipped">Skip for now</option>
+        </select>
+        <textarea class="response-answer" rows="3" placeholder="Plain-language answer"></textarea>
+      </div>`;
+    const state = wrapper.querySelector('.response-state');
+    const answer = wrapper.querySelector('.response-answer');
+    state.addEventListener('change', () => {
+      answer.disabled = state.value !== 'answered';
+      if (answer.disabled) answer.value = '';
+    });
+    questionsEl.append(wrapper);
+  }
+}
+
+function populateReview(current) {
+  const candidate = current.phase31.latestRun?.output?.brief ?? {};
+  const strategy = current.phase31.strategyRecommendation;
+  document.querySelector('#review-problem').value = candidate.problem ?? '';
+  document.querySelector('#review-outcome').value = candidate.desired_outcome ?? '';
+  document.querySelector('#review-users').value = candidate.primary_users ?? '';
+  document.querySelector('#review-constraints').value = candidate.constraints ?? '';
+  document.querySelector('#review-success').value = candidate.success ?? '';
+  document.querySelector('#review-non-goals').value = (candidate.non_goals ?? []).join('\n');
+  document.querySelector('#review-strategy').value = strategy.strategy;
+  document.querySelector('#review-strategy-rationale').value = '';
+  document.querySelector('#review-summary').textContent = `Model recommendation: ${strategyLabel(strategy.strategy)}\nEvidence refs: ${(strategy.evidenceRefs ?? []).join(', ')}\nRequested solution remains: ${current.intake.requested_solution ?? 'none recorded'}\nNothing becomes canonical until you accept this form.`;
+}
 
 async function refreshCommandCenter() {
   const workspaceId = dashboardWorkspace.value;
@@ -262,19 +275,9 @@ function renderProjectCard(project, workspaceId) {
   const card = document.createElement('article');
   card.className = 'project-card';
   card.innerHTML = `
-    <div>
-      <p class="eyebrow">${escapeHtml(project.kind)}</p>
-      <h3>${escapeHtml(project.title)}</h3>
-      <p class="muted">${escapeHtml(project.phase)} · ${escapeHtml(project.status)} · ${escapeHtml(project.health)}</p>
-    </div>
-    <div class="project-metrics">
-      <span>${project.nextReadyCount} ready</span>
-      <span>${project.attentionCount} attention</span>
-    </div>
-    <div class="button-row">
-      <button class="secondary compact inspect-project" type="button">Inspect</button>
-      <button class="secondary compact run-next" type="button" ${project.nextReadyCount === 0 ? 'disabled' : ''}>Run next mock task</button>
-    </div>
+    <div><p class="eyebrow">${escapeHtml(project.kind)}</p><h3>${escapeHtml(project.title)}</h3><p class="muted">${escapeHtml(project.phase)} · ${escapeHtml(project.status)} · ${escapeHtml(project.health)}</p></div>
+    <div class="project-metrics"><span>${project.nextReadyCount} ready</span><span>${project.attentionCount} attention</span></div>
+    <div class="button-row"><button class="secondary compact inspect-project" type="button">Inspect</button><button class="secondary compact run-next" type="button" ${project.nextReadyCount === 0 ? 'disabled' : ''}>Run next mock task</button></div>
     <pre class="project-detail hidden"></pre>`;
   card.querySelector('.inspect-project').addEventListener('click', async () => {
     const detail = await api(`/api/projects/${encodeURIComponent(project.id)}/command-center?workspaceId=${encodeURIComponent(workspaceId)}`);
@@ -296,7 +299,7 @@ async function runNextMockTask(workspaceId, projectId) {
     const assignmentId = created.row.id;
     await api(`/api/assignments/${encodeURIComponent(assignmentId)}/start`, { method: 'POST', body: { workspaceId, projectId } });
     await api(`/api/assignments/${encodeURIComponent(assignmentId)}/finish`, { method: 'POST', body: { workspaceId, projectId } });
-    await api(`/api/assignments/${encodeURIComponent(assignmentId)}/evidence`, { method: 'POST', body: { workspaceId, projectId, level: 'L2', summary: 'Synthetic Phase 1 evidence produced by the local mock worker.' } });
+    await api(`/api/assignments/${encodeURIComponent(assignmentId)}/evidence`, { method: 'POST', body: { workspaceId, projectId, level: 'L2', summary: 'Synthetic Phase 1 compatibility evidence produced by the local mock worker.' } });
     await api(`/api/assignments/${encodeURIComponent(assignmentId)}/verify`, { method: 'POST', body: { workspaceId, projectId, outcome: 'pass', level: 'L2', summary: 'Synthetic verifier accepted the bounded mock result.' } });
     await api(`/api/projects/${encodeURIComponent(projectId)}/readiness/refresh`, { method: 'POST', body: { workspaceId } });
     await api(`/api/projects/${encodeURIComponent(projectId)}/project-pack`, { method: 'POST', body: { workspaceId } });
@@ -333,32 +336,9 @@ function summarizeProject(detail) {
   return `Brief v${detail.project.current_brief_version ?? '—'}\nNext ready: ${next}\nAttention:\n${attention}\nActive assignments:\n${assignments}`;
 }
 
-function renderReview(current) {
-  const responseMap = new Map(current.responses.map((row) => [row.question_key, row]));
-  const lines = [
-    `Project: ${current.project.title}`,
-    `Problem: ${displayResponse(responseMap.get('problem'))}`,
-    `Desired outcome: ${displayResponse(responseMap.get('desired_outcome'))}`,
-    `Primary users: ${displayResponse(responseMap.get('primary_users'))}`,
-    `Constraints: ${displayResponse(responseMap.get('constraints'))}`,
-    `Success: ${displayResponse(responseMap.get('success'))}`,
-    `Requested solution: ${current.intake.requested_solution ?? 'none recorded'}`,
-    `Working strategy: ${strategyLabel(current.strategy.strategy)}`
-  ];
-  document.querySelector('#review-summary').textContent = lines.join('\n');
-}
-
-function displayResponse(row) {
-  if (!row) return 'not answered';
-  if (row.response_state === 'answered') return row.answer_text;
-  if (row.response_state === 'unknown') return "I don't know";
-  return 'skipped';
-}
-
 async function api(url, options = {}) {
   const response = await fetch(url, {
-    method: options.method ?? 'GET',
-    cache: 'no-store',
+    method: options.method ?? 'GET', cache: 'no-store',
     headers: options.body ? { 'content-type': 'application/json' } : undefined,
     body: options.body ? JSON.stringify(options.body) : undefined
   });
@@ -368,22 +348,10 @@ async function api(url, options = {}) {
 }
 
 function strategyLabel(value) {
-  const labels = {
-    process_change: 'Process change',
-    adopt_existing: 'Adopt an existing solution',
-    configure: 'Configure an existing system',
-    integrate: 'Integrate existing systems',
-    automate: 'Automate a workflow',
-    custom_build: 'Custom build',
-    hybrid: 'Hybrid approach',
-    research_pilot: 'Research or pilot first',
-    defer: 'Decline or defer'
-  };
+  const labels = { process_change: 'Process change', adopt_existing: 'Adopt an existing solution', configure: 'Configure an existing system', integrate: 'Integrate existing systems', automate: 'Automate a workflow', custom_build: 'Custom build', hybrid: 'Hybrid approach', research_pilot: 'Research or pilot first', defer: 'Decline or defer' };
   return labels[value] ?? value;
 }
-
+function nullableValue(value) { return typeof value === 'string' && value.trim() ? value.trim() : null; }
 function showError(error) { errorEl.textContent = error instanceof Error ? error.message : String(error); }
 function clearError() { errorEl.textContent = ''; }
-function escapeHtml(value) {
-  return String(value).replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character]);
-}
+function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character]); }
