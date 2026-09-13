@@ -29,10 +29,14 @@ This repository is **spec-first**. Documentation defines product and architectur
 21. `docs/plans/phase-2.2-canonical-authority-hardening.md`
 22. `docs/plans/phase-3.0-golden-path-contract.md`
 23. `docs/plans/phase-3.1-adaptive-discovery-strategy.md`
-24. `docs/reviews/phase-2.1-live-certification-report.md`
-25. `docs/reviews/phase-2.2-implementation-report.md`
-26. `docs/reviews/phase-3.1-implementation-report.md`
-27. task-specific contracts referenced by the active WorkItem.
+24. `docs/plans/phase-3.2-dynamic-workforce-work-graph.md`
+25. `docs/plans/phase-3.3-governed-local-execution-workspace.md`
+26. `docs/plans/phase-3.4-verification-repair-delivery.md`
+27. `docs/reviews/phase-2.1-live-certification-report.md`
+28. `docs/reviews/phase-2.2-implementation-report.md`
+29. `docs/reviews/phase-3.1-implementation-report.md`
+30. `docs/reviews/phase-3.5-end-to-end-certification-report.md`
+31. task-specific contracts referenced by the active WorkItem.
 
 ## Product invariant
 
@@ -76,6 +80,8 @@ Do not assume OpenAI, Anthropic, Google, Groq, OpenRouter, GitHub Copilot, Codex
 
 A fixture route proves orchestration semantics only. It is not evidence that a real provider worked. Operational portability requires representative evidence from independently configured non-fixture routes.
 
+Phase 2.1 already supplies representative live-provider evidence. Do not waste live quota in normal CI merely to re-prove provider access while testing local Phase 3 delivery mechanics.
+
 ## Local-first rule
 
 The control plane must remain understandable and operable when external AI/runtime providers are unavailable. Projects, approvals, events, Project Packs, WorkItems and Command Center state must not require a paid provider.
@@ -109,29 +115,61 @@ Phase 3.1 model analysis is **proposed reasoning, not Project truth**.
 - never treat a model recommendation as authority to accept the Project Brief;
 - preserve a rejected recommendation when the operator accepts another strategy instead of rewriting history.
 
-## Governed local execution workspace rule
+## Dynamic workforce / Work Graph rule
 
-Phase 3 introduces a separate execution-authority boundary for real local implementation work.
+Work creates the workforce. A permanent role roster must not create unnecessary tasks.
+
+For Phase 3 Projects:
+
+- generate WorkItems from the exact accepted Project Brief and selected delivery strategy;
+- every generated WorkItem must carry capabilities, evidence, risk/action class, authority, verification and stop/escalation requirements;
+- do not force configure/adopt/process-change/defer Projects through frontend/backend/repository/deployment work;
+- logical role activation is derived from WorkItem capability requirements;
+- one eligible worker may satisfy multiple compatible roles when separation is not required;
+- independent verification requirements remain explicit and cannot be manufactured by renaming two prompts;
+- local mutable-resource declarations must be respected before later parallel execution is added.
+
+The Phase 1 initial graph remains only as a compatibility/regression path for older Projects.
+
+## Governed local execution workspace rule
 
 A bounded local execution workspace is **not** authority to mutate the Workflow OS repository, a shared GitHub remote, a deployment target, production state, or an external communication channel.
 
-For the first Phase 3 golden path:
+For the certified Phase 3 local path:
 
 - the execution workspace is a dedicated synthetic Project directory under an operator/Workflow-OS configured root;
-- file access must fail closed on path traversal, absolute-path escape, symlink/junction/realpath escape, and unrelated host paths;
-- command execution is deny-by-default and granted by explicit command/tool capability classes;
-- local loopback traffic may be authorized for exercising the generated application;
-- external network access is separately governed and network-minimal;
-- spawned processes must be attributable, bounded, observable, and cleaned up;
-- ordinary R1 local file edits/test commands may be covered by an explicit bounded Project/Assignment policy rather than separate approval for every edit;
+- file access fails closed on path traversal, absolute-path escape, symlink/realpath escape, and unrelated host paths;
+- command execution is deny-by-default and granted by explicit command classes;
+- the current certified classes are only Node syntax check, Node test, and owned local-server execution;
+- commands use `shell: false` and a minimal environment rather than inheriting operator secrets;
+- local application traffic is loopback-only;
+- spawned processes are attributable, bounded, observable, and cleaned up by exact ownership;
+- ordinary R1 local file edits/test commands may be covered by the bounded Project/Assignment policy rather than separate approval for every edit;
 - git push/shared-remote mutation remains a separate R2 action requiring exact Phase 2.2 authority;
-- production deployment, privilege elevation, credential-store access, package publishing, external messaging, and destructive host mutation remain outside the first golden path.
+- production deployment, privilege elevation, credential-store access, package publishing, external messaging, and destructive host mutation remain outside the certified path.
 
 Never widen workspace/tool authority because a model asks for it or because a previous command failed. Missing capability/authority is a blocker or proposal, not an implicit permission grant.
 
+## Verification / repair / delivery rule
+
+Agent claims are not evidence.
+
+For Phase 3 local delivery:
+
+- deterministic command output supplies L2 evidence where applicable;
+- actual loopback application exercise supplies L3 evidence;
+- final delivery requires independent L3-or-higher verification evidence;
+- the independent reconciler must inspect observable artifacts/process/evidence rather than trust implementation-worker self-report;
+- implementation and independent-review Assignments must be distinct where the Work Spec requires independence;
+- repair is classified and bounded; the first implementation permits no more than two repair attempts for one WorkItem;
+- a verification failure, missing authority, material scope change, or harness insufficiency must stop/escalate instead of fabricating completion;
+- delivery records must state limitations and remaining human action explicitly.
+
+Passing verification cannot retroactively grant authority that was absent before a side effect.
+
 ## AI/workforce rules
 
-- Full logical roster, dynamic activation.
+- Full logical capability roster, dynamic activation.
 - Do not spawn agents without measurable benefit.
 - Every active worker receives a bounded AgentAssignment.
 - Provider/runtime completion is evidence, not WorkItem completion.
@@ -172,7 +210,9 @@ ProviderConnection records store references/bindings such as an environment-vari
 
 `npm run phase2:live` is a consequential opt-in harness. Do not run it unless the operator explicitly configured credentials, set `WORKFLOW_OS_LIVE_APPROVE_SPEND=yes`, and selected a positive bounded maximum amount.
 
-`npm run phase21:certify` is separately consequential because it consumes real free quota. Do not run it unless the operator explicitly configured local free-provider access and set `WORKFLOW_OS_FREE_FIRST_RUN=yes`. That flag authorizes free quota consumption only; it does not authorize paid spend. Phase 2.1 is already live-certified; rerun only after material broker/provider/certification changes or when evidence needs renewal.
+`npm run phase21:certify` consumes real free quota. Do not run it unless the operator explicitly configured local free-provider access and set `WORKFLOW_OS_FREE_FIRST_RUN=yes`. Phase 2.1 is already live-certified; rerun only after material broker/provider/certification changes or when evidence needs renewal.
+
+`npm run phase3:certify` is different: it is a local synthetic certification with temporary storage, fixture discovery reasoning, local filesystem/process execution and loopback networking. It must remain credential-free and must not acquire shared-remote/production/external authority.
 
 ## Prompt/instruction rule
 
@@ -184,31 +224,29 @@ Generated `AGENTS.md`, `CLAUDE.md`, runtime config, or provider payloads for a c
 
 A coding/automation worker must be able to bootstrap, start, inspect, test, exercise the relevant real flow, collect evidence, clean up, and escalate without repeatedly using the operator as its terminal/test runner. See `docs/engineering/agent-operability.md`.
 
-## Verification
+## Verification chain
 
-Agent claims are not evidence. Completion requires the applicable level in `docs/testing/verification-ladder.md` and `docs/testing/testing-strategy.md`.
-
-The Phase 2 kernel must preserve the chain:
+The canonical execution chain remains:
 
 ```text
-ExecutionAttempt -> evidence -> verifier decision -> canonical WorkItem completion/rejection
+Assignment -> execution/effect evidence -> verifier/reconciler decision -> canonical WorkItem completion/rejection
 ```
 
 Never introduce a provider callback or model response that bypasses this chain.
 
-Verification and authority are separate. Passing verification does not retroactively grant permission for a consequential effect that lacked current authority.
-
 ## Current implementation discipline
 
-Phase 1 is complete. Phase 2 provider-neutral autonomy kernel is merged. Phase 2.1 Free-First routing is merged and passed real zero-spend live certification with an independent verifier and cross-provider portability drill. Phase 2.2 Canonical Authority Hardening is implemented with database-enforced birth-state, exact approval binding, approval immutability, stale-version/TOCTOU guards, and explicit consequential-action thresholds.
+Foundation v3 and Phase 1 are complete. Phase 2 provider-neutral autonomy is implemented. Phase 2.1 Free-First routing is live-certified on a representative worker/verifier/provider-replacement path. Phase 2.2 hardens exact/version-bound authority.
 
-Phase 3.0 defines the complete golden-path and governed local execution-workspace contract. Phase 3.1 Adaptive Discovery / Challenge / Strategy is implemented and CI-verified with **75/75 tests** and nine migrations. It keeps model analysis proposed until operator acceptance and reuses the existing Free-First zero-incremental routing boundary.
+**Phase 3 is complete for the canonical synthetic/local delivery golden path.** It now covers adaptive discovery/strategy, strategy-specific Work Graph and logical-role activation, bounded real local execution, deterministic + actual local-flow verification, bounded repair semantics, independent reconciliation, and final delivery evidence.
 
-The next material subphase is **Phase 3.2 — Dynamic Workforce / Work Graph**. Generate strategy-specific work and capability/evidence/authority requirements from the accepted Phase 3.1 Project Brief. Do not grant filesystem/command authority yet; that remains Phase 3.3.
+The executable implementation head passed **81/81 tests with 10 migrations** before documentation closure. Final merge-candidate CI also runs `npm run phase3:certify` as an explicit local certification gate.
 
-The first consequential implementation capability must consume the Phase 2.2 authority contract and the additional local execution-workspace boundary in `docs/plans/phase-3.0-golden-path-contract.md`. Do not add a provider-specific path that creates shared/external state from model intent alone.
+Do not translate this into a claim of production autonomy. Phase 3 does not authorize or certify shared GitHub mutation, production deployment, real client data, Meta/CRM/email/SMS effects, arbitrary external integrations, credential grants, ad spend, or always-on unattended hosting.
 
-Keep the first Phase 3 path narrow. Do not expand it into production autonomy, remote GitHub mutation, a generic integration marketplace, Paperclip/Activepieces adoption without measured need, or a PM/CRM/ERP suite.
+The next direction is **Phase 4 — Broaden Delivery Adapters**, but it is evidence-driven. Add the next source-control/deployment/workflow/configuration/integration adapter only when a concrete Project exposes that delivery gap. Do not turn Phase 4 into a speculative integration marketplace.
+
+Keep the anti-PM-suite boundary. Do not expand Workflow OS into a generic PM/CRM/ERP product merely because those features are easy to imagine.
 
 ## Public repository
 

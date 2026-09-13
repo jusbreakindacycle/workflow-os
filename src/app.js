@@ -10,6 +10,7 @@ import { handleControlPlaneApi, statusForControlPlaneError } from './http/contro
 import { handlePhase2Api, statusForPhase2Error } from './http/phase2-api.js';
 import { handleFreeFirstApi, statusForFreeFirstError } from './http/free-first-api.js';
 import { handlePhase31Api, statusForPhase31Error } from './http/phase31-api.js';
+import { handlePhase3Api, statusForPhase3Error } from './http/phase3-api.js';
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(moduleDir, '..');
@@ -31,8 +32,8 @@ export function createApp(options) {
 
   const status = {
     service: 'workflow-os',
-    phase: 'phase-3.1',
-    gate: 'adaptive-discovery-challenge-strategy-implemented',
+    phase: 'phase-3.5',
+    gate: 'end-to-end-local-delivery-golden-path-implemented',
     database: { status: 'ready', migrations }
   };
   assertFoundationStatus(status);
@@ -47,6 +48,8 @@ export function createApp(options) {
         if (intakeResult) return sendJson(response, intakeResult.status, intakeResult.body);
         const phase31Result = await handlePhase31Api({ request, url, db });
         if (phase31Result) return sendJson(response, phase31Result.status, phase31Result.body);
+        const phase3Result = await handlePhase3Api({ request, url, db });
+        if (phase3Result) return sendJson(response, phase3Result.status, phase3Result.body);
         const controlPlaneResult = await handleControlPlaneApi({ request, url, db });
         if (controlPlaneResult) return sendJson(response, controlPlaneResult.status, controlPlaneResult.body);
         const phase2Result = await handlePhase2Api({ request, url, db });
@@ -61,7 +64,7 @@ export function createApp(options) {
     } catch (error) {
       console.error(error);
       if ((request.url ?? '').startsWith('/api/')) {
-        const statusCode = Math.max(statusForApiError(error), statusForPhase31Error(error), statusForControlPlaneError(error), statusForPhase2Error(error), statusForFreeFirstError(error));
+        const statusCode = Math.max(statusForApiError(error), statusForPhase31Error(error), statusForPhase3Error(error), statusForControlPlaneError(error), statusForPhase2Error(error), statusForFreeFirstError(error));
         return sendJson(response, statusCode, { error: error instanceof Error ? error.message : 'request_failed' });
       }
       return sendJson(response, 500, { error: 'internal_error' });

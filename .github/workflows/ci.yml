@@ -24,6 +24,8 @@ jobs:
         run: |
           npm run db:migrate
           npm run db:backup
+      - name: Certify Phase 3 local delivery golden path
+        run: npm run phase3:certify
       - name: Confirm live provider harnesses are opt-in only
         run: |
           if npm run phase2:live >/tmp/phase2-live.out 2>&1; then
