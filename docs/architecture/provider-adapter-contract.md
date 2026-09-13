@@ -20,6 +20,14 @@ Every adapter class should expose equivalents of:
 - supported provider/API version bounds;
 - known unsupported semantics.
 
+## External-effect rule
+
+A provider adapter being technically capable of a mutation does not authorize that mutation.
+
+Durable shared/external effects must consume the governed boundary in `external-action-contract.md`: exact canonical plan, applicable authority/spend, deterministic preflight, use-time freshness, bounded adapter attempt, read-after-write reconciliation, and verification evidence.
+
+Read-only observation may use the lighter applicable R0 policy. Consequential mutation must not be invoked directly from model/runtime intent.
+
 ## Adapter classes
 
 ### Model Adapter
@@ -40,7 +48,7 @@ Deploys/executes WIR-compatible business workflows.
 
 ### Source Control Adapter
 
-Repository/branch/PR/status operations.
+Repository/branch/commit/pull-request/status operations. The first governed implementation follows `source-control-adapter-contract.md` and deliberately excludes merge/force-push/settings/secrets/releases from the certified Phase 4.1 write path.
 
 ### Deployment Adapter
 
@@ -54,9 +62,13 @@ Normalized alerts/health/evidence links.
 
 Never infer capability merely from provider name. Route only against declared/tested capability manifests for the configured provider version.
 
+Capability is not authority: eligibility means an adapter can perform an operation if the current canonical plan/policy permits it.
+
 ## Failure behavior
 
 Unknown/unsupported semantics fail closed. Provider outage creates waiting/blocked/unknown execution state, not false Project completion.
+
+For consequential mutations, transport failure must distinguish known no-effect from uncertain outcome. Uncertain state requires reconciliation before retry.
 
 ## Canonical boundary
 
