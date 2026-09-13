@@ -58,19 +58,54 @@ Adversarial tests cover direct-SQL WorkItem bypass, cross-Project/unknown/stale 
 
 See `docs/plans/phase-2.2-canonical-authority-hardening.md` and `docs/reviews/phase-2.2-implementation-report.md`.
 
-## Phase 3 — End-to-end Delivery Golden Path — next
+## Phase 3 — End-to-end Delivery Golden Path — in progress
 
-Add AI-assisted discovery/research/challenge and dynamic internal role activation, then choose the first complete delivery path from an actual controlled Project's **delivery strategy**.
+Phase 3 proves one controlled internal/synthetic Project can move from raw request to a verified real outcome with minimal operator coordination and with every consequential effect governed by the Phase 2.2 authority contract.
 
-The first consequential adapter/runtime capability must consume the Phase 2.2 authority contract: exact subject/version/bounds when approval is required, freshness at resolution, and revalidation immediately before a durable/external effect.
+### Phase 3.0 — Golden Path and Governed Execution Contract — complete
 
-Examples:
+Defines the first synthetic certification case, adaptive discovery/research/challenge boundaries, capability-driven workforce direction, strategy-dependent work graph, Project Pack/Context Slice expectations, and the governed local execution-workspace authority boundary before workers receive real filesystem/command permissions.
 
-- `custom_build` / hybrid software: approved repository/bootstrap -> implementation -> test/review -> controlled deploy/delivery;
-- `automate` / integrate: evaluate/activate Workflow Engine Adapter earlier and execute the governed automation path;
+### Phase 3.1 — Adaptive Discovery / Challenge / Strategy — implemented and CI-verified
+
+Implements bounded AI-assisted pre-brief reasoning that:
+
+- preserves raw request and requested solution separately;
+- asks only structured material questions with explicit impact areas;
+- keeps `I don't know`/skipped answers explicit;
+- requires re-analysis after answers;
+- records conditional research requirements rather than inventing external facts;
+- challenges the requested solution and compares alternatives;
+- recommends delivery strategy from source-backed evidence;
+- reuses zero-incremental Free-First routing without silent paid fallback;
+- waits for operator acceptance/revision before creating the canonical Project Brief;
+- preserves a rejected model recommendation when the operator chooses another strategy.
+
+Phase 3.1 CI passed **75/75 tests** with nine migrations plus migration/backup and live-harness opt-in checks. See `docs/plans/phase-3.1-adaptive-discovery-strategy.md` and `docs/reviews/phase-3.1-implementation-report.md`.
+
+### Phase 3.2 — Dynamic Workforce / Work Graph — next
+
+Consume the accepted Phase 3.1 Project Brief and selected delivery strategy to generate strategy-specific WorkItems, dependencies, capability requirements, evidence contracts, authority requirements, verification requirements, and logical role activation. Replace the universal Phase 1 initial graph as the Phase 3 default without breaking its regression path.
+
+### Phase 3.3 — Governed Local Execution Workspace — later
+
+Implement the dedicated per-Project local execution workspace with bounded filesystem, command, network and process authority. Local isolated execution remains distinct from GitHub/shared-remote mutation.
+
+### Phase 3.4 — Verification / Repair / Delivery — later
+
+Implement deterministic checks, actual local user/business flow verification, independent review, bounded repair, evidence reconciliation, and delivery semantics.
+
+### Phase 3.5 — Full End-to-end Certification — later
+
+Run the canonical synthetic Project from raw client request through the complete governed local delivery outcome and certify the Command Center evidence chain.
+
+The first consequential adapter/runtime capability must consume exact subject/version/bounds authority when approval is required, freshness at resolution, and revalidation immediately before a durable/external effect.
+
+Examples remain strategy-dependent:
+
+- `custom_build` / hybrid software: governed local workspace -> implementation -> test/review -> controlled later delivery/deploy;
+- `automate` / integrate: evaluate/activate Workflow Engine Adapter when the accepted strategy requires it;
 - `configure` / adopt existing: use appropriate tool/provider adapters and evidence without inventing source-code/repository/deployment steps.
-
-Goal: one controlled internal/synthetic Project reaches a verified real outcome from raw request with minimal operator coordination. The system does not privilege coding merely because coding agents are available.
 
 If unattended/background execution becomes valuable, define an `ExecutionHost` topology (local desktop, always-on self-hosted machine, or replaceable remote host). Canonical state must not depend on one hosting vendor.
 
