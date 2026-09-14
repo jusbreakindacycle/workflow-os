@@ -24,6 +24,8 @@
 - [Skill Registry](architecture/skill-registry.md)
 - [Spend Gate](architecture/spend-gate.md)
 - [Provider Adapter Contract](architecture/provider-adapter-contract.md)
+- [External Action Contract](architecture/external-action-contract.md)
+- [Source Control Adapter Contract](architecture/source-control-adapter-contract.md)
 - [Internal Workforce Adapter](architecture/internal-workforce-adapter-contract.md)
 - [Workflow Engine Adapter](architecture/workflow-engine-adapter-contract.md)
 
@@ -53,6 +55,7 @@
 - [Phase 2.2 Canonical Authority Hardening Acceptance Criteria](testing/phase-2.2-acceptance-criteria.md)
 - [Phase 3.0 Golden Path Contract Acceptance Criteria](testing/phase-3.0-acceptance-criteria.md)
 - [Phase 3.1 Adaptive Discovery / Challenge / Strategy Acceptance Criteria](testing/phase-3.1-acceptance-criteria.md)
+- [Phase 4.0–4.1 External Action / Source Control Acceptance Criteria](testing/phase-4.0-4.1-acceptance-criteria.md)
 - [Production and Maintenance](operations/production-maintenance.md)
 - [Windows Free-First Provider Setup](operations/free-first-provider-setup-windows.md)
 
@@ -80,6 +83,7 @@
 ## Decisions, reviews, and plans
 
 - [Decision Index](decisions/index.md)
+- [ADR-024 Governed External Action Boundary](decisions/ADR-024-governed-external-action-boundary.md)
 - [Legacy Decision Disposition](decisions/legacy-foundation-decisions.md)
 - [PR #7 Adversarial Review](reviews/pr-7-adversarial-review.md)
 - [Phase 1 Completion Report](reviews/phase-1-completion-report.md)
@@ -98,6 +102,8 @@
 - [Phase 3.2 Dynamic Workforce / Work Graph](plans/phase-3.2-dynamic-workforce-work-graph.md)
 - [Phase 3.3 Governed Local Execution Workspace](plans/phase-3.3-governed-local-execution-workspace.md)
 - [Phase 3.4 Verification / Repair / Delivery](plans/phase-3.4-verification-repair-delivery.md)
+- [Phase 4 Real Delivery Adapters](plans/phase-4-real-delivery-adapters.md)
+- [Phase 4.1 Governed Source Control](plans/phase-4.1-governed-source-control.md)
 
 ## Templates / schemas
 
