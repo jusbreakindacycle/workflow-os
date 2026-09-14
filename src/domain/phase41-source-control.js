@@ -41,6 +41,7 @@ export class Phase41SourceControl {
     };
     const preconditions = {
       expectedBaseCommit: baseCommit.trim(),
+      artifactManifest: manifest,
       artifactManifestSha256,
       projectedTreeSha256,
       commitMessage: commitMessage.trim(),
@@ -96,7 +97,7 @@ export class Phase41SourceControl {
     const delivery = this.#delivery(workspaceId, projectId, externalActionPlanId);
     const external = this.external.getPlan({ workspaceId, projectId, planId: externalActionPlanId });
     this.#assertCurrentArtifact(delivery);
-    this.#assertRemotePreconditions(external);
+    await this.#assertRemotePreconditions(external);
     const preflight = this.external.preflight({ workspaceId, projectId, planId: externalActionPlanId });
     if (!preflight.ok) throw new Error(`source_control_external_preflight_blocked:${preflight.blockers.join('|')}`);
 
@@ -157,11 +158,11 @@ export class Phase41SourceControl {
     };
   }
 
-  #assertRemotePreconditions(external) {
-    const repository = this.adapter.inspectRepository({ repository: external.target.repository });
+  async #assertRemotePreconditions(external) {
+    const repository = await this.adapter.inspectRepository({ repository: external.target.repository });
     if (!repository?.available) throw new Error('source_control_repository_unavailable');
     if (repository.defaultBranch === external.target.deliveryBranch) throw new Error('source_control_default_branch_write_forbidden');
-    const base = this.adapter.resolveRef({ repository: external.target.repository, ref: external.target.baseRef });
+    const base = await this.adapter.resolveRef({ repository: external.target.repository, ref: external.target.baseRef });
     if (!base || base.sha !== external.target.baseCommit) throw new Error('source_control_base_drift');
   }
 
