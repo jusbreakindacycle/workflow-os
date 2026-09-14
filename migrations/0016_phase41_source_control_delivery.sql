@@ -1,3 +1,7 @@
+INSERT INTO app_metadata (key, value, updated_at)
+VALUES ('phase41_governed_source_control', '1', CURRENT_TIMESTAMP)
+ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at;
+
 CREATE TABLE source_control_delivery_plans (
   id TEXT PRIMARY KEY,
   workspace_id TEXT NOT NULL,
@@ -32,5 +36,3 @@ CREATE INDEX idx_source_control_delivery_project ON source_control_delivery_plan
 CREATE UNIQUE INDEX idx_source_control_delivery_active_branch
   ON source_control_delivery_plans(workspace_id, provider, repository_ref, delivery_branch)
   WHERE status NOT IN ('complete','rejected','superseded','failed');
-
-INSERT OR REPLACE INTO app_metadata(key,value) VALUES ('phase41_governed_source_control','1');
