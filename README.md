@@ -1,6 +1,6 @@
 # Workflow OS (temporary name)
 
-> **Status:** Foundation v3, Phase 1, Phase 2, Phase 2.1, Phase 2.2 and the complete Phase 3 synthetic/local delivery golden path are implemented. Phase 2.1 passed representative real zero-spend provider certification on 2026-09-12. Phase 3 now proves one raw synthetic client request can reach a strategy-specific Work Graph, governed real local artifact execution, L2/L3 verification, independent reconciliation and a final delivery record. **This is not production/shared-remote autonomy.** Phase 4 is the next evidence-driven direction. The product name `workflow-os` is temporary.
+> **Status:** Foundation v3, Phase 1, Phase 2, Phase 2.1, Phase 2.2, the complete Phase 3 synthetic/local delivery golden path, and **Phase 4.0 governed external-action control plane** are implemented. Phase 2.1 passed representative real zero-spend provider certification on 2026-09-12. Phase 3 proves one raw synthetic client request can reach a strategy-specific Work Graph, governed real local artifact execution, L2/L3 verification, independent reconciliation and a final delivery record. Phase 4.0 now proves the provider-neutral `plan -> authority -> preflight -> attempt -> reconcile -> verify` external-action lifecycle with deterministic fixture evidence. **This is still not GitHub/shared-remote or production autonomy. Phase 4.1 Governed Source Control is next.** The product name `workflow-os` is temporary.
 
 Workflow OS is intended to become the **one operating interface a solo builder uses to run client and internal delivery work without depending on one AI platform, one coding agent, or one model vendor**.
 
@@ -200,30 +200,41 @@ raw request
 
 The generated certification artifact contains a synthetic offer, lead form, validation and local in-memory receiver. It uses no real customer/client data and no external business endpoint.
 
-Executable implementation CI passed **81/81 tests with 10 migrations**. The merge-candidate workflow also runs `npm run phase3:certify` as a separate local certification gate.
-
 See `docs/reviews/phase-3.5-end-to-end-certification-report.md`.
 
 ### What Phase 3 does not prove
 
-Phase 3 does not certify:
+Phase 3 does not certify production deployment, GitHub/shared-remote mutation, real client/customer data handling, Meta/Facebook/Instagram API access, real ad spend/performance, CRM/email/SMS/public/client messaging, arbitrary real external integrations, credential/permission grants, unattended always-on hosting, or every strategy end to end.
 
-- production deployment;
-- GitHub/shared-remote mutation;
-- real client/customer data handling;
-- Meta/Facebook/Instagram API access;
-- real ad spend/performance;
-- CRM/email/SMS/public/client messaging;
-- arbitrary real external integrations;
-- credential/permission grants;
-- unattended always-on hosting;
-- every strategy end to end.
+## Phase 4.0 — Governed External Action Contract — complete for the deterministic fixture path
 
-Those remain future adapter/authority/certification problems.
+Phase 4.0 adds the generic canonical boundary for durable shared/external effects without making any provider canonical.
 
-## Next engineering direction — Phase 4, evidence-driven
+```text
+exact plan
+-> exact current authority
+-> deterministic preflight
+-> one bounded attempt
+-> reconcile observed external state
+-> L3 evidence
+-> verified / complete / retry / block / escalate
+```
 
-Broaden delivery adapters only from measured Project needs. Likely candidates are workflow/WIR execution, governed source-control/shared-remote actions, deployment/hosting with rollback, and real configure/integrate execution paths.
+The implementation includes exact Project/WorkItem version capture, plan/input/target hashing, idempotency, use-time authority revalidation, optional SpendEnvelope binding, explicit uncertain outcomes, reconciliation-before-retry, bounded external-attempt budgets, provider-resource mappings and Command Center attention state.
+
+Merge-candidate CI passed **91/91 tests with 15 migrations**. `npm run phase40:certify` also passed with one fixture attempt, one confirmed reconciliation, one provider mapping, exact approval binding and L3 evidence while explicitly reporting `realExternalSideEffects: false`.
+
+See `docs/reviews/phase-4.0-implementation-report.md`.
+
+### What Phase 4.0 does not prove
+
+Phase 4.0 does not certify real GitHub mutation, merge/force-push/settings/secrets/releases, deployment, production mutation, external messaging, real client/customer data, arbitrary credentials, unattended hosting, or paid external effects without an applicable SpendEnvelope.
+
+## Next engineering direction — Phase 4.1 Governed Source Control
+
+Phase 4.1 is the next coding task. It will consume the Phase 4.0 contract to take one verified local artifact through an exact non-default remote branch, exact commit/tree, exact pull request and remote reconciliation.
+
+Normal CI remains credential-free. Any live GitHub certification must be separately opt-in and restricted to one exact disposable/non-production repository. Merge, force push, repository settings, secrets, releases and deployment remain outside Phase 4.1.
 
 Do not add every possible provider or enterprise-scale subsystem speculatively.
 
@@ -234,6 +245,7 @@ npm run verify
 npm run db:migrate
 npm run db:backup
 npm run phase3:certify
+npm run phase40:certify
 npm start
 ```
 
@@ -263,8 +275,9 @@ This repository is public. Use synthetic data only. Never commit real client dat
 5. `ARCHITECTURE.md`
 6. `docs/security/risk-and-approval-policy.md`
 7. `docs/plans/roadmap.md`
-8. `docs/plans/phase-3.0-golden-path-contract.md`
-9. `docs/reviews/phase-3.5-end-to-end-certification-report.md`
+8. `docs/architecture/external-action-contract.md`
+9. `docs/reviews/phase-4.0-implementation-report.md`
+10. `docs/plans/phase-4.1-governed-source-control.md`
 
 ## One-line product test
 

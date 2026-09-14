@@ -11,6 +11,9 @@ import { handlePhase2Api, statusForPhase2Error } from './http/phase2-api.js';
 import { handleFreeFirstApi, statusForFreeFirstError } from './http/free-first-api.js';
 import { handlePhase31Api, statusForPhase31Error } from './http/phase31-api.js';
 import { handlePhase3Api, statusForPhase3Error } from './http/phase3-api.js';
+import { handlePhase40PlanApi, statusForPhase40Error } from './http/phase40-plan-api.js';
+import { handlePhase40AttemptApi } from './http/phase40-attempt-api.js';
+import { handlePhase40CommandCenterApi } from './http/phase40-command-center-api.js';
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(moduleDir, '..');
@@ -32,8 +35,8 @@ export function createApp(options) {
 
   const status = {
     service: 'workflow-os',
-    phase: 'phase-3.5',
-    gate: 'end-to-end-local-delivery-golden-path-implemented',
+    phase: 'phase-4.0',
+    gate: 'governed-external-action-control-plane-implemented',
     database: { status: 'ready', migrations }
   };
   assertFoundationStatus(status);
@@ -50,6 +53,12 @@ export function createApp(options) {
         if (phase31Result) return sendJson(response, phase31Result.status, phase31Result.body);
         const phase3Result = await handlePhase3Api({ request, url, db });
         if (phase3Result) return sendJson(response, phase3Result.status, phase3Result.body);
+        const phase40PlanResult = await handlePhase40PlanApi({ request, url, db });
+        if (phase40PlanResult) return sendJson(response, phase40PlanResult.status, phase40PlanResult.body);
+        const phase40AttemptResult = await handlePhase40AttemptApi({ request, url, db });
+        if (phase40AttemptResult) return sendJson(response, phase40AttemptResult.status, phase40AttemptResult.body);
+        const phase40CommandCenterResult = handlePhase40CommandCenterApi({ request, url, db });
+        if (phase40CommandCenterResult) return sendJson(response, phase40CommandCenterResult.status, phase40CommandCenterResult.body);
         const controlPlaneResult = await handleControlPlaneApi({ request, url, db });
         if (controlPlaneResult) return sendJson(response, controlPlaneResult.status, controlPlaneResult.body);
         const phase2Result = await handlePhase2Api({ request, url, db });
@@ -64,8 +73,8 @@ export function createApp(options) {
     } catch (error) {
       console.error(error);
       if ((request.url ?? '').startsWith('/api/')) {
-        const statusCode = Math.max(statusForApiError(error), statusForPhase31Error(error), statusForPhase3Error(error), statusForControlPlaneError(error), statusForPhase2Error(error), statusForFreeFirstError(error));
-        return sendJson(response, statusCode, { error: error instanceof Error ? error.message : 'request_failed' });
+        const statusCode = Math.max(statusForApiError(error), statusForPhase31Error(error), statusForPhase3Error(error), statusForPhase40Error(error), statusForControlPlaneError(error), statusForPhase2Error(error), statusForFreeFirstError(error));
+        return sendJson(response, statusCode || 500, { error: error instanceof Error ? error.message : 'request_failed' });
       }
       return sendJson(response, 500, { error: 'internal_error' });
     }
