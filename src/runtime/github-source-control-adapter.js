@@ -32,6 +32,7 @@ export class GitHubSourceControlAdapter {
     let mutated = false;
     try {
       const target = plan.target;
+      const preconditions = plan.details?.preconditions ?? {};
       const repository = await this.inspectRepository({ repository: target.repository });
       if (repository.defaultBranch === target.deliveryBranch) return failed('source_control_default_branch_write_forbidden');
       const base = await this.resolveRef({ repository: target.repository, ref: target.baseRef });
@@ -56,14 +57,14 @@ export class GitHubSourceControlAdapter {
       }
       const tree = await this.#request('POST', `/repos/${repoPath(target.repository)}/git/trees`, { tree: treeEntries }, { mutation: true });
       mutated = true;
-      const commit = await this.#request('POST', `/repos/${repoPath(target.repository)}/git/commits`, { message: plan.preconditions.commitMessage, tree: tree.sha, parents: [target.baseCommit] }, { mutation: true });
+      const commit = await this.#request('POST', `/repos/${repoPath(target.repository)}/git/commits`, { message: preconditions.commitMessage, tree: tree.sha, parents: [target.baseCommit] }, { mutation: true });
       mutated = true;
       await this.#request('PATCH', `/repos/${repoPath(target.repository)}/git/refs/heads/${encodeURIComponent(target.deliveryBranch)}`, { sha: commit.sha, force: false }, { mutation: true });
       mutated = true;
 
       let pr = await this.#findPullRequest(plan);
       if (!pr) {
-        pr = await this.#request('POST', `/repos/${repoPath(target.repository)}/pulls`, { title: plan.preconditions.prTitle, body: plan.preconditions.prBody, head: target.deliveryBranch, base: target.baseRef }, { mutation: true });
+        pr = await this.#request('POST', `/repos/${repoPath(target.repository)}/pulls`, { title: preconditions.prTitle, body: preconditions.prBody, head: target.deliveryBranch, base: target.baseRef }, { mutation: true });
         mutated = true;
       }
       return { outcome: 'succeeded', providerOperationRef: commit.sha, providerResourceRef: pr.html_url ?? String(pr.number), result: { branch: target.deliveryBranch, commit: commit.sha, tree: tree.sha, pullRequest: normalizePr(pr) } };
@@ -76,6 +77,7 @@ export class GitHubSourceControlAdapter {
 
   async reconcile(plan) {
     const target = plan.target;
+    const preconditions = plan.details?.preconditions ?? {};
     const branch = await this.resolveRef({ repository: target.repository, ref: target.deliveryBranch });
     const pr = await this.#findPullRequest(plan);
     if (!branch && !pr) return { classification: 'not_applied', observedState: { provider: this.provider, repository: target.repository, branch: null, pullRequest: null } };
@@ -83,18 +85,18 @@ export class GitHubSourceControlAdapter {
 
     const commit = await this.#request('GET', `/repos/${repoPath(target.repository)}/git/commits/${encodeURIComponent(branch.sha)}`, null, { mutation: false });
     const parentSha = commit.parents?.[0]?.sha ?? null;
-    if (parentSha !== target.baseCommit || commit.message !== plan.preconditions.commitMessage) {
+    if (parentSha !== target.baseCommit || commit.message !== preconditions.commitMessage) {
       return { classification: 'drifted', observedState: { provider: this.provider, repository: target.repository, deliveryBranch: target.deliveryBranch, commit: branch.sha, parent: parentSha, pullRequest: pr ? normalizePr(pr) : null } };
     }
 
     const remoteManifest = await this.#readTreeManifest(target.repository, commit.tree?.sha);
-    const expectedManifest = normalizeManifest(plan.preconditions.artifactManifest ?? []);
-    if (!manifestsEqual(remoteManifest, expectedManifest) || !pr || pr.title !== plan.preconditions.prTitle || (pr.body ?? '') !== plan.preconditions.prBody || pr.base?.ref !== target.baseRef || pr.head?.ref !== target.deliveryBranch) {
+    const expectedManifest = normalizeManifest(preconditions.artifactManifest ?? []);
+    if (!manifestsEqual(remoteManifest, expectedManifest) || !pr || pr.title !== preconditions.prTitle || (pr.body ?? '') !== preconditions.prBody || pr.base?.ref !== target.baseRef || pr.head?.ref !== target.deliveryBranch) {
       return { classification: 'drifted', observedState: { provider: this.provider, repository: target.repository, deliveryBranch: target.deliveryBranch, commit: branch.sha, remoteManifest, pullRequest: pr ? normalizePr(pr) : null } };
     }
     const checks = await this.getChecks({ repository: target.repository, commitSha: branch.sha });
     const observedState = { provider: this.provider, repository: target.repository, baseRef: target.baseRef, baseCommit: target.baseCommit, deliveryBranch: target.deliveryBranch, commit: branch.sha, tree: commit.tree?.sha ?? null, artifactManifest: remoteManifest, pullRequest: normalizePr(pr), checks };
-    if (plan.preconditions.checksPolicy?.required && !checksPass(checks)) return { classification: 'uncertain', providerResourceRef: pr.html_url ?? String(pr.number), observedState: { ...observedState, verificationPending: true } };
+    if (preconditions.checksPolicy?.required && !checksPass(checks)) return { classification: 'uncertain', providerResourceRef: pr.html_url ?? String(pr.number), observedState: { ...observedState, verificationPending: true } };
     return { classification: 'confirmed', providerResourceRef: pr.html_url ?? String(pr.number), observedState };
   }
 
@@ -176,7 +178,7 @@ function checksPass(checks) {
   if (runs.length === 0 && statuses.length === 0) return false;
   const runPass = runs.every((run) => run.status === 'completed' && ['success','neutral','skipped'].includes(run.conclusion));
   const statusPass = statuses.every((status) => status.state === 'success');
-  return runPass && statusPass && ['success','pending'].includes(checks.combinedState) && checks.combinedState !== 'pending';
+  return runPass && statusPass && checks.combinedState === 'success';
 }
 function repoPath(repository) {
   if (typeof repository !== 'string' || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository)) throw new TypeError('source_control_repository_ref_invalid');
