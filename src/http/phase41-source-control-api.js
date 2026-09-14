@@ -52,8 +52,16 @@ export async function handlePhase41SourceControlApi({ request, url, db, workspac
 export function statusForPhase41Error(error) {
   const message = error instanceof Error ? error.message : String(error);
   if (error instanceof TypeError) return 400;
+  if (message.includes('provider_unsupported')) return 400;
   if (message.includes('not_found')) return 404;
-  if (message.includes('required') || message.includes('forbidden') || message.includes('drift') || message.includes('blocked') || message.includes('unavailable') || message.includes('mismatch') || message.includes('uncertain') || message.includes('collision') || message.includes('stale') || message.includes('not_approved')) return 409;
+  if (
+    message.includes('required') || message.includes('forbidden') || message.includes('drift') ||
+    message.includes('blocked') || message.includes('unavailable') || message.includes('mismatch') ||
+    message.includes('uncertain') || message.includes('collision') || message.includes('stale') ||
+    message.includes('not_approved') || message.includes('authentication_') || message.includes('permission_') ||
+    message.includes('provider_rate') || message.includes('provider_quota') || message.includes('provider_outage') ||
+    message.includes('provider_conflict') || message.includes('provider_validation') || message.includes('partial_mutation')
+  ) return 409;
   return 0;
 }
 
