@@ -17,26 +17,13 @@ export class Phase40ExternalActions {
     this.controlPlane = new Phase1ControlPlane(db);
   }
 
-  createPlan({
-    workspaceId,
-    projectId,
-    workItemId = null,
-    assignmentId = null,
-    adapterClass,
-    actionKind,
-    target,
-    preconditions = {},
-    inputRefs = [],
-    inputSha256,
-    riskTier = 'R2',
-    actionClass = 'durable_external_mutation',
-    requiredAuthority = 'exact_approval',
-    spendEnvelopeId = null,
-    verification = {},
-    recovery = {},
-    expiresAt = null,
-    supersedesPlanId = null
-  }) {
+  createPlan(input) {
+    const {
+      workspaceId, projectId, workItemId = null, assignmentId = null,
+      adapterClass, actionKind, target, preconditions = {}, inputRefs = [], inputSha256,
+      riskTier = 'R2', actionClass = 'durable_external_mutation', requiredAuthority = 'exact_approval',
+      spendEnvelopeId = null, verification = {}, recovery = {}, expiresAt = null, supersedesPlanId = null
+    } = input;
     const project = this.#project(workspaceId, projectId);
     const workItem = workItemId ? this.#workItem(workspaceId, projectId, workItemId) : null;
     if (!isText(adapterClass) || !isText(actionKind)) throw new TypeError('external_action_kind_required');
@@ -56,30 +43,13 @@ export class Phase40ExternalActions {
       supersedes = this.#plan(workspaceId, projectId, supersedesPlanId);
       if (['executing', 'reconciling'].includes(supersedes.status)) throw new Error('external_action_cannot_supersede_active_plan');
     }
-
     const version = supersedes ? Number(supersedes.version) + 1 : 1;
     const content = {
-      workspaceId,
-      projectId,
-      workItemId,
-      assignmentId,
-      version,
-      projectVersion: Number(project.version),
-      workItemVersion: workItem ? Number(workItem.version) : null,
-      adapterClass: adapterClass.trim(),
-      actionKind: actionKind.trim(),
-      target,
-      preconditions,
-      inputRefs,
-      inputSha256: inputSha256.trim(),
-      riskTier,
-      actionClass,
-      requiredAuthority,
-      spendEnvelopeId,
-      verification,
-      recovery,
-      expiresAt,
-      supersedesPlanId
+      workspaceId, projectId, workItemId, assignmentId, version,
+      projectVersion: Number(project.version), workItemVersion: workItem ? Number(workItem.version) : null,
+      adapterClass: adapterClass.trim(), actionKind: actionKind.trim(), target, preconditions, inputRefs,
+      inputSha256: inputSha256.trim(), riskTier, actionClass, requiredAuthority, spendEnvelopeId,
+      verification, recovery, expiresAt, supersedesPlanId
     };
     const planSha256 = sha256Json(content);
     const idempotencyKey = `phase40:${planSha256}`;
@@ -90,7 +60,7 @@ export class Phase40ExternalActions {
     const now = isoNow();
     this.#transaction(() => {
       if (supersedes && supersedes.status !== 'superseded') {
-        this.db.prepare("UPDATE external_action_plans SET status='superseded', updated_at=? WHERE id=? AND workspace_id=? AND project_id=?").run(now, supersedes.id, workspaceId, projectId);
+        this.db.prepare("UPDATE external_action_plans SET status='superseded',updated_at=? WHERE id=? AND workspace_id=? AND project_id=?").run(now, supersedes.id, workspaceId, projectId);
       }
       this.db.prepare(`INSERT INTO external_action_plans
         (id,workspace_id,project_id,work_item_id,version,project_version,work_item_version,adapter_class,action_kind,target_json,input_sha256,plan_sha256,risk_tier,action_class,required_authority,spend_envelope_id,idempotency_key,verification_json,recovery_json,status,expires_at,created_at,updated_at)
@@ -113,29 +83,21 @@ export class Phase40ExternalActions {
     if (plan.status !== 'proposed') throw new Error(`external_action_plan_not_proposed:${plan.status}`);
     if (plan.required_authority === 'none') {
       if (plan.action_class !== 'read_only') throw new Error('external_action_mutation_requires_authority');
-      this.db.prepare("UPDATE external_action_plans SET status='authorized',authorized_at=?,updated_at=? WHERE id=? AND workspace_id=? AND project_id=?").run(isoNow(), isoNow(), planId, workspaceId, projectId);
-      return { plan: this.#plan(workspaceId, projectId, planId), approval: null };
+      const now = isoNow();
+      this.db.prepare("UPDATE external_action_plans SET status='authorized',authorized_at=?,updated_at=? WHERE id=? AND workspace_id=? AND project_id=?").run(now, now, planId, workspaceId, projectId);
+      return { plan: this.getPlan({ workspaceId, projectId, planId }), approval: null };
     }
     if (!plan.work_item_id) throw new Error('external_action_authority_work_item_required');
     if (plan.approval_id) return { plan: this.getPlan({ workspaceId, projectId, planId }), approval: this.#approval(workspaceId, projectId, plan.approval_id) };
-
     const approval = this.store.requestApproval({
-      workspaceId,
-      projectId,
-      subjectType: 'work_item',
-      subjectId: plan.work_item_id,
+      workspaceId, projectId, subjectType: 'work_item', subjectId: plan.work_item_id,
       subjectVersion: Number(plan.work_item_version),
       authorityReason: `External action requires exact authority: ${plan.adapter_class}/${plan.action_kind}`,
       bounds: {
-        externalActionPlanId: plan.id,
-        externalActionPlanVersion: Number(plan.version),
-        planSha256: plan.plan_sha256,
-        idempotencyKey: plan.idempotency_key,
-        adapterClass: plan.adapter_class,
-        actionKind: plan.action_kind,
-        targetSha256: sha256Json(parseJson(plan.target_json, {})),
-        actionClass: plan.action_class,
-        riskTier: plan.risk_tier
+        externalActionPlanId: plan.id, externalActionPlanVersion: Number(plan.version),
+        planSha256: plan.plan_sha256, idempotencyKey: plan.idempotency_key,
+        adapterClass: plan.adapter_class, actionKind: plan.action_kind,
+        targetSha256: sha256Json(parseJson(plan.target_json, {})), actionClass: plan.action_class, riskTier: plan.risk_tier
       }
     });
     this.db.prepare('UPDATE external_action_plans SET approval_id=?,updated_at=? WHERE id=? AND workspace_id=? AND project_id=?').run(approval.id, isoNow(), planId, workspaceId, projectId);
@@ -150,7 +112,8 @@ export class Phase40ExternalActions {
     const next = decision === 'approved' ? 'authorized' : 'rejected';
     if (decision === 'approved') this.#assertFresh(plan, { requireApproval: true });
     const now = isoNow();
-    this.db.prepare('UPDATE external_action_plans SET status=?,authorized_at=CASE WHEN ?="authorized" THEN ? ELSE authorized_at END,updated_at=? WHERE id=? AND workspace_id=? AND project_id=?').run(next, next, now, now, planId, workspaceId, projectId);
+    const authorizedAt = next === 'authorized' ? now : null;
+    this.db.prepare('UPDATE external_action_plans SET status=?,authorized_at=COALESCE(?,authorized_at),updated_at=? WHERE id=? AND workspace_id=? AND project_id=?').run(next, authorizedAt, now, planId, workspaceId, projectId);
     this.store.recordEvent({ workspaceId, projectId, workItemId: plan.work_item_id, eventType: `external_action.${next}`, actorType: 'operator', entityType: 'external_action_plan', entityId: planId, entityVersion: plan.version, payload: { approvalId: approval.id } });
     return { plan: this.getPlan({ workspaceId, projectId, planId }), approval };
   }
@@ -179,7 +142,8 @@ export class Phase40ExternalActions {
     const now = isoNow();
     const requestSha256 = sha256Json({ planSha256: plan.plan_sha256, adapterProvider, adapterVersion, operationKind, requestDescriptor });
     this.#transaction(() => {
-      this.db.prepare("UPDATE external_action_plans SET status='executing',updated_at=? WHERE id=? AND workspace_id=? AND project_id=? AND status='authorized'").run(now, planId, workspaceId, projectId);
+      const moved = this.db.prepare("UPDATE external_action_plans SET status='executing',updated_at=? WHERE id=? AND workspace_id=? AND project_id=? AND status='authorized'").run(now, planId, workspaceId, projectId);
+      if (Number(moved.changes) !== 1) throw new Error('external_action_plan_execution_state_conflict');
       this.db.prepare(`INSERT INTO external_action_attempts
         (id,workspace_id,project_id,plan_id,attempt_number,adapter_provider,adapter_version,operation_kind,request_sha256,status,started_at)
         VALUES (?,?,?,?,?,?,?,?,?,'started',?)`).run(id, workspaceId, projectId, planId, attemptNumber, adapterProvider.trim(), adapterVersion.trim(), operationKind.trim(), requestSha256, now);
@@ -197,8 +161,7 @@ export class Phase40ExternalActions {
     const planStatus = outcome === 'succeeded' ? 'reconciling' : outcome === 'uncertain' ? 'uncertain' : 'failed';
     const now = isoNow();
     this.#transaction(() => {
-      this.db.prepare(`UPDATE external_action_attempts SET status=?,normalized_result=?,provider_operation_ref=?,provider_resource_ref=?,error_class=?,result_json=?,finished_at=?
-        WHERE id=? AND workspace_id=? AND project_id=?`).run(outcome, outcome, providerOperationRef, providerResourceRef, errorClass, canonicalJson(result), now, attemptId, workspaceId, projectId);
+      this.db.prepare(`UPDATE external_action_attempts SET status=?,normalized_result=?,provider_operation_ref=?,provider_resource_ref=?,error_class=?,result_json=?,finished_at=? WHERE id=? AND workspace_id=? AND project_id=?`).run(outcome, outcome, providerOperationRef, providerResourceRef, errorClass, canonicalJson(result), now, attemptId, workspaceId, projectId);
       this.db.prepare('UPDATE external_action_plans SET status=?,updated_at=? WHERE id=? AND workspace_id=? AND project_id=?').run(planStatus, now, plan.id, workspaceId, projectId);
       this.store.recordEvent({ workspaceId, projectId, workItemId: plan.work_item_id, eventType: `external_action.attempt_${outcome}`, actorType: 'tool', actorId: attempt.adapter_provider, entityType: 'external_action_attempt', entityId: attemptId, entityVersion: attempt.attempt_number, payload: { planId: plan.id, errorClass } });
     });
@@ -213,24 +176,16 @@ export class Phase40ExternalActions {
     if (!['reconciling', 'uncertain'].includes(plan.status)) throw new Error(`external_action_plan_not_reconciling:${plan.status}`);
     const existing = this.db.prepare('SELECT * FROM action_reconciliation_records WHERE attempt_id=? ORDER BY created_at DESC LIMIT 1').get(attemptId);
     if (existing && existing.classification !== 'uncertain') return { reconciliation: existing, plan: this.getPlan({ workspaceId, projectId, planId: plan.id }) };
-
-    const observedSha256 = sha256Json(observedState);
+    const stateHash = sha256Json(observedState);
     const evidenceId = crypto.randomUUID();
     const reconciliationId = crypto.randomUUID();
     const now = isoNow();
     const nextStatus = classification === 'confirmed' ? 'verified' : classification === 'not_applied' ? 'authorized' : classification === 'drifted' ? 'blocked' : 'uncertain';
     this.#transaction(() => {
-      this.db.prepare(`INSERT INTO evidence_references
-        (id,workspace_id,project_id,work_item_id,level,evidence_type,summary,created_at)
-        VALUES (?,?,?,?, 'L3','external_action_reconciliation',?,?)`).run(
-          evidenceId, workspaceId, projectId, plan.work_item_id,
-          summary ?? canonicalJson({ planId: plan.id, attemptId, classification, observedSha256 }), now
-        );
-      this.db.prepare(`INSERT INTO action_reconciliation_records
-        (id,workspace_id,project_id,plan_id,attempt_id,classification,state_hash,evidence_id,created_at)
-        VALUES (?,?,?,?,?,?,?,?,?)`).run(reconciliationId, workspaceId, projectId, plan.id, attemptId, classification, observedSha256, evidenceId, now);
+      this.db.prepare(`INSERT INTO evidence_references (id,workspace_id,project_id,work_item_id,level,evidence_type,summary,created_at) VALUES (?,?,?,?, 'L3','external_action_reconciliation',?,?)`).run(evidenceId, workspaceId, projectId, plan.work_item_id, summary ?? canonicalJson({ planId: plan.id, attemptId, classification, stateHash }), now);
+      this.db.prepare(`INSERT INTO action_reconciliation_records (id,workspace_id,project_id,plan_id,attempt_id,classification,state_hash,evidence_id,created_at) VALUES (?,?,?,?,?,?,?,?,?)`).run(reconciliationId, workspaceId, projectId, plan.id, attemptId, classification, stateHash, evidenceId, now);
       this.db.prepare('UPDATE external_action_plans SET status=?,updated_at=? WHERE id=? AND workspace_id=? AND project_id=?').run(nextStatus, now, plan.id, workspaceId, projectId);
-      this.store.recordEvent({ workspaceId, projectId, workItemId: plan.work_item_id, eventType: `external_action.reconciled_${classification}`, actorType: 'system', entityType: 'external_action_plan', entityId: plan.id, entityVersion: plan.version, payload: { attemptId, evidenceId, observedSha256 } });
+      this.store.recordEvent({ workspaceId, projectId, workItemId: plan.work_item_id, eventType: `external_action.reconciled_${classification}`, actorType: 'system', entityType: 'external_action_plan', entityId: plan.id, entityVersion: plan.version, payload: { attemptId, evidenceId, stateHash } });
     });
     return { reconciliation: this.db.prepare('SELECT * FROM action_reconciliation_records WHERE id=?').get(reconciliationId), plan: this.getPlan({ workspaceId, projectId, planId: plan.id }) };
   }
@@ -251,29 +206,20 @@ export class Phase40ExternalActions {
     const reconciliations = this.db.prepare('SELECT * FROM action_reconciliation_records WHERE plan_id=? AND workspace_id=? AND project_id=? ORDER BY created_at').all(planId, workspaceId, projectId);
     const approval = plan.approval_id ? this.#approval(workspaceId, projectId, plan.approval_id) : null;
     return {
-      ...plan,
-      target: parseJson(plan.target_json, {}),
-      verification: parseJson(plan.verification_json, {}),
-      recovery: parseJson(plan.recovery_json, {}),
+      ...plan, target: parseJson(plan.target_json, {}), verification: parseJson(plan.verification_json, {}), recovery: parseJson(plan.recovery_json, {}),
       details: details ? { ...details, preconditions: parseJson(details.preconditions_json, {}), inputRefs: parseJson(details.input_refs_json, []) } : null,
-      approval,
-      attempts,
-      reconciliations
+      approval, attempts, reconciliations
     };
   }
 
   getProjectState({ workspaceId, projectId }) {
     this.#project(workspaceId, projectId);
     const plans = this.db.prepare('SELECT id FROM external_action_plans WHERE workspace_id=? AND project_id=? ORDER BY created_at,id').all(workspaceId, projectId).map((row) => this.getPlan({ workspaceId, projectId, planId: row.id }));
-    const attention = plans.filter((plan) => ['blocked', 'failed', 'uncertain'].includes(plan.status) || (plan.status === 'proposed' && plan.required_authority !== 'none')).map((plan) => ({
-      type: 'external_action',
-      planId: plan.id,
-      status: plan.status,
-      target: plan.target,
-      approvalStatus: plan.approval?.status ?? null,
-      reason: plan.status === 'uncertain' ? 'External effect is uncertain; reconcile before retry.' : plan.status === 'blocked' ? 'External action is blocked by preflight/authority state.' : plan.status === 'failed' ? 'External action attempt failed.' : 'Exact external-action approval is required.'
+    const needsAttention = plans.filter((plan) => ['blocked', 'failed', 'uncertain'].includes(plan.status) || (plan.status === 'proposed' && plan.required_authority !== 'none')).map((plan) => ({
+      type: 'external_action', planId: plan.id, status: plan.status, target: plan.target, approvalStatus: plan.approval?.status ?? null,
+      reason: plan.status === 'uncertain' ? 'External effect is uncertain; reconcile before retry.' : plan.status === 'blocked' ? 'External action is blocked by preflight or authority state.' : plan.status === 'failed' ? 'External action attempt failed.' : 'Exact external-action approval is required.'
     }));
-    return { projectId, plans, needsAttention: attention };
+    return { projectId, plans, needsAttention };
   }
 
   #freshnessBlockers(plan, { requireApproval }) {
@@ -304,7 +250,6 @@ export class Phase40ExternalActions {
     const blockers = this.#freshnessBlockers(plan, options);
     if (blockers.length) throw new Error(`external_action_authority_stale_or_missing:${blockers.join('|')}`);
   }
-
   #project(workspaceId, projectId) {
     const row = this.db.prepare('SELECT * FROM projects WHERE id=? AND workspace_id=?').get(projectId, workspaceId);
     if (!row) throw new Error(`project_not_found:${projectId}`);
