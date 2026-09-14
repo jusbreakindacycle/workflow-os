@@ -13,6 +13,7 @@ import { handlePhase31Api, statusForPhase31Error } from './http/phase31-api.js';
 import { handlePhase3Api, statusForPhase3Error } from './http/phase3-api.js';
 import { handlePhase40PlanApi, statusForPhase40Error } from './http/phase40-plan-api.js';
 import { handlePhase40AttemptApi } from './http/phase40-attempt-api.js';
+import { handlePhase40CommandCenterApi } from './http/phase40-command-center-api.js';
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(moduleDir, '..');
@@ -56,6 +57,8 @@ export function createApp(options) {
         if (phase40PlanResult) return sendJson(response, phase40PlanResult.status, phase40PlanResult.body);
         const phase40AttemptResult = await handlePhase40AttemptApi({ request, url, db });
         if (phase40AttemptResult) return sendJson(response, phase40AttemptResult.status, phase40AttemptResult.body);
+        const phase40CommandCenterResult = handlePhase40CommandCenterApi({ request, url, db });
+        if (phase40CommandCenterResult) return sendJson(response, phase40CommandCenterResult.status, phase40CommandCenterResult.body);
         const controlPlaneResult = await handleControlPlaneApi({ request, url, db });
         if (controlPlaneResult) return sendJson(response, controlPlaneResult.status, controlPlaneResult.body);
         const phase2Result = await handlePhase2Api({ request, url, db });
