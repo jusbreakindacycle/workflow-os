@@ -44,6 +44,9 @@ test('Phase 4.0 fixture proves plan -> approval -> attempt -> reconcile -> compl
     assert.equal(completed.status, 'complete');
     assert.equal(completed.attempts.length, 1);
     assert.equal(completed.reconciliations[0].classification, 'confirmed');
+    assert.equal(completed.mappings.length, 1);
+    assert.equal(completed.mappings[0].provider, 'fixture');
+    assert.equal(completed.mappings[0].resource_ref, effect.providerResourceRef);
     const evidence = ctx.db.prepare("SELECT * FROM evidence_references WHERE workspace_id=? AND project_id=? AND evidence_type='external_action_reconciliation'").all(ctx.workspace.id, ctx.project.id);
     assert.equal(evidence.length, 1);
     assert.equal(evidence[0].level, 'L3');
