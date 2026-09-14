@@ -14,6 +14,10 @@ import { handlePhase3Api, statusForPhase3Error } from './http/phase3-api.js';
 import { handlePhase40PlanApi, statusForPhase40Error } from './http/phase40-plan-api.js';
 import { handlePhase40AttemptApi } from './http/phase40-attempt-api.js';
 import { handlePhase40CommandCenterApi } from './http/phase40-command-center-api.js';
+import { handlePhase41SourceControlApi, statusForPhase41Error } from './http/phase41-source-control-api.js';
+import { GovernedWorkspace } from './runtime/governed-workspace.js';
+import { FixtureSourceControlAdapter } from './runtime/fixture-source-control-adapter.js';
+import { GitHubSourceControlAdapter } from './runtime/github-source-control-adapter.js';
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(moduleDir, '..');
@@ -32,11 +36,16 @@ export function createApp(options) {
   const publicDir = options.publicDir ?? defaultPublicDir;
   const migrationsDir = options.migrationsDir ?? defaultMigrationsDir;
   const { db, migrations } = openDatabase({ databasePath: options.databasePath, dataDir: options.dataDir, migrationsDir });
+  const workspaceRuntime = new GovernedWorkspace(db, { rootDir: path.join(options.dataDir, 'execution-workspaces') });
+  const sourceControlAdapters = {
+    fixture: new FixtureSourceControlAdapter(),
+    github: new GitHubSourceControlAdapter()
+  };
 
   const status = {
     service: 'workflow-os',
-    phase: 'phase-4.0',
-    gate: 'governed-external-action-control-plane-implemented',
+    phase: 'phase-4.1',
+    gate: 'governed-source-control-adapter-implemented',
     database: { status: 'ready', migrations }
   };
   assertFoundationStatus(status);
@@ -53,6 +62,8 @@ export function createApp(options) {
         if (phase31Result) return sendJson(response, phase31Result.status, phase31Result.body);
         const phase3Result = await handlePhase3Api({ request, url, db });
         if (phase3Result) return sendJson(response, phase3Result.status, phase3Result.body);
+        const phase41Result = await handlePhase41SourceControlApi({ request, url, db, workspaceRuntime, adapters: sourceControlAdapters });
+        if (phase41Result) return sendJson(response, phase41Result.status, phase41Result.body);
         const phase40PlanResult = await handlePhase40PlanApi({ request, url, db });
         if (phase40PlanResult) return sendJson(response, phase40PlanResult.status, phase40PlanResult.body);
         const phase40AttemptResult = await handlePhase40AttemptApi({ request, url, db });
@@ -73,7 +84,7 @@ export function createApp(options) {
     } catch (error) {
       console.error(error);
       if ((request.url ?? '').startsWith('/api/')) {
-        const statusCode = Math.max(statusForApiError(error), statusForPhase31Error(error), statusForPhase3Error(error), statusForPhase40Error(error), statusForControlPlaneError(error), statusForPhase2Error(error), statusForFreeFirstError(error));
+        const statusCode = Math.max(statusForApiError(error), statusForPhase31Error(error), statusForPhase3Error(error), statusForPhase41Error(error), statusForPhase40Error(error), statusForControlPlaneError(error), statusForPhase2Error(error), statusForFreeFirstError(error));
         return sendJson(response, statusCode || 500, { error: error instanceof Error ? error.message : 'request_failed' });
       }
       return sendJson(response, 500, { error: 'internal_error' });

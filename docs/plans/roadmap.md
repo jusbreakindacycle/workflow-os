@@ -98,7 +98,7 @@ Phase 4 moves from verified local outcomes to governed real external delivery. S
 
 ### Phase 4.0 — External Action Contract — complete for the deterministic provider-neutral fixture path
 
-Phase 4.0 now implements the provider-neutral plan/authority/preflight/attempt/reconciliation/verification substrate in `docs/architecture/external-action-contract.md`.
+Phase 4.0 implements the provider-neutral plan/authority/preflight/attempt/reconciliation/verification substrate in `docs/architecture/external-action-contract.md`.
 
 The certified bounded loop is:
 
@@ -108,23 +108,42 @@ observe -> compile exact plan -> authorize -> preflight -> act -> reconcile -> v
 
 The implementation persists exact Project/WorkItem versions, immutable plan hashes/idempotency keys, bounded attempts, explicit `uncertain` outcomes, reconciliation evidence, provider-resource mappings, optional spend bounds and Command Center attention state. Authority is revalidated at use time and current plan content is re-hashed before mutation.
 
-The deterministic certification is credential-free and creates no real external side effects. Merge-candidate CI passed **91/91 tests with 15 migrations**, the existing Phase 3 certification, and `npm run phase40:certify` with one confirmed reconciliation, one provider mapping, exact approval binding and L3 evidence.
+The deterministic certification is credential-free and creates no real external side effects. Phase 4.0 merge-candidate CI passed **91/91 tests with 15 migrations**, the existing Phase 3 certification, and `npm run phase40:certify` with one confirmed reconciliation, one provider mapping, exact approval binding and L3 evidence.
 
 See `docs/reviews/phase-4.0-implementation-report.md`.
 
-### Phase 4.1 — Governed Source Control — next coding task
+### Phase 4.1 — Governed Source Control — implemented and fixture-certified
 
-Implement the Source Control Adapter contract in `docs/architecture/source-control-adapter-contract.md` on top of Phase 4.0 rather than bypassing it.
+Phase 4.1 implements the Source Control Adapter contract in `docs/architecture/source-control-adapter-contract.md` on top of Phase 4.0 rather than bypassing it.
 
-The first certified write path is deliberately narrow: inspect repository/base, create one non-default delivery branch, project one verified artifact snapshot to an exact commit/tree, open one exact pull request, read checks/state, reconcile.
+The normalized certified path is deliberately narrow:
 
-Merge, force push, settings, permissions, secrets, releases and deployment remain outside Phase 4.1.
+```text
+verified governed local artifact
+  -> exact repository/base/branch/content plan
+  -> exact current R2 authority
+  -> non-default delivery branch
+  -> exact commit/tree from the verified artifact manifest
+  -> exact pull request
+  -> branch/commit/PR/check read-back
+  -> external reconciliation
+```
 
-Normal CI remains credential-free. Any real GitHub certification must be explicit opt-in and restricted to an exact disposable/non-production repository.
+The implementation includes canonical source-control delivery state, exact artifact-manifest and projected-tree hashes, pre-mutation base/artifact drift checks, a deterministic fixture adapter, a bounded GitHub adapter, uncertain/partial-mutation reconciliation, provider-resource mapping, API routes and adversarial coverage.
 
-### Phase 4.2 — Deployment Adapter — evidence-triggered
+Merge-candidate CI passed **102/102 tests with 16 migrations** plus Phase 3, Phase 4.0 and Phase 4.1 certification gates. `npm run phase41:certify` reports one confirmed non-default branch/commit/pull-request fixture path, one bounded attempt, one provider mapping, exact approval binding, L3 evidence, `mergeAuthority: false`, and `realExternalSideEffects: false`.
 
-Target one deployment provider first. Separate preview/staging from production authority, bind exact artifact/source versions, verify health and define rollback/recovery before production use.
+The GitHub adapter is implemented but **has not been live-certified against a real GitHub repository**. Any such certification remains a separate explicit opt-in action restricted to one exact disposable/non-production repository.
+
+Merge, force push, default-branch direct mutation, settings, permissions, secrets, rulesets, releases, deletion and deployment remain outside Phase 4.1.
+
+See `docs/reviews/phase-4.1-implementation-report.md`.
+
+### Phase 4.2 — Deployment Adapter — next adapter class when evidence requires it
+
+Target one deployment provider first, and only when a concrete Project requires deployment. Separate preview/staging from production authority, bind exact artifact/source versions, verify health and define rollback/recovery before production use.
+
+A separately authorized live GitHub Phase 4.1 certification may occur before Phase 4.2 when real source-control evidence is needed; it is not a prerequisite for normal fixture-certified development.
 
 ### Phase 4.3 — Workflow Engine / WIR Execution — evidence-triggered
 

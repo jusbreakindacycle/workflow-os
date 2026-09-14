@@ -28,6 +28,8 @@ jobs:
         run: npm run phase3:certify
       - name: Certify Phase 4.0 governed external action contract
         run: npm run phase40:certify
+      - name: Certify Phase 4.1 governed source control fixture
+        run: npm run phase41:certify
       - name: Confirm live provider harnesses are opt-in only
         run: |
           if npm run phase2:live >/tmp/phase2-live.out 2>&1; then

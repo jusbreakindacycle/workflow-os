@@ -93,6 +93,7 @@
 - [Phase 3.1 Implementation Report](reviews/phase-3.1-implementation-report.md)
 - [Phase 3.5 End-to-End Local Delivery Certification Report](reviews/phase-3.5-end-to-end-certification-report.md)
 - [Phase 4.0 Implementation Report](reviews/phase-4.0-implementation-report.md)
+- [Phase 4.1 Governed Source Control Implementation Report](reviews/phase-4.1-implementation-report.md)
 - [Roadmap](plans/roadmap.md)
 - [Phase 1 Core Control Plane](plans/phase-1-core-control-plane.md)
 - [Phase 2 Autonomy Kernel](plans/phase-2-autonomy-kernel.md)

@@ -1,6 +1,6 @@
 # Workflow OS (temporary name)
 
-> **Status:** Foundation v3, Phase 1, Phase 2, Phase 2.1, Phase 2.2, the complete Phase 3 synthetic/local delivery golden path, and **Phase 4.0 governed external-action control plane** are implemented. Phase 2.1 passed representative real zero-spend provider certification on 2026-09-12. Phase 3 proves one raw synthetic client request can reach a strategy-specific Work Graph, governed real local artifact execution, L2/L3 verification, independent reconciliation and a final delivery record. Phase 4.0 now proves the provider-neutral `plan -> authority -> preflight -> attempt -> reconcile -> verify` external-action lifecycle with deterministic fixture evidence. **This is still not GitHub/shared-remote or production autonomy. Phase 4.1 Governed Source Control is next.** The product name `workflow-os` is temporary.
+> **Status:** Foundation v3, Phase 1, Phase 2, Phase 2.1, Phase 2.2, the complete Phase 3 synthetic/local delivery golden path, **Phase 4.0 governed external actions**, and **Phase 4.1 governed source control** are implemented. Phase 2.1 passed representative real zero-spend provider certification on 2026-09-12. Phase 4.0 is deterministic fixture-certified. Phase 4.1 is fixture-certified for exact non-default branch + commit/tree + pull-request delivery and includes a bounded GitHub adapter, but **no live GitHub mutation certification is claimed yet**. This is still not production/deployment autonomy. The product name `workflow-os` is temporary.
 
 Workflow OS is intended to become the **one operating interface a solo builder uses to run client and internal delivery work without depending on one AI platform, one coding agent, or one model vendor**.
 
@@ -122,83 +122,11 @@ Phase 2.2 added database-enforced WorkItem birth states, exact/version-bound App
 
 Consequential model/provider intent cannot bypass the canonical authority boundary.
 
-## Phase 3.0 — Golden Path Contract — complete
+## Phase 3 — Synthetic/local end-to-end delivery — complete
 
-Phase 3.0 defined the first synthetic delivery proof and, before any real local mutation, separated bounded local R1 execution authority from shared-remote/deployment/production authority.
+Phase 3 proves one controlled synthetic Project can move from raw request through adaptive discovery, strategy-specific Work Graph, governed local execution, real tests/local application exercise, independent reconciliation, bounded repair and final delivery evidence.
 
-Canonical certification request:
-
-> “I'm running Facebook/Instagram ads for my business. I need somewhere prospects can see the offer, enter their details, and let us follow up. I was thinking of a simple website with a contact form.”
-
-The requested website is preserved, but `custom_build` is never pre-authorized merely because the client mentioned a website.
-
-## Phase 3.1 — Adaptive Discovery / Challenge / Strategy — complete
-
-Phase 3.1:
-
-- preserves the raw request/requested solution separately;
-- asks only materially consequential questions;
-- keeps `I don't know` explicit;
-- re-analyzes after answers;
-- records `research_required` instead of inventing external facts;
-- challenges the requested solution and compares alternatives;
-- recommends strategy from source-backed evidence;
-- lets the operator override the recommendation without rewriting history;
-- compiles accepted direction into the canonical Project Brief.
-
-## Phase 3.2 — Dynamic Workforce / Work Graph — complete
-
-Phase 3.2 converts the accepted Brief/strategy into case-specific WorkItems, dependencies, capabilities, evidence, risk/action class, authority, verification and stop/escalation requirements.
-
-Roles are logical capabilities activated by work, not permanent AI employees.
-
-The planner has materially different graph families for process change, adopt/configure, integrate, automate, custom build, hybrid, research/pilot and defer. Tests explicitly prove that non-build strategies do not receive fake software-development work.
-
-## Phase 3.3 — Governed Local Execution Workspace — complete for synthetic R1 work
-
-Phase 3.3 implements a real per-Project local workspace under a configured root with:
-
-- traversal/absolute/symlink escape rejection;
-- workspace-only file operations;
-- hashed artifact manifests;
-- deny-by-default command classes;
-- minimal process environment;
-- loopback-only server execution;
-- owned-process lifecycle tracking/cleanup.
-
-It does **not** grant arbitrary shell, shared GitHub, production, credential-store, messaging or package-publishing authority.
-
-## Phase 3.4 — Verification / Repair / Delivery — complete for the local golden path
-
-Phase 3.4 projects Work Specs into Phase 3 Project Packs, Context Slices and bounded Assignments, then requires observable evidence:
-
-- real syntax checks;
-- real Node behavior tests;
-- actual loopback application flow;
-- separate deterministic independent reconciliation;
-- bounded repair records (max two attempts in the first implementation);
-- independent L3 evidence before final delivery can be recorded.
-
-## Phase 3.5 — Full synthetic/local certification — complete
-
-The full certification now proves:
-
-```text
-raw request
--> challenge / strategy / accepted Brief
--> strategy-specific Work Graph
--> bounded roles/capabilities
--> governed local workspace
--> real generated local app
--> real tests
--> actual invalid + valid synthetic lead requests
--> local receiver/store effect
--> independent reconciliation
--> final evidence bundle
--> Project complete / closed / healthy
-```
-
-The generated certification artifact contains a synthetic offer, lead form, validation and local in-memory receiver. It uses no real customer/client data and no external business endpoint.
+The local execution workspace rejects path/symlink escape, uses deny-by-default command classes and minimal process environment, and does not imply shared-remote or production authority.
 
 See `docs/reviews/phase-3.5-end-to-end-certification-report.md`.
 
@@ -222,19 +150,40 @@ exact plan
 
 The implementation includes exact Project/WorkItem version capture, plan/input/target hashing, idempotency, use-time authority revalidation, optional SpendEnvelope binding, explicit uncertain outcomes, reconciliation-before-retry, bounded external-attempt budgets, provider-resource mappings and Command Center attention state.
 
-Merge-candidate CI passed **91/91 tests with 15 migrations**. `npm run phase40:certify` also passed with one fixture attempt, one confirmed reconciliation, one provider mapping, exact approval binding and L3 evidence while explicitly reporting `realExternalSideEffects: false`.
+Phase 4.0 merge-candidate CI passed **91/91 tests with 15 migrations**. `npm run phase40:certify` passed with one fixture attempt, one confirmed reconciliation, one provider mapping, exact approval binding and L3 evidence while explicitly reporting `realExternalSideEffects: false`.
 
 See `docs/reviews/phase-4.0-implementation-report.md`.
 
-### What Phase 4.0 does not prove
+## Phase 4.1 — Governed Source Control — implemented and fixture-certified
 
-Phase 4.0 does not certify real GitHub mutation, merge/force-push/settings/secrets/releases, deployment, production mutation, external messaging, real client/customer data, arbitrary credentials, unattended hosting, or paid external effects without an applicable SpendEnvelope.
+Phase 4.1 consumes Phase 4.0 to project one independently verified local artifact into a tightly bounded source-control delivery action:
 
-## Next engineering direction — Phase 4.1 Governed Source Control
+```text
+verified local artifact
+-> exact repository/base/branch/content plan
+-> exact current R2 authority
+-> non-default branch
+-> exact commit/tree
+-> exact pull request
+-> remote read-back
+-> reconciliation
+```
 
-Phase 4.1 is the next coding task. It will consume the Phase 4.0 contract to take one verified local artifact through an exact non-default remote branch, exact commit/tree, exact pull request and remote reconciliation.
+The implementation binds the governed-workspace artifact manifest and SHA-256 content hashes, exact base ref/commit, exact delivery branch, commit message and PR metadata before mutation. Artifact/base drift blocks execution. Partial or uncertain provider outcomes must be reconciled before retry.
 
-Normal CI remains credential-free. Any live GitHub certification must be separately opt-in and restricted to one exact disposable/non-production repository. Merge, force push, repository settings, secrets, releases and deployment remain outside Phase 4.1.
+Normal CI uses a deterministic source-control fixture and fake GitHub HTTP. The merge-candidate implementation passed **102/102 tests with 16 migrations**, Phase 3 and Phase 4.0 regression certifications, and `npm run phase41:certify`. The Phase 4.1 certification reports `realExternalSideEffects: false`, one confirmed non-default branch/commit/PR fixture path, one attempt, one provider mapping, exact approval binding, L3 evidence and `mergeAuthority: false`.
+
+A bounded `GitHubSourceControlAdapter` is implemented for repository/ref inspection, non-default branch creation, exact blobs/tree/commit, non-force branch update, PR creation and remote tree/PR/check read-back. It uses a credential reference via `WORKFLOW_OS_GITHUB_TOKEN`; raw tokens are not canonical Project state.
+
+**The GitHub adapter is not live-certified yet.** A real GitHub certification requires separate explicit operator authorization and one exact disposable/non-production repository.
+
+Phase 4.1 does not implement PR merge, force push/history rewrite, default-branch direct mutation, branch/tag/release deletion, repository settings/permissions/secrets/rulesets, deployment, package publication, external messaging or arbitrary git/shell authority.
+
+See `docs/reviews/phase-4.1-implementation-report.md`.
+
+## Next engineering direction — evidence-driven
+
+The next planned adapter class is **Phase 4.2 Deployment**, but it should start only when a concrete Project requires deployment and we can bind one provider's exact staging/production/rollback authority model. A separately authorized live GitHub Phase 4.1 certification can happen earlier when real remote-source-control evidence is useful.
 
 Do not add every possible provider or enterprise-scale subsystem speculatively.
 
@@ -246,8 +195,11 @@ npm run db:migrate
 npm run db:backup
 npm run phase3:certify
 npm run phase40:certify
+npm run phase41:certify
 npm start
 ```
+
+`phase3:certify`, `phase40:certify`, and `phase41:certify` are synthetic/fixture certification paths and create no live GitHub or production effects.
 
 Free-First operator commands remain separate:
 
@@ -276,8 +228,8 @@ This repository is public. Use synthetic data only. Never commit real client dat
 6. `docs/security/risk-and-approval-policy.md`
 7. `docs/plans/roadmap.md`
 8. `docs/architecture/external-action-contract.md`
-9. `docs/reviews/phase-4.0-implementation-report.md`
-10. `docs/plans/phase-4.1-governed-source-control.md`
+9. `docs/architecture/source-control-adapter-contract.md`
+10. `docs/reviews/phase-4.1-implementation-report.md`
 
 ## One-line product test
 
