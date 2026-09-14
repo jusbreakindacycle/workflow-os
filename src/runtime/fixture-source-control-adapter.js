@@ -31,12 +31,13 @@ export class FixtureSourceControlAdapter {
 
   executeBundle(plan, files) {
     const target = plan.target;
+    const preconditions = plan.details?.preconditions ?? {};
     const repo = this.#repo(target.repository);
     if (target.deliveryBranch === repo.defaultBranch) return failure('source_control_default_branch_write_forbidden');
     if (repo.refs.get(target.baseRef) !== target.baseCommit) return failure('source_control_base_drift');
 
     const existingBranch = repo.refs.get(target.deliveryBranch);
-    const intendedCommit = commitIdentity({ base: target.baseCommit, tree: plan.preconditions.projectedTreeSha256, message: plan.preconditions.commitMessage });
+    const intendedCommit = commitIdentity({ base: target.baseCommit, tree: preconditions.projectedTreeSha256, message: preconditions.commitMessage });
     if (existingBranch && existingBranch !== intendedCommit) return failure('source_control_branch_collision_drift');
 
     const apply = () => {
@@ -44,18 +45,18 @@ export class FixtureSourceControlAdapter {
       repo.commits.set(intendedCommit, {
         sha: intendedCommit,
         base: target.baseCommit,
-        treeSha256: plan.preconditions.projectedTreeSha256,
+        treeSha256: preconditions.projectedTreeSha256,
         files: structuredClone(files),
-        message: plan.preconditions.commitMessage
+        message: preconditions.commitMessage
       });
-      const existingPr = [...repo.pullRequests.values()].find((pr) => pr.base === target.baseRef && pr.head === target.deliveryBranch && pr.title === plan.preconditions.prTitle && pr.body === plan.preconditions.prBody);
+      const existingPr = [...repo.pullRequests.values()].find((pr) => pr.base === target.baseRef && pr.head === target.deliveryBranch && pr.title === preconditions.prTitle && pr.body === preconditions.prBody);
       const pr = existingPr ?? {
         id: `fixture-pr-${repo.pullRequests.size + 1}`,
         number: repo.pullRequests.size + 1,
         base: target.baseRef,
         head: target.deliveryBranch,
-        title: plan.preconditions.prTitle,
-        body: plan.preconditions.prBody,
+        title: preconditions.prTitle,
+        body: preconditions.prBody,
         state: 'open',
         url: `fixture://${target.repository}/pull/${repo.pullRequests.size + 1}`
       };
@@ -75,12 +76,13 @@ export class FixtureSourceControlAdapter {
 
   reconcile(plan) {
     const target = plan.target;
+    const preconditions = plan.details?.preconditions ?? {};
     const repo = this.#repo(target.repository);
-    const intendedCommit = commitIdentity({ base: target.baseCommit, tree: plan.preconditions.projectedTreeSha256, message: plan.preconditions.commitMessage });
+    const intendedCommit = commitIdentity({ base: target.baseCommit, tree: preconditions.projectedTreeSha256, message: preconditions.commitMessage });
     const branchCommit = repo.refs.get(target.deliveryBranch) ?? null;
     const pr = [...repo.pullRequests.values()].find((item) => item.base === target.baseRef && item.head === target.deliveryBranch) ?? null;
     if (!branchCommit && !pr) return { classification: 'not_applied', observedState: { repository: target.repository, branch: null, pullRequest: null } };
-    if (branchCommit !== intendedCommit || !pr || pr.title !== plan.preconditions.prTitle || pr.body !== plan.preconditions.prBody) {
+    if (branchCommit !== intendedCommit || !pr || pr.title !== preconditions.prTitle || pr.body !== preconditions.prBody) {
       return { classification: 'drifted', observedState: { repository: target.repository, branch: target.deliveryBranch, commit: branchCommit, pullRequest: pr } };
     }
     return {
@@ -93,7 +95,8 @@ export class FixtureSourceControlAdapter {
         baseCommit: target.baseCommit,
         deliveryBranch: target.deliveryBranch,
         commit: intendedCommit,
-        treeSha256: plan.preconditions.projectedTreeSha256,
+        treeSha256: preconditions.projectedTreeSha256,
+        artifactManifest: preconditions.artifactManifest ?? [],
         pullRequest: pr,
         checks: [{ name: 'fixture-ci', status: 'completed', conclusion: 'success' }]
       },
