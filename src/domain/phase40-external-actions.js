@@ -44,12 +44,13 @@ export class Phase40ExternalActions {
       if (['executing', 'reconciling'].includes(supersedes.status)) throw new Error('external_action_cannot_supersede_active_plan');
     }
     const version = supersedes ? Number(supersedes.version) + 1 : 1;
+    const recoveryPolicy = normalizeRecovery(recovery);
     const content = {
       workspaceId, projectId, workItemId, assignmentId, version,
       projectVersion: Number(project.version), workItemVersion: workItem ? Number(workItem.version) : null,
       adapterClass: adapterClass.trim(), actionKind: actionKind.trim(), target, preconditions, inputRefs,
       inputSha256: inputSha256.trim(), riskTier, actionClass, requiredAuthority, spendEnvelopeId,
-      verification, recovery, expiresAt, supersedesPlanId
+      verification, recovery: recoveryPolicy, expiresAt, supersedesPlanId
     };
     const planSha256 = sha256Json(content);
     const idempotencyKey = `phase40:${planSha256}`;
@@ -68,7 +69,7 @@ export class Phase40ExternalActions {
         id, workspaceId, projectId, workItemId, version, project.version, workItem?.version ?? null,
         adapterClass.trim(), actionKind.trim(), canonicalJson(target), inputSha256.trim(), planSha256,
         riskTier, actionClass, requiredAuthority, spendEnvelopeId, idempotencyKey,
-        canonicalJson(verification), canonicalJson(recovery), expiresAt, now, now
+        canonicalJson(verification), canonicalJson(recoveryPolicy), expiresAt, now, now
       );
       this.db.prepare(`INSERT INTO external_action_plan_details
         (plan_id,workspace_id,project_id,assignment_id,preconditions_json,input_refs_json,supersedes_plan_id)
@@ -126,6 +127,9 @@ export class Phase40ExternalActions {
       WHERE a.plan_id=? AND a.status='uncertain'
       AND NOT EXISTS (SELECT 1 FROM action_reconciliation_records r WHERE r.attempt_id=a.id AND r.classification IN ('confirmed','not_applied','drifted')) LIMIT 1`).get(planId);
     if (unresolved) blockers.push(`unreconciled_uncertain_attempt:${unresolved.id}`);
+    const attemptCount = Number(this.db.prepare('SELECT COUNT(*) AS n FROM external_action_attempts WHERE plan_id=?').get(planId).n);
+    const maxAttempts = normalizeRecovery(parseJson(plan.recovery_json, {})).maxAttempts;
+    if (attemptCount >= maxAttempts) blockers.push('attempt_budget_exhausted');
     return { ok: blockers.length === 0, blockers, plan: this.getPlan({ workspaceId, projectId, planId }) };
   }
 
@@ -184,6 +188,11 @@ export class Phase40ExternalActions {
     this.#transaction(() => {
       this.db.prepare(`INSERT INTO evidence_references (id,workspace_id,project_id,work_item_id,level,evidence_type,summary,created_at) VALUES (?,?,?,?, 'L3','external_action_reconciliation',?,?)`).run(evidenceId, workspaceId, projectId, plan.work_item_id, summary ?? canonicalJson({ planId: plan.id, attemptId, classification, stateHash }), now);
       this.db.prepare(`INSERT INTO action_reconciliation_records (id,workspace_id,project_id,plan_id,attempt_id,classification,state_hash,evidence_id,created_at) VALUES (?,?,?,?,?,?,?,?,?)`).run(reconciliationId, workspaceId, projectId, plan.id, attemptId, classification, stateHash, evidenceId, now);
+      if (classification === 'confirmed' && attempt.provider_resource_ref) {
+        this.db.prepare(`INSERT OR IGNORE INTO external_action_mappings
+          (id,workspace_id,project_id,plan_id,adapter_class,provider,resource_kind,resource_id,resource_ref,observed_hash,observed_at)
+          VALUES (?,?,?,?,?,?,?,?,?,?,?)`).run(crypto.randomUUID(), workspaceId, projectId, plan.id, plan.adapter_class, attempt.adapter_provider, plan.action_kind, attempt.provider_resource_ref, attempt.provider_resource_ref, stateHash, now);
+      }
       this.db.prepare('UPDATE external_action_plans SET status=?,updated_at=? WHERE id=? AND workspace_id=? AND project_id=?').run(nextStatus, now, plan.id, workspaceId, projectId);
       this.store.recordEvent({ workspaceId, projectId, workItemId: plan.work_item_id, eventType: `external_action.reconciled_${classification}`, actorType: 'system', entityType: 'external_action_plan', entityId: plan.id, entityVersion: plan.version, payload: { attemptId, evidenceId, stateHash } });
     });
@@ -201,14 +210,15 @@ export class Phase40ExternalActions {
 
   getPlan({ workspaceId, projectId, planId }) {
     const plan = this.#plan(workspaceId, projectId, planId);
-    const details = this.db.prepare('SELECT * FROM external_action_plan_details WHERE plan_id=? AND workspace_id=? AND project_id=?').get(planId, workspaceId, projectId) ?? null;
+    const details = this.#details(workspaceId, projectId, planId);
     const attempts = this.db.prepare('SELECT * FROM external_action_attempts WHERE plan_id=? AND workspace_id=? AND project_id=? ORDER BY attempt_number').all(planId, workspaceId, projectId);
     const reconciliations = this.db.prepare('SELECT * FROM action_reconciliation_records WHERE plan_id=? AND workspace_id=? AND project_id=? ORDER BY created_at').all(planId, workspaceId, projectId);
+    const mappings = this.db.prepare('SELECT * FROM external_action_mappings WHERE plan_id=? AND workspace_id=? AND project_id=? ORDER BY observed_at').all(planId, workspaceId, projectId);
     const approval = plan.approval_id ? this.#approval(workspaceId, projectId, plan.approval_id) : null;
     return {
       ...plan, target: parseJson(plan.target_json, {}), verification: parseJson(plan.verification_json, {}), recovery: parseJson(plan.recovery_json, {}),
       details: details ? { ...details, preconditions: parseJson(details.preconditions_json, {}), inputRefs: parseJson(details.input_refs_json, []) } : null,
-      approval, attempts, reconciliations
+      approval, attempts, reconciliations, mappings
     };
   }
 
@@ -224,6 +234,7 @@ export class Phase40ExternalActions {
 
   #freshnessBlockers(plan, { requireApproval }) {
     const blockers = [];
+    if (this.#currentPlanHash(plan) !== plan.plan_sha256) blockers.push('plan_content_hash_mismatch');
     const project = this.db.prepare('SELECT * FROM projects WHERE id=? AND workspace_id=?').get(plan.project_id, plan.workspace_id);
     if (!project || Number(project.version) !== Number(plan.project_version)) blockers.push('project_version_stale');
     if (plan.work_item_id) {
@@ -244,6 +255,20 @@ export class Phase40ExternalActions {
       if (!envelope || envelope.status !== 'approved' || Number(envelope.spent_amount_minor) >= Number(envelope.max_amount_minor)) blockers.push('spend_envelope_unavailable');
     }
     return blockers;
+  }
+
+  #currentPlanHash(plan) {
+    const details = this.#details(plan.workspace_id, plan.project_id, plan.id);
+    return sha256Json({
+      workspaceId: plan.workspace_id, projectId: plan.project_id, workItemId: plan.work_item_id,
+      assignmentId: details?.assignment_id ?? null, version: Number(plan.version), projectVersion: Number(plan.project_version),
+      workItemVersion: plan.work_item_version === null ? null : Number(plan.work_item_version),
+      adapterClass: plan.adapter_class, actionKind: plan.action_kind, target: parseJson(plan.target_json, {}),
+      preconditions: parseJson(details?.preconditions_json, {}), inputRefs: parseJson(details?.input_refs_json, []), inputSha256: plan.input_sha256,
+      riskTier: plan.risk_tier, actionClass: plan.action_class, requiredAuthority: plan.required_authority,
+      spendEnvelopeId: plan.spend_envelope_id, verification: parseJson(plan.verification_json, {}), recovery: parseJson(plan.recovery_json, {}),
+      expiresAt: plan.expires_at, supersedesPlanId: details?.supersedes_plan_id ?? null
+    });
   }
 
   #assertFresh(plan, options) {
@@ -275,6 +300,9 @@ export class Phase40ExternalActions {
     if (!row) throw new Error(`external_action_plan_not_found:${planId}`);
     return row;
   }
+  #details(workspaceId, projectId, planId) {
+    return this.db.prepare('SELECT * FROM external_action_plan_details WHERE plan_id=? AND project_id=? AND workspace_id=?').get(planId, projectId, workspaceId) ?? null;
+  }
   #attempt(workspaceId, projectId, attemptId) {
     const row = this.db.prepare('SELECT * FROM external_action_attempts WHERE id=? AND project_id=? AND workspace_id=?').get(attemptId, projectId, workspaceId);
     if (!row) throw new Error(`external_action_attempt_not_found:${attemptId}`);
@@ -292,6 +320,11 @@ export class Phase40ExternalActions {
   }
 }
 
+function normalizeRecovery(value) {
+  const input = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  const maxAttempts = Number.isInteger(input.maxAttempts) && input.maxAttempts > 0 ? Math.min(input.maxAttempts, 10) : 2;
+  return { ...input, maxAttempts };
+}
 function isText(value) { return typeof value === 'string' && value.trim().length > 0; }
 function parseJson(value, fallback) { try { return JSON.parse(value ?? ''); } catch { return fallback; } }
 function isoNow() { return new Date().toISOString(); }
