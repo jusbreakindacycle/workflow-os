@@ -28,7 +28,7 @@ test('local app serves control-plane UI and Phase 4.0 database-backed health end
   assert.equal(health.phase, 'phase-4.0');
   assert.equal(health.gate, 'governed-external-action-control-plane-implemented');
   assert.equal(health.database.status, 'ready');
-  assert.equal(health.database.migrations, 14);
+  assert.equal(health.database.migrations, 15);
 
   const uiResponse = await fetch(`${origin}/`);
   assert.equal(uiResponse.status, 200);
