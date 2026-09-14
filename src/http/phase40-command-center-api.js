@@ -12,7 +12,7 @@ export function handlePhase40CommandCenterApi({ request, url, db }) {
     const externalAttention = [];
     const projects = base.projects.map((project) => {
       const state = actions.getProjectState({ workspaceId, projectId: project.id });
-      for (const item of state.needsAttention) externalAttention.push({ ...item, projectId: project.id });
+      for (const item of state.needsAttention) externalAttention.push(normalizeAttention(item, project.id));
       return { ...project, externalActionCount: state.plans.length, externalAttentionCount: state.needsAttention.length };
     });
     return { status: 200, body: { ...base, projects, needsMyAttention: [...base.needsMyAttention, ...externalAttention] } };
@@ -29,11 +29,15 @@ export function handlePhase40CommandCenterApi({ request, url, db }) {
       body: {
         ...base,
         externalActions: state.plans,
-        needsMyAttention: [...base.needsMyAttention, ...state.needsAttention]
+        needsMyAttention: [...base.needsMyAttention, ...state.needsAttention.map((item) => normalizeAttention(item, projectId))]
       }
     };
   }
   return null;
+}
+
+function normalizeAttention(item, projectId) {
+  return { ...item, projectId, title: item.reason ?? `External action ${item.status}` };
 }
 
 function requiredQuery(url, key) {
