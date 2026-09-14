@@ -29,6 +29,7 @@ export class GitHubSourceControlAdapter {
   }
 
   async executeBundle(plan, files) {
+    let mutated = false;
     try {
       const target = plan.target;
       const repository = await this.inspectRepository({ repository: target.repository });
@@ -46,25 +47,29 @@ export class GitHubSourceControlAdapter {
       }
 
       await this.#request('POST', `/repos/${repoPath(target.repository)}/git/refs`, { ref: `refs/heads/${target.deliveryBranch}`, sha: target.baseCommit }, { mutation: true });
+      mutated = true;
       const treeEntries = [];
       for (const file of files) {
         const blob = await this.#request('POST', `/repos/${repoPath(target.repository)}/git/blobs`, { content: file.content, encoding: 'utf-8' }, { mutation: true });
+        mutated = true;
         treeEntries.push({ path: file.path, mode: '100644', type: 'blob', sha: blob.sha });
       }
       const tree = await this.#request('POST', `/repos/${repoPath(target.repository)}/git/trees`, { tree: treeEntries }, { mutation: true });
+      mutated = true;
       const commit = await this.#request('POST', `/repos/${repoPath(target.repository)}/git/commits`, { message: plan.preconditions.commitMessage, tree: tree.sha, parents: [target.baseCommit] }, { mutation: true });
+      mutated = true;
       await this.#request('PATCH', `/repos/${repoPath(target.repository)}/git/refs/heads/${encodeURIComponent(target.deliveryBranch)}`, { sha: commit.sha, force: false }, { mutation: true });
+      mutated = true;
 
       let pr = await this.#findPullRequest(plan);
       if (!pr) {
         pr = await this.#request('POST', `/repos/${repoPath(target.repository)}/pulls`, { title: plan.preconditions.prTitle, body: plan.preconditions.prBody, head: target.deliveryBranch, base: target.baseRef }, { mutation: true });
+        mutated = true;
       }
       return { outcome: 'succeeded', providerOperationRef: commit.sha, providerResourceRef: pr.html_url ?? String(pr.number), result: { branch: target.deliveryBranch, commit: commit.sha, tree: tree.sha, pullRequest: normalizePr(pr) } };
     } catch (error) {
-      if (error instanceof GitHubAdapterError) {
-        if (error.effectKnownAbsent) return failed(error.errorClass);
-        throw error;
-      }
+      if (mutated) throw new GitHubAdapterError('partial_mutation_requires_reconciliation', error instanceof Error ? error.message : String(error), false);
+      if (error instanceof GitHubAdapterError && error.effectKnownAbsent) return failed(error.errorClass);
       throw error;
     }
   }
@@ -88,19 +93,22 @@ export class GitHubSourceControlAdapter {
       return { classification: 'drifted', observedState: { provider: this.provider, repository: target.repository, deliveryBranch: target.deliveryBranch, commit: branch.sha, remoteManifest, pullRequest: pr ? normalizePr(pr) : null } };
     }
     const checks = await this.getChecks({ repository: target.repository, commitSha: branch.sha });
-    return {
-      classification: 'confirmed',
-      providerResourceRef: pr.html_url ?? String(pr.number),
-      observedState: { provider: this.provider, repository: target.repository, baseRef: target.baseRef, baseCommit: target.baseCommit, deliveryBranch: target.deliveryBranch, commit: branch.sha, tree: commit.tree?.sha ?? null, artifactManifest: remoteManifest, pullRequest: normalizePr(pr), checks }
-    };
+    const observedState = { provider: this.provider, repository: target.repository, baseRef: target.baseRef, baseCommit: target.baseCommit, deliveryBranch: target.deliveryBranch, commit: branch.sha, tree: commit.tree?.sha ?? null, artifactManifest: remoteManifest, pullRequest: normalizePr(pr), checks };
+    if (plan.preconditions.checksPolicy?.required && !checksPass(checks)) return { classification: 'uncertain', providerResourceRef: pr.html_url ?? String(pr.number), observedState: { ...observedState, verificationPending: true } };
+    return { classification: 'confirmed', providerResourceRef: pr.html_url ?? String(pr.number), observedState };
   }
 
   async getChecks({ repository, commitSha }) {
-    const [status, runs] = await Promise.all([
-      this.#request('GET', `/repos/${repoPath(repository)}/commits/${encodeURIComponent(commitSha)}/status`, null, { mutation: false }),
-      this.#request('GET', `/repos/${repoPath(repository)}/commits/${encodeURIComponent(commitSha)}/check-runs`, null, { mutation: false, accept: 'application/vnd.github+json' })
-    ]);
-    return { combinedState: status.state ?? 'unknown', statuses: status.statuses ?? [], checkRuns: runs.check_runs ?? [] };
+    try {
+      const [status, runs] = await Promise.all([
+        this.#request('GET', `/repos/${repoPath(repository)}/commits/${encodeURIComponent(commitSha)}/status`, null, { mutation: false }),
+        this.#request('GET', `/repos/${repoPath(repository)}/commits/${encodeURIComponent(commitSha)}/check-runs`, null, { mutation: false, accept: 'application/vnd.github+json' })
+      ]);
+      return { available: true, combinedState: status.state ?? 'unknown', statuses: status.statuses ?? [], checkRuns: runs.check_runs ?? [] };
+    } catch (error) {
+      if (error instanceof GitHubAdapterError && ['permission_scope_denied','repository_or_ref_not_found'].includes(error.errorClass)) return { available: false, errorClass: error.errorClass, combinedState: 'unknown', statuses: [], checkRuns: [] };
+      throw error;
+    }
   }
 
   async #findPullRequest(plan) {
@@ -136,8 +144,9 @@ export class GitHubSourceControlAdapter {
     const text = await response.text();
     const data = text ? safeJson(text) : {};
     if (response.ok) return data;
-    const errorClass = classify(response.status, response.headers, data);
-    throw new GitHubAdapterError(errorClass, data?.message ?? `GitHub request failed: ${response.status}`, true);
+    const errorClass = classify(response.status, response.headers);
+    const effectKnownAbsent = !mutation || response.status < 500;
+    throw new GitHubAdapterError(errorClass, data?.message ?? `GitHub request failed: ${response.status}`, effectKnownAbsent);
   }
 }
 
@@ -150,7 +159,7 @@ export class GitHubAdapterError extends Error {
   }
 }
 
-function classify(status, headers, body) {
+function classify(status, headers) {
   if (status === 401) return 'authentication_unavailable';
   if (status === 403 && headers?.get?.('x-ratelimit-remaining') === '0') return 'provider_rate_or_quota_limit';
   if (status === 403) return 'permission_scope_denied';
@@ -159,6 +168,15 @@ function classify(status, headers, body) {
   if (status === 422) return 'provider_validation_failure';
   if (status >= 500) return 'provider_outage';
   return `provider_http_${status}`;
+}
+function checksPass(checks) {
+  if (!checks?.available) return false;
+  const runs = checks.checkRuns ?? [];
+  const statuses = checks.statuses ?? [];
+  if (runs.length === 0 && statuses.length === 0) return false;
+  const runPass = runs.every((run) => run.status === 'completed' && ['success','neutral','skipped'].includes(run.conclusion));
+  const statusPass = statuses.every((status) => status.state === 'success');
+  return runPass && statusPass && ['success','pending'].includes(checks.combinedState) && checks.combinedState !== 'pending';
 }
 function repoPath(repository) {
   if (typeof repository !== 'string' || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository)) throw new TypeError('source_control_repository_ref_invalid');
