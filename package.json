@@ -15,6 +15,7 @@
     "phase21:preflight": "node scripts/phase21-free-first-preflight.js",
     "phase21:certify": "node scripts/phase21-free-first-certify.js",
     "phase3:certify": "node scripts/phase3-golden-path-certify.js",
+    "phase40:certify": "node scripts/phase40-external-action-certify.js",
     "check": "node scripts/check-source.js",
     "test": "node --test",
     "verify": "npm run check && npm test"
