@@ -92,29 +92,35 @@ See `docs/reviews/phase-3.5-end-to-end-certification-report.md`.
 
 Phase 3 does not certify production deployment, shared GitHub mutation, real client/customer data, real Meta/CRM/email/SMS integrations, ad spend/performance, arbitrary external integrations, credential/permission grants, or unattended always-on hosting.
 
-## Phase 4 — Real Delivery Adapters — next
+## Phase 4 — Real Delivery Adapters — in progress
 
 Phase 4 moves from verified local outcomes to governed real external delivery. See `docs/plans/phase-4-real-delivery-adapters.md`.
 
-### Phase 4.0 — External Action Contract — next coding task
+### Phase 4.0 — External Action Contract — complete for the deterministic provider-neutral fixture path
 
-Implement the provider-neutral plan/authority/preflight/attempt/reconciliation/verification substrate in `docs/architecture/external-action-contract.md`.
+Phase 4.0 now implements the provider-neutral plan/authority/preflight/attempt/reconciliation/verification substrate in `docs/architecture/external-action-contract.md`.
 
-The core bounded loop is:
+The certified bounded loop is:
 
 ```text
 observe -> compile exact plan -> authorize -> preflight -> act -> reconcile -> verify -> complete/repair/escalate
 ```
 
-Uncertain external mutations are reconciled before retry.
+The implementation persists exact Project/WorkItem versions, immutable plan hashes/idempotency keys, bounded attempts, explicit `uncertain` outcomes, reconciliation evidence, provider-resource mappings, optional spend bounds and Command Center attention state. Authority is revalidated at use time and current plan content is re-hashed before mutation.
 
-### Phase 4.1 — Governed Source Control — immediately after / alongside 4.0
+The deterministic certification is credential-free and creates no real external side effects. Merge-candidate CI passed **91/91 tests with 15 migrations**, the existing Phase 3 certification, and `npm run phase40:certify` with one confirmed reconciliation, one provider mapping, exact approval binding and L3 evidence.
 
-Implement the Source Control Adapter contract in `docs/architecture/source-control-adapter-contract.md`.
+See `docs/reviews/phase-4.0-implementation-report.md`.
+
+### Phase 4.1 — Governed Source Control — next coding task
+
+Implement the Source Control Adapter contract in `docs/architecture/source-control-adapter-contract.md` on top of Phase 4.0 rather than bypassing it.
 
 The first certified write path is deliberately narrow: inspect repository/base, create one non-default delivery branch, project one verified artifact snapshot to an exact commit/tree, open one exact pull request, read checks/state, reconcile.
 
 Merge, force push, settings, permissions, secrets, releases and deployment remain outside Phase 4.1.
+
+Normal CI remains credential-free. Any real GitHub certification must be explicit opt-in and restricted to an exact disposable/non-production repository.
 
 ### Phase 4.2 — Deployment Adapter — evidence-triggered
 
