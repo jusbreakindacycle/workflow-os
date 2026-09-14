@@ -29,7 +29,8 @@ CREATE TABLE source_control_delivery_plans (
 ) STRICT;
 
 CREATE INDEX idx_source_control_delivery_project ON source_control_delivery_plans(workspace_id, project_id, created_at);
-CREATE UNIQUE INDEX idx_source_control_delivery_branch ON source_control_delivery_plans(workspace_id, provider, repository_ref, delivery_branch, status)
-  WHERE status NOT IN ('rejected','superseded','failed');
+CREATE UNIQUE INDEX idx_source_control_delivery_active_branch
+  ON source_control_delivery_plans(workspace_id, provider, repository_ref, delivery_branch)
+  WHERE status NOT IN ('complete','rejected','superseded','failed');
 
 INSERT OR REPLACE INTO app_metadata(key,value) VALUES ('phase41_governed_source_control','1');
