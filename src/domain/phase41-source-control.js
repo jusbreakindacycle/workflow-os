@@ -96,12 +96,24 @@ export class Phase41SourceControl {
   async execute({ workspaceId, projectId, externalActionPlanId }) {
     const delivery = this.#delivery(workspaceId, projectId, externalActionPlanId);
     const external = this.external.getPlan({ workspaceId, projectId, planId: externalActionPlanId });
-    this.#assertCurrentArtifact(delivery);
-    await this.#assertRemotePreconditions(external);
-    const preflight = this.external.preflight({ workspaceId, projectId, planId: externalActionPlanId });
-    if (!preflight.ok) throw new Error(`source_control_external_preflight_blocked:${preflight.blockers.join('|')}`);
+    if (external.status === 'complete') return this.get({ workspaceId, projectId, externalActionPlanId });
 
-    const files = this.#readManifestFiles(workspaceId, projectId, parseJson(delivery.artifact_manifest_json, []));
+    const preflight = this.external.preflight({ workspaceId, projectId, planId: externalActionPlanId });
+    if (!preflight.ok) {
+      if (external.status === 'authorized') this.#block(workspaceId, projectId, externalActionPlanId, `external_preflight:${preflight.blockers.join('|')}`);
+      throw new Error(`source_control_external_preflight_blocked:${preflight.blockers.join('|')}`);
+    }
+
+    let files;
+    try {
+      this.#assertCurrentArtifact(delivery);
+      await this.#assertRemotePreconditions(external);
+      files = this.#readManifestFiles(workspaceId, projectId, parseJson(delivery.artifact_manifest_json, []));
+    } catch (error) {
+      this.#block(workspaceId, projectId, externalActionPlanId, error instanceof Error ? error.message : String(error));
+      throw error;
+    }
+
     const attempt = this.external.startAttempt({
       workspaceId, projectId, planId: externalActionPlanId,
       adapterProvider: this.adapter.provider,
@@ -129,7 +141,13 @@ export class Phase41SourceControl {
 
   async reconcile({ workspaceId, projectId, externalActionPlanId, attemptId }) {
     const external = this.external.getPlan({ workspaceId, projectId, planId: externalActionPlanId });
-    const observed = await this.adapter.reconcile(external);
+    let observed;
+    try {
+      observed = await this.adapter.reconcile(external);
+    } catch (error) {
+      this.#markUncertain(workspaceId, projectId, externalActionPlanId, error instanceof Error ? error.message : String(error));
+      throw error;
+    }
     const reconciled = this.external.reconcile({
       workspaceId, projectId, attemptId,
       classification: observed.classification,
@@ -161,6 +179,7 @@ export class Phase41SourceControl {
   async #assertRemotePreconditions(external) {
     const repository = await this.adapter.inspectRepository({ repository: external.target.repository });
     if (!repository?.available) throw new Error('source_control_repository_unavailable');
+    if (repository.repository && repository.repository.toLowerCase() !== external.target.repository.toLowerCase()) throw new Error('source_control_repository_identity_mismatch');
     if (repository.defaultBranch === external.target.deliveryBranch) throw new Error('source_control_default_branch_write_forbidden');
     const base = await this.adapter.resolveRef({ repository: external.target.repository, ref: external.target.baseRef });
     if (!base || base.sha !== external.target.baseCommit) throw new Error('source_control_base_drift');
@@ -187,6 +206,22 @@ export class Phase41SourceControl {
   #assertVerifiedArtifact(workspaceId, projectId) {
     const evidence = this.db.prepare("SELECT level FROM evidence_references WHERE workspace_id=? AND project_id=? AND evidence_type='independent_verification' ORDER BY created_at DESC LIMIT 1").get(workspaceId, projectId);
     if (!evidence || !VERIFIED_LEVELS.has(evidence.level)) throw new Error('source_control_independent_L3_verification_required');
+  }
+
+  #block(workspaceId, projectId, externalActionPlanId, reason) {
+    const time = now();
+    this.db.prepare("UPDATE external_action_plans SET status='blocked',updated_at=? WHERE workspace_id=? AND project_id=? AND id=? AND status='authorized'").run(time, workspaceId, projectId, externalActionPlanId);
+    this.#syncStatus(workspaceId, projectId, externalActionPlanId, 'blocked');
+    const row = this.#delivery(workspaceId, projectId, externalActionPlanId);
+    this.#event(workspaceId, projectId, row.work_item_id, 'phase41.source_control_plan.blocked', row.id, { externalActionPlanId, reason });
+  }
+
+  #markUncertain(workspaceId, projectId, externalActionPlanId, reason) {
+    const time = now();
+    this.db.prepare("UPDATE external_action_plans SET status='uncertain',updated_at=? WHERE workspace_id=? AND project_id=? AND id=? AND status IN ('reconciling','uncertain')").run(time, workspaceId, projectId, externalActionPlanId);
+    this.#syncStatus(workspaceId, projectId, externalActionPlanId, 'uncertain');
+    const row = this.#delivery(workspaceId, projectId, externalActionPlanId);
+    this.#event(workspaceId, projectId, row.work_item_id, 'phase41.source_control_reconciliation.uncertain', row.id, { externalActionPlanId, reason });
   }
 
   #delivery(workspaceId, projectId, externalActionPlanId) {
