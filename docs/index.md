@@ -58,6 +58,7 @@
 - [Phase 4.0–4.1 External Action / Source Control Acceptance Criteria](testing/phase-4.0-4.1-acceptance-criteria.md)
 - [Production and Maintenance](operations/production-maintenance.md)
 - [Windows Free-First Provider Setup](operations/free-first-provider-setup-windows.md)
+- [Phase 4.1 Controlled Live GitHub Certification](operations/phase-4.1-github-live-certification.md)
 
 ## Implementation
 
