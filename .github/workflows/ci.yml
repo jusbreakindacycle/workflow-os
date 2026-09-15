@@ -43,3 +43,9 @@ jobs:
             exit 1
           fi
           grep -q "Free-First live execution is disabled" /tmp/phase21-free.out
+
+          if npm run phase41:github-live >/tmp/phase41-github-live.out 2>&1; then
+            echo "phase41:github-live unexpectedly ran without explicit operator approval" >&2
+            exit 1
+          fi
+          grep -q "Live GitHub certification is disabled" /tmp/phase41-github-live.out
